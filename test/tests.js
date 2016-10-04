@@ -3,7 +3,7 @@ import * as R     from "ramda"
 import Atom       from "kefir.atom"
 import K          from "kefir.combines"
 
-import {bind, bindProps, classes} from "../src/karet.util"
+import {bind, bindProps, classes, sink} from "../src/karet.util"
 
 function show(x) {
   switch (typeof x) {
@@ -16,7 +16,7 @@ function show(x) {
 }
 
 const testEq = (expr, expect) => it(`${expr} => ${show(expect)}`, done => {
-  const actual = eval(`(Atom, K, Kefir, R, bind, bindProps, classes) => ${expr}`)(Atom, K, Kefir, R, bind, bindProps, classes)
+  const actual = eval(`(Atom, K, Kefir, R, bind, bindProps, classes, sink) => ${expr}`)(Atom, K, Kefir, R, bind, bindProps, classes, sink)
   const check = actual => {
     if (!R.equals(actual, expect))
       throw new Error(`Expected: ${show(expect)}, actual: ${show(actual)}`)
@@ -66,4 +66,8 @@ describe("classes", () => {
 
   testEq('K(classes("a", Kefir.constant("b")), R.identity)',
          {className: "a b"})
+})
+
+describe("sink", () => {
+  testEq('sink(Kefir.constant("lol"))', null)
 })

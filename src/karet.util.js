@@ -79,3 +79,7 @@ export const fromIds = (ids, fromId) => ids.scan(([oldIds], ids) => {
   }
   return [newIds, newVs]
 }, [{}, []]).map(s => s[1])
+
+//
+
+export const sink = stream => K(stream, () => null)
