@@ -1,6 +1,6 @@
-import * as R from "ramda"
-
-import K from "kefir.combines"
+import * as Kefir from "kefir"
+import * as R     from "ramda"
+import K          from "kefir.combines"
 
 export const setProps = template => {
   let observable = null
@@ -82,4 +82,4 @@ export const fromIds = (ids, fromId) => ids.scan(([oldIds], ids) => {
 
 //
 
-export const sink = stream => K(stream, () => null)
+export const sink = stream => K(Kefir.constant(null).concat(stream), () => null)
