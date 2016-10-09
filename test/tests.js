@@ -1,9 +1,8 @@
 import * as Kefir from "kefir"
 import * as R     from "ramda"
 import Atom       from "kefir.atom"
-import K          from "kefir.combines"
 
-import {bind, bindProps, classes, sink} from "../src/karet.util"
+import K, {bind, bindProps, classes, sink} from "../src/karet.util"
 
 function show(x) {
   switch (typeof x) {

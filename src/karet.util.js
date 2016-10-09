@@ -2,6 +2,8 @@ import * as Kefir from "kefir"
 import * as R     from "ramda"
 import K          from "kefir.combines"
 
+export default K
+
 export const setProps = template => {
   let observable = null
   let callback = null
