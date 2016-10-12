@@ -39,16 +39,16 @@ describe("bind", () => {
 describe("bindProps", () => {
   testEq('{const a = Atom(1);' +
          ' const e = {a: 2};' +
-         ' const x = bindProps({mount: "onChange", a});' +
-         ' x.mount(e);' +
+         ' const x = bindProps({ref: "onChange", a});' +
+         ' x.ref(e);' +
          ' a.set(3);' +
          ' return e.a}',
          3)
 
   testEq('{const a = Atom(1);' +
          ' const e = {a: 2};' +
-         ' const x = bindProps({mount: "onChange", a});' +
-         ' x.mount(e);' +
+         ' const x = bindProps({ref: "onChange", a});' +
+         ' x.ref(e);' +
          ' e.a = 3;' +
          ' x.onChange({target: e});' +
          ' return a}',
