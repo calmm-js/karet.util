@@ -41,9 +41,8 @@ export const getProps = template => ({target}) => {
     template[k].set(target[k])
 }
 
-export const bindProps = ({ref, mount, ...template}) =>
-  ({[ref && "ref" || mount && "mount"]: setProps(template),
-    [ref || mount]: getProps(template)})
+export const bindProps = ({ref, ...template}) =>
+  ({ref: setProps(template), [ref]: getProps(template)})
 
 export const bind = template =>
   ({...template, onChange: getProps(template)})
