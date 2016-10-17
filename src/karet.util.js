@@ -1,8 +1,11 @@
 import * as Kefir from "kefir"
 import * as R     from "ramda"
 import K          from "kefir.combines"
+import React      from "karet"
 
 export default K
+
+//
 
 export const setProps = template => {
   let observable = null
@@ -84,3 +87,27 @@ export const fromIds = (ids, fromId) => ids.scan(([oldIds], ids) => {
 //
 
 export const sink = stream => K(Kefir.constant(null).concat(stream), () => null)
+
+//
+
+const types = {context: React.PropTypes.any}
+
+export class Context extends React.Component {
+  constructor(props) {
+    super(props)
+  }
+  getChildContext() {
+    return {context: this.props.context}
+  }
+  render() {
+    return this.props.children
+  }
+}
+
+Context.childContextTypes = types
+
+export const withContext = originalFn => {
+  const fn = (props, {context}) => originalFn(props, context)
+  fn.contextTypes = types
+  return fn
+}
