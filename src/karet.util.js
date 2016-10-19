@@ -8,13 +8,12 @@ export default K
 //
 
 export const setProps = template => {
-  let observable = null
-  let callback = null
+  let observable
+  let callback
   return e => {
     if (callback) {
       observable.offAny(callback)
-      observable = null
-      callback = null
+      observable = callback = null
     }
     if (e) {
       callback = ev => {
@@ -28,8 +27,7 @@ export const setProps = template => {
           case "error":
             throw ev.value
           case "end":
-            observable = null
-            callback = null
+            observable = callback = null
             break
         }
       }
