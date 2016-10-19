@@ -86,7 +86,9 @@ export const fromIds = (ids, fromId) => ids.scan(([oldIds], ids) => {
 
 //
 
-export const sink = stream => K(Kefir.constant(null).concat(stream), () => null)
+const toNull = () => null
+
+export const sink = stream => K(Kefir.constant(null).concat(stream), toNull)
 
 //
 
