@@ -2,7 +2,7 @@ import * as Kefir from "kefir"
 import * as R     from "ramda"
 import Atom       from "kefir.atom"
 
-import K, {bind, bindProps, classes, sink} from "../src/karet.util"
+import K, {bind, bindProps, classes, sink, string} from "../src/karet.util"
 
 function show(x) {
   switch (typeof x) {
@@ -15,7 +15,9 @@ function show(x) {
 }
 
 const testEq = (expr, expect) => it(`${expr} => ${show(expect)}`, done => {
-  const actual = eval(`(Atom, K, Kefir, R, bind, bindProps, classes, sink) => ${expr}`)(Atom, K, Kefir, R, bind, bindProps, classes, sink)
+  const actual =
+    eval(`(Atom, K, Kefir, R, bind, bindProps, classes, sink, string) => ${expr}`)(
+           Atom, K, Kefir, R, bind, bindProps, classes, sink, string)
   const check = actual => {
     if (!R.equals(actual, expect))
       throw new Error(`Expected: ${show(expect)}, actual: ${show(actual)}`)
@@ -69,4 +71,11 @@ describe("classes", () => {
 
 describe("sink", () => {
   testEq('sink(Kefir.constant("lol"))', null)
+})
+
+describe("string", () => {
+  testEq('string`Hello!`', "Hello!")
+  testEq('string`Hello, ${"constant"}!`', "Hello, constant!")
+  testEq('string`Hello, ${Kefir.constant("World")}!`', "Hello, World!")
+  testEq('string`Hello, ${"constant"} ${Kefir.constant("property")}!`', "Hello, constant property!")
 })

@@ -1,6 +1,6 @@
 {
   "name": "karet.util",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Utilities for working with Karet",
   "main": "lib/karet.util.js",
   "scripts": {

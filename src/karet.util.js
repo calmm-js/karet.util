@@ -111,3 +111,8 @@ export const withContext = originalFn => {
   fn.contextTypes = types
   return fn
 }
+
+//
+
+export const string = (strings, ...values) =>
+  K(...values, (...values) => String.raw(strings, ...values))
