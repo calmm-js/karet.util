@@ -1,8 +1,19 @@
 import * as Kefir from "kefir"
 import * as R     from "ramda"
 import Atom       from "kefir.atom"
+import React      from "karet"
+import ReactDOM   from "react-dom/server"
 
-import K, {bind, bindProps, classes, sink, string} from "../src/karet.util"
+import K, {
+  Context,
+  bind,
+  bindProps,
+  classes,
+  fromIds,
+  sink,
+  string,
+  withContext
+} from "../src/karet.util"
 
 function show(x) {
   switch (typeof x) {
@@ -16,8 +27,8 @@ function show(x) {
 
 const testEq = (expr, expect) => it(`${expr} => ${show(expect)}`, done => {
   const actual =
-    eval(`(Atom, K, Kefir, R, bind, bindProps, classes, sink, string) => ${expr}`)(
-           Atom, K, Kefir, R, bind, bindProps, classes, sink, string)
+    eval(`(Atom, K, Kefir, R, bind, bindProps, classes, fromIds, sink, string) => ${expr}`)(
+           Atom, K, Kefir, R, bind, bindProps, classes, fromIds, sink, string)
   const check = actual => {
     if (!R.equals(actual, expect))
       throw new Error(`Expected: ${show(expect)}, actual: ${show(actual)}`)
@@ -27,6 +38,13 @@ const testEq = (expr, expect) => it(`${expr} => ${show(expect)}`, done => {
     actual.take(1).onValue(check)
   else
     check(actual)
+})
+
+const testRender = (vdom, expect) => it(`${expect}`, () => {
+  const actual = ReactDOM.renderToStaticMarkup(vdom)
+
+  if (actual !== expect)
+    throw new Error(`Expected: ${show(expect)}, actual: ${show(actual)}`)
 })
 
 describe("bind", () => {
@@ -69,6 +87,10 @@ describe("classes", () => {
          {className: "a b"})
 })
 
+describe("fromIds", () => {
+  testEq('fromIds(Kefir.concat([Kefir.constant([2, 1, 1]), Kefir.constant([1, 3, 2])]), i => `item ${i}`)', ["item 1", "item 3", "item 2"])
+})
+
 describe("sink", () => {
   testEq('sink(Kefir.constant("lol"))', null)
 })
@@ -78,4 +100,11 @@ describe("string", () => {
   testEq('string`Hello, ${"constant"}!`', "Hello, constant!")
   testEq('string`Hello, ${Kefir.constant("World")}!`', "Hello, World!")
   testEq('string`Hello, ${"constant"} ${Kefir.constant("property")}!`', "Hello, constant property!")
+})
+
+describe("Context", () => {
+  const Who = withContext((_, {who}) => <div>Hello, {who}!</div>)
+
+  testRender(<Context context={{who: Kefir.constant("World")}}><Who/></Context>,
+             '<div>Hello, World!</div>')
 })
