@@ -68,7 +68,9 @@ export const classes = (...cs) =>
 
 //
 
-export const fromIds = (ids, fromId) => ids.scan(([oldIds], ids) => {
+const fromIdsInit = [{}, []]
+
+const fromIdsStep = fromId => ([oldIds], ids) => {
   const newIds = {}
   const newVs = Array(ids.length)
   for (let i=0, n=ids.length; i<n; ++i) {
@@ -80,7 +82,14 @@ export const fromIds = (ids, fromId) => ids.scan(([oldIds], ids) => {
       newIds[k] = newVs[i] = k in oldIds ? oldIds[k] : fromId(id)
   }
   return [newIds, newVs]
-}, [{}, []]).map(s => s[1])
+}
+
+const fromIdsMap = x => x[1]
+
+export const fromIds = (ids, fromId) =>
+  ids instanceof Kefir.Observable
+  ? ids.scan(fromIdsStep(fromId), fromIdsInit).map(fromIdsMap)
+  : fromIdsMap(fromIdsStep(fromId)(fromIdsInit, ids))
 
 //
 
