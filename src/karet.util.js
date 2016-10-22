@@ -123,5 +123,15 @@ export const withContext = originalFn => {
 
 //
 
+const actionsImmediate = (...fns) => (...args) => {
+  for (let i=0, n=fns.length; i<n; ++i)
+    if (fns[i] instanceof Function)
+      fns[i](...args)
+}
+
+export const actions = (...fns) => K(...fns, actionsImmediate)
+
+//
+
 export const string = (strings, ...values) =>
   K(...values, (...values) => String.raw(strings, ...values))

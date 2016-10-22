@@ -6,6 +6,7 @@ import ReactDOM   from "react-dom/server"
 
 import K, {
   Context,
+  actions,
   bind,
   bindProps,
   classes,
@@ -27,8 +28,8 @@ function show(x) {
 
 const testEq = (expr, expect) => it(`${expr} => ${show(expect)}`, done => {
   const actual =
-    eval(`(Atom, K, Kefir, R, bind, bindProps, classes, fromIds, sink, string) => ${expr}`)(
-           Atom, K, Kefir, R, bind, bindProps, classes, fromIds, sink, string)
+    eval(`(Atom, K, Kefir, R, actions, bind, bindProps, classes, fromIds, sink, string) => ${expr}`)(
+           Atom, K, Kefir, R, actions, bind, bindProps, classes, fromIds, sink, string)
   const check = actual => {
     if (!R.equals(actual, expect))
       throw new Error(`Expected: ${show(expect)}, actual: ${show(actual)}`)
@@ -45,6 +46,10 @@ const testRender = (vdom, expect) => it(`${expect}`, () => {
 
   if (actual !== expect)
     throw new Error(`Expected: ${show(expect)}, actual: ${show(actual)}`)
+})
+
+describe("actions", () => {
+  testEq('{let i = "" ; actions(false, Kefir.constant(x => i += "1" + x), undefined, x => i += "2" + x).onValue(f => f("z")); return i}', "1z2z")
 })
 
 describe("bind", () => {
