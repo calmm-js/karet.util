@@ -68,6 +68,18 @@ export const classes = (...cs) =>
 
 //
 
+export class Idx {
+  constructor(id, index) {
+    this.id = id
+    this.index = index
+  }
+  toString() {
+    return `${this.id}:${this.index}`
+  }
+}
+
+export const idx = (id, index) => new Idx(id, index)
+
 const fromIdsInit = [{}, []]
 
 const fromIdsStep = fromId => ([oldIds], ids) => {

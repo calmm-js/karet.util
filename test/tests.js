@@ -11,6 +11,7 @@ import K, {
   bindProps,
   classes,
   fromIds,
+  idx,
   sink,
   string,
   withContext
@@ -28,8 +29,8 @@ function show(x) {
 
 const testEq = (expr, expect) => it(`${expr} => ${show(expect)}`, done => {
   const actual =
-    eval(`(Atom, K, Kefir, R, actions, bind, bindProps, classes, fromIds, sink, string) => ${expr}`)(
-           Atom, K, Kefir, R, actions, bind, bindProps, classes, fromIds, sink, string)
+    eval(`(Atom, K, Kefir, R, actions, bind, bindProps, classes, fromIds, idx, sink, string) => ${expr}`)(
+           Atom, K, Kefir, R, actions, bind, bindProps, classes, fromIds, idx, sink, string)
   const check = actual => {
     if (!R.equals(actual, expect))
       throw new Error(`Expected: ${show(expect)}, actual: ${show(actual)}`)
@@ -94,6 +95,8 @@ describe("classes", () => {
 
 describe("fromIds", () => {
   testEq('fromIds(Kefir.concat([Kefir.constant([2, 1, 1]), Kefir.constant([1, 3, 2])]), i => `item ${i}`)', ["item 1", "item 3", "item 2"])
+
+  testEq('fromIds(["a", "c", "b"].map(idx), R.toString)', ["a:0", "c:1", "b:2"])
 })
 
 describe("sink", () => {
