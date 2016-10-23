@@ -78,7 +78,7 @@ export class Idx {
   }
 }
 
-export const idx = (id, index) => new Idx(id, index)
+export const idx = id => (x, i) => new Idx(x[id], i)
 
 const fromIdsInit = [{}, []]
 

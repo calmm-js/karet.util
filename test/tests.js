@@ -96,7 +96,7 @@ describe("classes", () => {
 describe("fromIds", () => {
   testEq('fromIds(Kefir.concat([Kefir.constant([2, 1, 1]), Kefir.constant([1, 3, 2])]), i => `item ${i}`)', ["item 1", "item 3", "item 2"])
 
-  testEq('fromIds(["a", "c", "b"].map(idx), R.toString)', ["a:0", "c:1", "b:2"])
+  testEq('fromIds([{id: "a"}, {id: "c"}, {id: "b"}].map(idx("id")), R.toString)', ["a:0", "c:1", "b:2"])
 })
 
 describe("sink", () => {
