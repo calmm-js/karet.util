@@ -1,4 +1,6 @@
+import * as A     from "kefir.atom"
 import * as Kefir from "kefir"
+import * as L     from "partial.lenses"
 import * as R     from "ramda"
 import K          from "kefir.combines"
 import React      from "karet"
@@ -80,9 +82,9 @@ export class Idx {
 
 export const idx = id => (x, i) => new Idx(x[id], i)
 
-const fromIdsInit = [{}, []]
+const mapCachedInit = [{}, []]
 
-const fromIdsStep = fromId => ([oldIds], ids) => {
+const mapCachedStep = fromId => ([oldIds], ids) => {
   const newIds = {}
   const newVs = Array(ids.length)
   for (let i=0, n=ids.length; i<n; ++i) {
@@ -96,12 +98,42 @@ const fromIdsStep = fromId => ([oldIds], ids) => {
   return [newIds, newVs]
 }
 
-const fromIdsMap = x => x[1]
+const mapCachedMap = x => x[1]
 
-export const fromIds = (ids, fromId) =>
+export const mapCached = fromId => ids =>
   ids instanceof Kefir.Observable
-  ? ids.scan(fromIdsStep(fromId), fromIdsInit).map(fromIdsMap)
-  : fromIdsMap(fromIdsStep(fromId)(fromIdsInit, ids))
+  ? ids.scan(mapCachedStep(fromId), mapCachedInit).map(mapCachedMap)
+  : mapCachedMap(mapCachedStep(fromId)(mapCachedInit, ids))
+
+export const fromIds = (ids, fromId) => mapCached(fromId)(ids)
+
+//
+
+export const lift = fn => (...args) => K(...args, fn)
+
+//
+
+export const seq = (x, ...fns) => {
+  let r = x
+  for (let i=0, n=fns.length; i<n; ++i)
+    r = fns[i](r)
+  return r
+}
+
+export const pipe = (...fns) => lift(R.pipe(...fns))
+
+//
+
+export const mapIndexed = xi2y => lift(xs => xs.map((x, i) => xi2y(x, i)))
+
+export const indices = pipe(R.length, R.range(0))
+
+//
+
+const viewProp = (l, xs) => K(xs, L.get(l))
+
+export const view = R.curry((l, xs) =>
+  xs instanceof A.AbstractMutable ? xs.view(l) : viewProp(l, xs))
 
 //
 
@@ -147,3 +179,11 @@ export const actions = (...fns) => K(...fns, actionsImmediate)
 
 export const string = (strings, ...values) =>
   K(...values, (...values) => String.raw(strings, ...values))
+
+//
+
+export const atom = value => new A.Atom(value)
+export const variable = () => new A.Atom()
+export const molecule = template => new A.Molecule(template)
+
+export const holding = A.holding
