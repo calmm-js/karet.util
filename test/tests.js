@@ -83,8 +83,6 @@ describe("classes", () => {
 
 describe("mapCached", () => {
   testEq('U.seq(Kefir.concat([Kefir.constant([2, 1, 1]), Kefir.constant([1, 3, 2])]), U.mapCached(i => `item ${i}`))', ["item 1", "item 3", "item 2"])
-
-  testEq('U.seq([{id: "a"}, {id: "c"}, {id: "b"}], U.mapIndexed(U.idx("id")), U.mapCached(R.toString))', ["a:0", "c:1", "b:2"])
 })
 
 describe("sink", () => {

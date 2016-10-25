@@ -71,18 +71,6 @@ export const classes = (...cs) =>
 
 //
 
-export class Idx {
-  constructor(id, index) {
-    this.id = id
-    this.index = index
-  }
-  toString() {
-    return `${this.id}:${this.index}`
-  }
-}
-
-export const idx = id => (x, i) => new Idx(x[id], i)
-
 const mapCachedInit = [{}, []]
 
 const mapCachedStep = fromId => ([oldIds], ids) => {
@@ -105,8 +93,6 @@ export const mapCached = R.curry((fromId, ids) =>
   ids instanceof Kefir.Observable
   ? ids.scan(mapCachedStep(fromId), mapCachedInit).map(mapCachedMap)
   : mapCachedMap(mapCachedStep(fromId)(mapCachedInit, ids)))
-
-export const fromIds = (ids, fromId) => mapCached(fromId, ids)
 
 //
 
@@ -147,6 +133,9 @@ export const staged = fn => R.curryN(fn.length, (...xs) =>
 export const mapIndexed = staged(xi2y => lift(xs => xs.map((x, i) => xi2y(x, i))))
 
 export const indices = pipe(R.length, R.range(0))
+
+export const keys = lift(R.keys)
+export const values = lift(R.values)
 
 //
 
