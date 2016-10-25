@@ -1,11 +1,12 @@
-import * as A     from "kefir.atom"
-import * as Kefir from "kefir"
-import * as L     from "partial.lenses"
-import * as R     from "ramda"
-import K          from "kefir.combines"
-import React      from "karet"
+import * as A            from "kefir.atom"
+import * as Kefir        from "kefir"
+import * as L            from "partial.lenses"
+import * as R            from "ramda"
+import K                 from "kefir.combines"
+import React, * as Karet from "karet"
 
 export default K
+export const fromKefir = Karet.fromKefir
 
 //
 
@@ -120,7 +121,21 @@ export const seq = (x, ...fns) => {
   return r
 }
 
+export const seqPartial = (x, ...fns) => {
+  let r = x
+  for (let i=0, n=fns.length; r !== undefined && i<n; ++i)
+    r = fns[i](r)
+  return r
+}
+
 export const pipe = (...fns) => lift(R.pipe(...fns))
+
+export const scope = f => f()
+
+export const toPartial = f => (...xs) =>
+  R.any(R.equals(undefined), xs) ? undefined : f(...xs)
+
+export const show = x => console.log(x) || x
 
 //
 
