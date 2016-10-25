@@ -136,6 +136,12 @@ export const indices = pipe(R.length, R.range(0))
 
 export const keys = lift(R.keys)
 export const values = lift(R.values)
+export const length = lift(R.length)
+
+const invoke = thunk => typeof thunk === "function" ? thunk() : thunk
+
+export const ifte = lift((b, t, e) => invoke(b ? t : e))
+export const when = lift((b, fn) => b ? invoke(fn) : null)
 
 //
 
