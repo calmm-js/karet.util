@@ -101,16 +101,16 @@ const mapCachedStep = fromId => ([oldIds], ids) => {
 
 const mapCachedMap = x => x[1]
 
-export const mapCached = fromId => ids =>
+export const mapCached = R.curry((fromId, ids) =>
   ids instanceof Kefir.Observable
   ? ids.scan(mapCachedStep(fromId), mapCachedInit).map(mapCachedMap)
-  : mapCachedMap(mapCachedStep(fromId)(mapCachedInit, ids))
+  : mapCachedMap(mapCachedStep(fromId)(mapCachedInit, ids)))
 
-export const fromIds = (ids, fromId) => mapCached(fromId)(ids)
+export const fromIds = (ids, fromId) => mapCached(fromId, ids)
 
 //
 
-export const lift = fn => (...args) => K(...args, fn)
+export const lift = fn => R.curryN(fn.length, (...xs) => K(...xs, fn))
 
 //
 
@@ -130,16 +130,21 @@ export const seqPartial = (x, ...fns) => {
 
 export const pipe = (...fns) => lift(R.pipe(...fns))
 
-export const scope = f => f()
+export const scope = fn => fn()
 
-export const toPartial = f => (...xs) =>
-  R.any(R.equals(undefined), xs) ? undefined : f(...xs)
+export const toPartial = fn => R.curryN(fn.length, (...xs) =>
+  R.any(R.equals(undefined), xs) ? undefined : fn(...xs))
 
 export const show = x => console.log(x) || x
 
+export const staged = fn => R.curryN(fn.length, (...xs) =>
+  fn.length === xs.length
+  ? fn(...xs)
+  : fn(...xs.slice(0, fn.length))(...xs.slice(fn.length)))
+
 //
 
-export const mapIndexed = xi2y => lift(xs => xs.map((x, i) => xi2y(x, i)))
+export const mapIndexed = staged(xi2y => lift(xs => xs.map((x, i) => xi2y(x, i))))
 
 export const indices = pipe(R.length, R.range(0))
 
