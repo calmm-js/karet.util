@@ -2,10 +2,17 @@ import * as A            from "kefir.atom"
 import * as Kefir        from "kefir"
 import * as L            from "partial.lenses"
 import * as R            from "ramda"
-import K                 from "kefir.combines"
+import K, * as C         from "kefir.combines"
 import React, * as Karet from "karet"
 
+//
+
 export default K
+export const lift1 = C.lift1
+export const lift = C.lift
+
+//
+
 export const fromKefir = Karet.fromKefir
 
 //
@@ -96,25 +103,21 @@ export const mapCached = R.curry((fromId, ids) =>
 
 //
 
-export const lift = fn => R.curryN(fn.length, (...xs) => K(...xs, fn))
-
-//
-
-export const seq = (x, ...fns) => {
+export function seq(x) {
   let r = x
-  for (let i=0, n=fns.length; i<n; ++i)
-    r = fns[i](r)
+  for (let i=1, n=arguments.length; i<n; ++i)
+    r = arguments[i](r)
   return r
 }
 
-export const seqPartial = (x, ...fns) => {
+export function seqPartial(x) {
   let r = x
-  for (let i=0, n=fns.length; r !== undefined && i<n; ++i)
-    r = fns[i](r)
+  for (let i=1, n=arguments.length; r !== undefined && i<n; ++i)
+    r = arguments[i](r)
   return r
 }
 
-export const pipe = (...fns) => lift(R.pipe(...fns))
+export const pipe = (f, ...fns) => R.pipe(lift(f), ...fns.map(lift1))
 
 export const scope = fn => fn()
 
@@ -130,13 +133,18 @@ export const staged = fn => R.curryN(fn.length, (...xs) =>
 
 //
 
-export const mapIndexed = staged(xi2y => lift(xs => xs.map((x, i) => xi2y(x, i))))
+export const mapIndexed = staged(xi2y => lift1(xs => xs.map((x, i) => xi2y(x, i))))
 
-export const indices = pipe(R.length, R.range(0))
+export const filter = lift(R.filter)
+export const keys = lift1(R.keys)
+export const length = lift1(R.length)
+export const map = lift(R.map)
+export const range = lift(R.range)
+export const sort = lift(R.sort)
+export const sortBy = lift(R.sortBy)
+export const values = lift1(R.values)
 
-export const keys = lift(R.keys)
-export const values = lift(R.values)
-export const length = lift(R.length)
+export const indices = pipe(length, lift1(R.range(0)))
 
 const invoke = thunk => typeof thunk === "function" ? thunk() : thunk
 
