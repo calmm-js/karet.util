@@ -81,25 +81,32 @@ export const classes = (...cs) =>
 
 const mapCachedInit = [{}, []]
 
-const mapCachedStep = fromId => ([oldIds], ids) => {
+const mapCachedStep = fromId => (old, ids) => {
+  const [oldIds, oldVs] = old
   const newIds = {}
-  const newVs = Array(ids.length)
-  for (let i=0, n=ids.length; i<n; ++i) {
+  const n = ids.length
+  let changed = n !== oldVs.length
+  const newVs = Array(n)
+  for (let i=0; i<n; ++i) {
     const id = ids[i]
     const k = id.toString()
+    let v
     if (k in newIds)
-      newVs[i] = newIds[k]
+      v = newIds[k]
     else
-      newIds[k] = newVs[i] = k in oldIds ? oldIds[k] : fromId(id)
+      v = newIds[k] = k in oldIds ? oldIds[k] : fromId(id)
+    newVs[i] = v
+    if (!changed)
+      changed = v !== oldVs[i]
   }
-  return [newIds, newVs]
+  return changed ? [newIds, newVs] : old
 }
 
 const mapCachedMap = x => x[1]
 
 export const mapCached = R.curry((fromId, ids) =>
   ids instanceof Observable
-  ? ids.scan(mapCachedStep(fromId), mapCachedInit).map(mapCachedMap)
+  ? K(ids.scan(mapCachedStep(fromId), mapCachedInit), mapCachedMap)
   : mapCachedMap(mapCachedStep(fromId)(mapCachedInit, ids)))
 
 //
