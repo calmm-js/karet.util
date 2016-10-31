@@ -161,6 +161,11 @@ export const when = lift((b, fn) => b ? invoke(fn) : null)
 
 //
 
+export const skipDuplicates = R.curry((equals, xs) =>
+  xs.skipDuplicates(equals))
+
+//
+
 const viewProp = (l, xs) => K(xs, L.get(l))
 
 export const view = R.curry((l, xs) =>
