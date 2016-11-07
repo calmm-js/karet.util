@@ -102,3 +102,11 @@ describe("Context", () => {
   testRender(<U.Context context={{who: Kefir.constant("World")}}><Who/></U.Context>,
              '<div>Hello, World!</div>')
 })
+
+describe("pipe", () => {
+  testEq('U.pipe(U.add(1), U.add(2))(Kefir.constant(3))', 6)
+})
+
+describe("ifElse", () => {
+  testEq('U.ifElse(U.equals("x"), () => "was x!", x => "was " + x)(Kefir.constant("y"))', "was y")
+})

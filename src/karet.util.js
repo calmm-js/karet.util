@@ -14,7 +14,7 @@ export default K
 export const lift1 = C.lift1
 export const lift1Shallow = C.lift1Shallow
 export const lift = C.lift
-export const liftStaged = fn => lift(R.pipe(fn, lift))
+export const liftStaged = fn => R.curryN(fn.length, R.pipe(fn, lift))
 
 //
 
@@ -256,7 +256,7 @@ export const allPass = liftStaged(R.allPass)
 export const always = lift(R.always)
 export const and = lift(R.and)
 export const any = lift(R.any)
-//export const anyPass = lift(R.anyPass)
+export const anyPass = liftStaged(R.anyPass)
 export const ap = lift(R.ap)
 export const aperture = lift(R.aperture)
 export const append = lift(R.append)
@@ -273,7 +273,7 @@ export const clamp = lift(R.clamp)
 //export const clone = lift(R.clone)                        -> useful?
 export const comparator = liftStaged(R.comparator)
 export const complement = liftStaged(R.complement)
-//export const compose = lift(R.compose)                    -> lift staged, useful?
+export const compose = lift(R.compose)
 //export const composeK = lift(R.composeK)                  -> lift staged, useful?
 //export const composeP = lift(R.composeP)                  -> lift staged, useful?
 export const concat = lift(R.concat)
@@ -322,7 +322,7 @@ export const hasIn = lift(R.hasIn)
 export const head = lift(R.head)
 export const identical = lift(R.identical)
 //export const identity = lift(R.identity)                  -> useful?
-export const ifElse = lift(R.ifElse)
+export const ifElse = liftStaged(R.ifElse)
 export const inc = lift(R.inc)
 export const indexBy = lift(R.indexBy)
 export const indexOf = lift(R.indexOf)
@@ -397,7 +397,7 @@ export const partition = lift(R.partition)
 //export const pick = lift(R.pick)                          -> partial.lenses
 //export const pickAll = lift(R.pickAll)                    -> partial.lenses
 export const pickBy = lift(R.pickBy)
-//export const pipe = lift(R.pipe)                          -> lift staged, useful?
+export const pipe = liftStaged(R.pipe)
 //export const pipeK = lift(R.pipeK)                        -> lift staged, useful?
 //export const pipeP = lift(R.pipeP)                        -> lift staged, useful?
 //export const pluck = lift(R.pluck)                        -> partial.lenses
