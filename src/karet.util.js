@@ -33,7 +33,7 @@ export const flatMapErrors = R.curry((fn, xs) =>
   xs instanceof Observable ? xs.flatMapErrors(x => toConstant(fn(x))) : xs)
 export const foldPast = R.curry((fn, s, xs) =>
   xs instanceof Observable ? xs.scan(fn, s) : fn(s, xs))
-export const later = Kefir.later
+export const later = R.curry(Kefir.later)
 export const sampledBy = R.curry((es, xs) =>
   xs instanceof Observable ? xs.sampledBy(es) : xs)
 export const skipDuplicates = R.curry((equals, xs) =>
