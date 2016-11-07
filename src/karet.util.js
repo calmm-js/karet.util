@@ -1,9 +1,12 @@
 import * as A            from "kefir.atom"
-import {Observable}      from "kefir"
+import * as Kefir        from "kefir"
 import * as L            from "partial.lenses"
 import * as R            from "ramda"
 import K, * as C         from "kefir.combines"
 import React, * as Karet from "karet"
+
+const Observable = Kefir.Observable
+const constant = Kefir.constant
 
 //
 
@@ -11,6 +14,7 @@ export default K
 export const lift1 = C.lift1
 export const lift1Shallow = C.lift1Shallow
 export const lift = C.lift
+export const liftStaged = fn => lift(R.pipe(fn, lift))
 
 //
 
@@ -18,21 +22,41 @@ export const fromKefir = Karet.fromKefir
 
 // Kefir
 
+const toUndefined = () => {}
+const toConstant = x => x instanceof Observable ? x : constant(x)
+
+export const debounce = R.curry((ms, xs) =>
+  xs instanceof Observable ? xs.debounce(ms) : xs)
 export const flatMapLatest = R.curry((fn, xs) =>
-  xs instanceof Observable ? xs.flatMapLatest(fn) : fn(xs))
+  xs instanceof Observable ? xs.flatMapLatest(x => toConstant(fn(x))) : fn(xs))
+export const flatMapErrors = R.curry((fn, xs) =>
+  xs instanceof Observable ? xs.flatMapErrors(x => toConstant(fn(x))) : xs)
 export const foldPast = R.curry((fn, s, xs) =>
   xs instanceof Observable ? xs.scan(fn, s) : fn(s, xs))
+export const later = Kefir.later
 export const sampledBy = R.curry((es, xs) =>
   xs instanceof Observable ? xs.sampledBy(es) : xs)
 export const skipDuplicates = R.curry((equals, xs) =>
   xs instanceof Observable ? xs.skipDuplicates(equals) : xs)
-export const skipIf = R.curry((p, xs) =>
+export const skipUnless = R.curry((p, xs) =>
   xs instanceof Observable ? xs.filter(p) : xs)
+export const skipWhen = R.curry((p, xs) =>
+  xs instanceof Observable ? xs.filter(x => !p(x)) : xs)
 export const startWith = R.curry((x, xs) =>
   xs instanceof Observable ? xs.toProperty(() => x) : xs)
-export const sink = R.pipe(startWith(null), lift(() => null))
+export const sink = R.pipe(startWith(null), lift(toUndefined)) // XXX Remove?
 export const toProperty = xs =>
   xs instanceof Observable ? xs.toProperty() : xs
+
+export const set = R.curry((settable, xs) => {
+  const ss = K(xs, xs => settable.set(xs))
+  if (ss instanceof Observable)
+    return ss.toProperty(toUndefined)
+})
+
+//
+
+export const refTo = a => e => e && a.set(e)
 
 //
 
@@ -52,8 +76,8 @@ export function seqPartial(x) {
 
 export const scope = fn => fn()
 
-export const toPartial = fn => R.curryN(fn.length, (...xs) =>
-  R.any(R.equals(undefined), xs) ? undefined : fn(...xs))
+export const toPartial = fn => lift(R.curryN(fn.length, (...xs) =>
+  R.any(R.equals(undefined), xs) ? undefined : fn(...xs)))
 
 export const show = x => console.log(x) || x
 
@@ -225,11 +249,11 @@ export const holding = A.holding
 //export const T = lift(R.T)
 //export const __ = lift(R.__)
 export const add = lift(R.add)
-//export const addIndex = lift(R.addIndex)                  -> lift result
+export const addIndex = liftStaged(R.addIndex)
 //export const adjust = lift(R.adjust)                      -> partial.lenses
 export const all = lift(R.all)
-//export const allPass = lift(R.allPass)                    -> lift result
-//export const always = lift(R.always)                      -> useful?
+export const allPass = liftStaged(R.allPass)
+export const always = lift(R.always)
 export const and = lift(R.and)
 export const any = lift(R.any)
 //export const anyPass = lift(R.anyPass)
@@ -240,27 +264,27 @@ export const apply = lift(R.apply)
 export const applySpec = lift(R.applySpec)
 //export const assoc = lift(R.assoc)                        -> partial.lenses
 //export const assocPath = lift(R.assocPath)                -> partial.lenses
-//export const binary = lift(R.binary)                      -> useful?
+export const binary = liftStaged(R.binary)
 //export const bind = lift(R.bind)                          -> conflict, useful?
-//export const both = lift(R.both)                          -> lift result
-//export const call = lift(R.call)                          -> useful?
+export const both = liftStaged(R.both)
+//export const call = lift(R.call)                          -> not staged properly by Ramda, useful?
 export const chain = lift(R.chain)
 export const clamp = lift(R.clamp)
 //export const clone = lift(R.clone)                        -> useful?
-//export const comparator = lift(R.comparator)              -> lift result, useful?
-//export const complement = lift(R.complement)              -> lift result, useful?
-//export const compose = lift(R.compose)                    -> lift result
-//export const composeK = lift(R.composeK)                  -> lift result
-//export const composeP = lift(R.composeP)                  -> lift result
+export const comparator = liftStaged(R.comparator)
+export const complement = liftStaged(R.complement)
+//export const compose = lift(R.compose)                    -> lift staged, useful?
+//export const composeK = lift(R.composeK)                  -> lift staged, useful?
+//export const composeP = lift(R.composeP)                  -> lift staged, useful?
 export const concat = lift(R.concat)
 export const cond = lift(R.cond)
-//export const construct = lift(R.construct)                -> lift result, useful?
-//export const constructN = lift(R.constructN)              -> lift result, useful?
+export const construct = liftStaged(R.construct)
+export const constructN = liftStaged(R.constructN)
 export const contains = lift(R.contains)
 //export const converge = lift(R.converge)
 export const countBy = lift(R.countBy)
-//export const curry = lift(R.curry)                        -> lift result, useful?
-//export const curryN = lift(R.curryN)                      -> lift result, useful?
+export const curry = liftStaged(R.curry)
+export const curryN = liftStaged(R.curryN)
 export const dec = lift(R.dec)
 export const defaultTo = lift(R.defaultTo)
 export const difference = lift(R.difference)
@@ -274,7 +298,7 @@ export const dropLastWhile = lift(R.dropLastWhile)
 export const dropRepeats = lift(R.dropRepeats)
 export const dropRepeatsWith = lift(R.dropRepeatsWith)
 export const dropWhile = lift(R.dropWhile)
-//export const either = lift(R.either)                      -> lift result
+export const either = liftStaged(R.either)
 export const empty = lift(R.empty)
 export const eqBy = lift(R.eqBy)
 export const eqProps = lift(R.eqProps)
@@ -286,7 +310,7 @@ export const findIndex = lift(R.findIndex)
 export const findLast = lift(R.findLast)
 export const findLastIndex = lift(R.findLastIndex)
 export const flatten = lift(R.flatten)
-//export const flip = lift(R.flip)                          -> lift result
+export const flip = liftStaged(R.flip)
 //export const forEach = lift(R.forEach)                    -> useful?
 export const fromPairs = lift(R.fromPairs)
 export const groupBy = lift(R.groupBy)
@@ -311,13 +335,13 @@ export const intersperse = lift(R.intersperse)
 export const into = lift(R.into)
 export const invert = lift(R.invert)
 export const invertObj = lift(R.invertObj)
-//export const invoker = lift(R.invoker)                    -> lift result
+export const invoker = liftStaged(R.invoker)
 export const is = lift(R.is)
 export const isArrayLike = lift(R.isArrayLike)
 export const isEmpty = lift(R.isEmpty)
 export const isNil = lift(R.isNil)
 export const join = lift(R.join)
-//export const juxt = lift(R.juxt)                          -> lift result
+export const juxt = liftStaged(R.juxt)
 export const keys = lift1Shallow(R.keys)
 export const keysIn = lift(R.keysIn)
 export const last = lift(R.last)
@@ -341,7 +365,7 @@ export const max = lift(R.max)
 export const maxBy = lift(R.maxBy)
 export const mean = lift(R.mean)
 export const median = lift(R.median)
-//export const memoize = lift(R.memoize)                    -> lift result
+export const memoize = liftStaged(R.memoize)
 export const merge = lift(R.merge)
 export const mergeAll = lift(R.mergeAll)
 export const mergeWith = lift(R.mergeWith)
@@ -355,16 +379,16 @@ export const negate = lift(R.negate)
 export const none = lift(R.none)
 export const not = lift(R.not)
 export const nth = lift(R.nth)
-//export const nthArg = lift(R.nthArg)
+export const nthArg = liftStaged(R.nthArg)
 export const objOf = lift(R.objOf)
 export const of = lift(R.of)
 //export const omit = lift(R.omit)                          -> partial.lenses
-//export const once = lift(R.once)                          -> lift result, useful?
+//export const once = lift(R.once)                          -> lift staged, usually wrong thing to do?
 export const or = lift(R.or)
 //export const over = lift(R.over)                          -> partial.lenses
 export const pair = lift(R.pair)
-//export const partial = lift(R.partial)                    -> lift result
-//export const partialRight = lift(R.partialRight)          -> lift result
+export const partial = liftStaged(R.partial)
+export const partialRight = liftStaged(R.partialRight)
 export const partition = lift(R.partition)
 //export const path = lift(R.path)                          -> partial.lenses
 //export const pathEq = lift(R.pathEq)                      -> partial.lenses
@@ -373,9 +397,9 @@ export const partition = lift(R.partition)
 //export const pick = lift(R.pick)                          -> partial.lenses
 //export const pickAll = lift(R.pickAll)                    -> partial.lenses
 export const pickBy = lift(R.pickBy)
-//export const pipe = lift(R.pipe)                          -> lift result
-//export const pipeK = lift(R.pipeK)                        -> lift result
-//export const pipeP = lift(R.pipeP)                        -> lift result
+//export const pipe = lift(R.pipe)                          -> lift staged, useful?
+//export const pipeK = lift(R.pipeK)                        -> lift staged, useful?
+//export const pipeP = lift(R.pipeP)                        -> lift staged, useful?
 //export const pluck = lift(R.pluck)                        -> partial.lenses
 export const prepend = lift(R.prepend)
 export const product = lift(R.product)
@@ -428,11 +452,11 @@ export const transduce = lift(R.transduce)
 export const transpose = lift(R.transpose)
 export const traverse = lift(R.traverse)
 export const trim = lift(R.trim)
-//export const tryCatch = lift(R.tryCatch)                  -> lift result
+export const tryCatch = liftStaged(R.tryCatch)
 export const type = lift(R.type)
-//export const unapply = lift(R.unapply)                    -> lift result?
-//export const unary = lift(R.unary)                        -> lift result
-//export const uncurryN = lift(R.uncurryN)                  -> lift result
+export const unapply = liftStaged(R.unapply)
+export const unary = liftStaged(R.unary)
+export const uncurryN = liftStaged(R.uncurryN)
 export const unfold = lift(R.unfold)
 export const union = lift(R.union)
 export const unionWith = lift(R.unionWith)
@@ -443,7 +467,7 @@ export const unless = lift(R.unless)
 export const unnest = lift(R.unnest)
 export const until = lift(R.until)
 //export const update = lift(R.update)                      -> partial.lenses
-//export const useWith = lift(R.useWith)                    -> lift result
+export const useWith = liftStaged(R.useWith)
 export const values = lift1(R.values)
 export const valuesIn = lift(R.valuesIn)
 //export const view = lift(R.view)                          -> partial.lenses, conflict

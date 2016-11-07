@@ -86,7 +86,7 @@ describe("mapCached", () => {
 })
 
 describe("sink", () => {
-  testEq('U.sink(Kefir.constant("lol"))', null)
+  testEq('U.sink(Kefir.constant("lol"))', undefined)
 })
 
 describe("string", () => {
