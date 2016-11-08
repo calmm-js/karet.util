@@ -44,7 +44,7 @@ export const skipWhen = R.curry((p, xs) =>
   xs instanceof Observable ? xs.filter(x => !p(x)) : xs)
 export const startWith = R.curry((x, xs) =>
   xs instanceof Observable ? xs.toProperty(() => x) : xs)
-export const sink = R.pipe(startWith(null), lift(toUndefined)) // XXX Remove?
+export const sink = R.pipe(startWith(undefined), lift(toUndefined))
 export const toProperty = xs =>
   xs instanceof Observable ? xs.toProperty() : xs
 
