@@ -29,18 +29,18 @@
     "babel-preset-react": "^6.16.0",
     "babel-preset-stage-2": "^6.18.0",
     "babel-register": "^6.18.0",
-    "eslint": "^3.9.1",
-    "eslint-plugin-react": "^6.5.0",
+    "eslint": "^3.10.0",
+    "eslint-plugin-react": "^6.6.0",
     "mocha": "^3.1.2",
     "nyc": "^8.4.0",
     "react-dom": "^15.3.2"
   },
   "dependencies": {
-    "karet": "^0.2.0",
+    "karet": "^0.2.1",
     "kefir": "^3.6.0",
-    "kefir.atom": "^4.0.0",
+    "kefir.atom": "^4.0.1",
     "kefir.combines": "^2.0.0",
-    "partial.lenses": "^3.9.3",
+    "partial.lenses": ">=3.9.3 <5.0.0",
     "ramda": ">=0.20.1 <0.23.0"
   }
 }
