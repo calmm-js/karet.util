@@ -14,7 +14,11 @@
     "url": "git+https://github.com/calmm-js/karet.util.git"
   },
   "keywords": [
-    "kefir"
+    "react",
+    "kefir",
+    "atom",
+    "lens",
+    "ramda"
   ],
   "license": "MIT",
   "bugs": {
