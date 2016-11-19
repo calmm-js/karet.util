@@ -25,46 +25,37 @@ export const fromKefir = Karet.fromKefir
 const toUndefined = () => {}
 const toConstant = x => x instanceof Observable ? x : constant(x)
 
-export const debounce = R.curry((ms, xs) =>
-  xs instanceof Observable ? xs.debounce(ms) : xs)
-export const changes = xs =>
-  xs instanceof Observable ? xs.changes() : xs
-export const serially = xs => Kefir.concat(xs.map(toConstant))
+const invokeIf = (fn, x) => fn && fn(x)
+const toHandler = fns => ({type, value}) => invokeIf(fns[type], value)
+
+export const debounce = R.curry((ms, xs) => toConstant(xs).debounce(ms))
+export const changes = xs => toConstant(xs).changes()
+export const serially = xs => Kefir.concat(R.map(toConstant, xs))
 export const parallel = Kefir.merge
-export const delay = R.curry((ms, xs) =>
-  xs instanceof Observable ? xs.delay(ms) : xs)
-export const endWith = R.curry((v, xs) =>
-  xs instanceof Observable ? xs.concat(constant(v)) : v)
+export const delay = R.curry((ms, xs) => toConstant(xs).delay(ms))
+export const endWith = R.curry((v, xs) => toConstant(xs).concat(toConstant(v)))
 export const flatMapSerial = R.curry((fn, xs) =>
-  xs instanceof Observable ? xs.flatMapConcat(x => toConstant(fn(x))) : xs)
+  toConstant(xs).flatMapConcat(R.pipe(fn, toConstant)))
 export const flatMapErrors = R.curry((fn, xs) =>
-  xs instanceof Observable ? xs.flatMapErrors(x => toConstant(fn(x))) : xs)
+  toConstant(xs).flatMapErrors(R.pipe(fn, toConstant)))
 export const flatMapLatest = R.curry((fn, xs) =>
-  xs instanceof Observable ? xs.flatMapLatest(x => toConstant(fn(x))) : fn(xs))
-export const foldPast = R.curry((fn, s, xs) =>
-  xs instanceof Observable ? xs.scan(fn, s) : fn(s, xs))
+  toConstant(xs).flatMapLatest(R.pipe(fn, toConstant)))
+export const foldPast = R.curry((fn, s, xs) => toConstant(xs).scan(fn, s))
 export const interval = R.curry(Kefir.interval)
 export const later = R.curry(Kefir.later)
 export const never = Kefir.never()
-export const sampledBy = R.curry((es, xs) =>
-  xs instanceof Observable ? xs.sampledBy(es) : xs)
-export const skipFirst = R.curry((n, xs) =>
-  xs instanceof Observable ? xs.skip(n) : xs)
+export const on = R.curry((efs, xs) => toConstant(xs).onAny(toHandler(efs)))
+export const sampledBy = R.curry((es, xs) => toConstant(xs).sampledBy(es))
+export const skipFirst = R.curry((n, xs) => toConstant(xs).skip(n))
 export const skipDuplicates = R.curry((equals, xs) =>
-  xs instanceof Observable ? xs.skipDuplicates(equals) : xs)
-export const skipUnless = R.curry((p, xs) =>
-  xs instanceof Observable ? xs.filter(p) : xs)
-export const skipWhen = R.curry((p, xs) =>
-  xs instanceof Observable ? xs.filter(x => !p(x)) : xs)
-export const startWith = R.curry((x, xs) =>
-  xs instanceof Observable ? xs.toProperty(() => x) : xs)
+  toConstant(xs).skipDuplicates(equals))
+export const skipUnless = R.curry((p, xs) => toConstant(xs).filter(p))
+export const skipWhen = R.curry((p, xs) => toConstant(xs).filter(x => !p(x)))
+export const startWith = R.curry((x, xs) => toConstant(xs).toProperty(() => x))
 export const sink = R.pipe(startWith(undefined), lift(toUndefined))
-export const takeFirst = R.curry((n, xs) =>
-  xs instanceof Observable ? xs.take(n) : xs)
-export const takeUntilBy = R.curry((ts, xs) =>
-  xs instanceof Observable ? xs.takeUntilBy(ts) : xs)
-export const toProperty = xs =>
-  xs instanceof Observable ? xs.toProperty() : xs
+export const takeFirst = R.curry((n, xs) => toConstant(xs).take(n))
+export const takeUntilBy = R.curry((ts, xs) => toConstant(xs).takeUntilBy(ts))
+export const toProperty = xs => toConstant(xs).toProperty()
 
 export const set = R.curry((settable, xs) => {
   const ss = K(xs, xs => settable.set(xs))
