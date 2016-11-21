@@ -10,11 +10,17 @@ const constant = Kefir.constant
 
 //
 
+const id = x => x
+
+//
+
 export default K
 export const lift1 = C.lift1
 export const lift1Shallow = C.lift1Shallow
 export const lift = C.lift
 export const liftStaged = fn => R.curryN(fn.length, R.pipe(fn, lift))
+
+export const template = observables => K(observables, id)
 
 //
 
@@ -97,7 +103,7 @@ export const staged = fn => R.curryN(fn.length, (...xs) =>
 
 //
 
-export const setProps = template => {
+export const setProps = observables => {
   let observable
   let callback
   return e => {
@@ -109,9 +115,9 @@ export const setProps = template => {
       callback = ev => {
         switch (ev.type) {
           case "value": {
-            const template = ev.value
-            for (const k in template)
-              e[k] = template[k]
+            const observables = ev.value
+            for (const k in observables)
+              e[k] = observables[k]
             break
           }
           case "error":
@@ -121,7 +127,7 @@ export const setProps = template => {
             break
         }
       }
-      observable = K(template, R.identity)
+      observable = template(observables)
       observable.onAny(callback)
     }
   }
