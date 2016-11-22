@@ -197,10 +197,8 @@ export const mapCached = staged(fromId =>
 
 export const mapIndexed = staged(xi2y => lift1(xs => xs.map((x, i) => xi2y(x, i))))
 
-const invoke = thunk => typeof thunk === "function" ? thunk() : thunk
-
-export const ifte = lift((b, t, e) => invoke(b ? t : e))
-export const ift = lift((b, fn) => b ? invoke(fn) : null)
+export const ifte = R.curry((b, t, e) => flatMapLatest(b => b ? t : e, b))
+export const ift = R.curry((b, t) => flatMapLatest(b => b ? t : undefined, b))
 
 //
 
