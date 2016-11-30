@@ -1,5 +1,6 @@
 import * as A            from "kefir.atom"
 import * as Kefir        from "kefir"
+import * as I            from "infestines"
 import * as L            from "partial.lenses"
 import * as R            from "ramda"
 import K, * as C         from "kefir.combines"
@@ -11,6 +12,7 @@ const constant = Kefir.constant
 //
 
 const id = x => x
+const isUndefined = x => x === undefined
 
 //
 
@@ -18,7 +20,7 @@ export default K
 export const lift1 = C.lift1
 export const lift1Shallow = C.lift1Shallow
 export const lift = C.lift
-export const liftStaged = fn => R.curryN(fn.length, R.pipe(fn, lift))
+export const liftStaged = fn => I.curryN(fn.length, I.pipe2(fn, lift))
 
 export const template = observables => K(observables, id)
 
@@ -34,36 +36,36 @@ const toConstant = x => x instanceof Observable ? x : constant(x)
 const invokeIf = (fn, x) => fn && fn(x)
 const toHandler = fns => ({type, value}) => invokeIf(fns[type], value)
 
-export const debounce = R.curry((ms, xs) => toConstant(xs).debounce(ms))
+export const debounce = I.curry2((ms, xs) => toConstant(xs).debounce(ms))
 export const changes = xs => toConstant(xs).changes()
 export const serially = xs => Kefir.concat(R.map(toConstant, xs))
 export const parallel = Kefir.merge
-export const delay = R.curry((ms, xs) => toConstant(xs).delay(ms))
-export const endWith = R.curry((v, xs) => toConstant(xs).concat(toConstant(v)))
-export const flatMapSerial = R.curry((fn, xs) =>
-  toConstant(xs).flatMapConcat(R.pipe(fn, toConstant)))
-export const flatMapErrors = R.curry((fn, xs) =>
-  toConstant(xs).flatMapErrors(R.pipe(fn, toConstant)))
-export const flatMapLatest = R.curry((fn, xs) =>
-  toConstant(xs).flatMapLatest(R.pipe(fn, toConstant)))
-export const foldPast = R.curry((fn, s, xs) => toConstant(xs).scan(fn, s))
-export const interval = R.curry(Kefir.interval)
-export const later = R.curry(Kefir.later)
+export const delay = I.curry2((ms, xs) => toConstant(xs).delay(ms))
+export const endWith = I.curry2((v, xs) => toConstant(xs).concat(toConstant(v)))
+export const flatMapSerial = I.curry2((fn, xs) =>
+  toConstant(xs).flatMapConcat(I.pipe2(fn, toConstant)))
+export const flatMapErrors = I.curry2((fn, xs) =>
+  toConstant(xs).flatMapErrors(I.pipe2(fn, toConstant)))
+export const flatMapLatest = I.curry2((fn, xs) =>
+  toConstant(xs).flatMapLatest(I.pipe2(fn, toConstant)))
+export const foldPast = I.curry3((fn, s, xs) => toConstant(xs).scan(fn, s))
+export const interval = I.curry2(Kefir.interval)
+export const later = I.curry2(Kefir.later)
 export const never = Kefir.never()
-export const on = R.curry((efs, xs) => toConstant(xs).onAny(toHandler(efs)))
-export const sampledBy = R.curry((es, xs) => toConstant(xs).sampledBy(es))
-export const skipFirst = R.curry((n, xs) => toConstant(xs).skip(n))
-export const skipDuplicates = R.curry((equals, xs) =>
+export const on = I.curry2((efs, xs) => toConstant(xs).onAny(toHandler(efs)))
+export const sampledBy = I.curry2((es, xs) => toConstant(xs).sampledBy(es))
+export const skipFirst = I.curry2((n, xs) => toConstant(xs).skip(n))
+export const skipDuplicates = I.curry2((equals, xs) =>
   toConstant(xs).skipDuplicates(equals))
-export const skipUnless = R.curry((p, xs) => toConstant(xs).filter(p))
-export const skipWhen = R.curry((p, xs) => toConstant(xs).filter(x => !p(x)))
-export const startWith = R.curry((x, xs) => toConstant(xs).toProperty(() => x))
-export const sink = R.pipe(startWith(undefined), lift(toUndefined))
-export const takeFirst = R.curry((n, xs) => toConstant(xs).take(n))
-export const takeUntilBy = R.curry((ts, xs) => toConstant(xs).takeUntilBy(ts))
+export const skipUnless = I.curry2((p, xs) => toConstant(xs).filter(p))
+export const skipWhen = I.curry2((p, xs) => toConstant(xs).filter(x => !p(x)))
+export const startWith = I.curry2((x, xs) => toConstant(xs).toProperty(() => x))
+export const sink = I.pipe2(startWith(undefined), lift(toUndefined))
+export const takeFirst = I.curry2((n, xs) => toConstant(xs).take(n))
+export const takeUntilBy = I.curry2((ts, xs) => toConstant(xs).takeUntilBy(ts))
 export const toProperty = xs => toConstant(xs).toProperty()
 
-export const set = R.curry((settable, xs) => {
+export const set = I.curry2((settable, xs) => {
   const ss = K(xs, xs => settable.set(xs))
   if (ss instanceof Observable)
     return ss.toProperty(toUndefined)
@@ -75,24 +77,14 @@ export const refTo = a => e => e && a.set(e)
 
 //
 
-export function seq(x) {
-  let r = x
-  for (let i=1, n=arguments.length; i<n; ++i)
-    r = arguments[i](r)
-  return r
-}
+export const seq = I.seq
 
-export function seqPartial(x) {
-  let r = x
-  for (let i=1, n=arguments.length; r !== undefined && i<n; ++i)
-    r = arguments[i](r)
-  return r
-}
+export const seqPartial = I.seqPartial
 
 export const scope = fn => fn()
 
 export const toPartial = fn => lift(R.curryN(fn.length, (...xs) =>
-  R.any(R.equals(undefined), xs) ? undefined : fn(...xs)))
+  R.any(isUndefined, xs) ? undefined : fn(...xs)))
 
 export const show = x => console.log(x) || x
 
@@ -190,21 +182,23 @@ const mapCachedStep = fromId => (old, ids) => {
 const mapCachedMap = lift1Shallow(x => x[1])
 
 export const mapCached = staged(fromId =>
-  R.pipe(foldPast(mapCachedStep(fromId), mapCachedInit),
+  I.pipe(foldPast(mapCachedStep(fromId), mapCachedInit),
          mapCachedMap))
 
 //
 
 export const mapIndexed = staged(xi2y => lift1(xs => xs.map((x, i) => xi2y(x, i))))
 
-export const ifte = R.curry((b, t, e) => flatMapLatest(b => b ? t : e, b))
-export const ift = R.curry((b, t) => flatMapLatest(b => b ? t : undefined, b))
+export const ifte = I.curry3((b, t, e) =>
+  toProperty(flatMapLatest(b => b ? t : e, b)))
+export const ift = I.curry2((b, t) =>
+  toProperty(flatMapLatest(b => b ? t : undefined, b)))
 
 //
 
 const viewProp = (l, xs) => K(xs, L.get(l))
 
-export const view = R.curry((l, xs) =>
+export const view = I.curry2((l, xs) =>
   xs instanceof A.AbstractMutable ? xs.view(l) : viewProp(l, xs))
 
 //
@@ -530,4 +524,4 @@ export const trunc  = lift1Shallow(Math.trunc)
 
 //
 
-export const indices = R.pipe(length, lift1Shallow(R.range(0)))
+export const indices = I.pipe(length, lift1Shallow(R.range(0)))

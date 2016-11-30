@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.7.0
+
+* Changed semantics of `ift` and `ifte` again so that they return properties
+  rather than streams.
+
+* Now using `infestines` where possible.  Note that there is no intention at
+  this point to drop the Ramda dependency from this library.
+
 ## 0.6.0
 
 The semantics of `ift` and `ifte` have been changed.  Previously they were a
