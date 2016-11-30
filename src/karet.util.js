@@ -28,7 +28,7 @@ export const fromKefir = Karet.fromKefir
 
 // Kefir
 
-const toUndefined = () => {}
+const toUndefined = _ => {}
 const toConstant = x => x instanceof Observable ? x : constant(x)
 
 const invokeIf = (fn, x) => fn && fn(x)
