@@ -11,7 +11,6 @@ const constant = Kefir.constant
 
 //
 
-const id = x => x
 const isUndefined = x => x === undefined
 
 //
@@ -22,7 +21,7 @@ export const lift1Shallow = C.lift1Shallow
 export const lift = C.lift
 export const liftStaged = fn => R.curryN(fn.length, R.pipe(fn, lift))
 
-export const template = observables => K(observables, id)
+export const template = observables => K(observables, I.id)
 
 //
 
