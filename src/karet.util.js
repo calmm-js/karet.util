@@ -20,7 +20,7 @@ export default K
 export const lift1 = C.lift1
 export const lift1Shallow = C.lift1Shallow
 export const lift = C.lift
-export const liftStaged = fn => I.curryN(fn.length, I.pipe2(fn, lift))
+export const liftStaged = fn => R.curryN(fn.length, R.pipe(fn, lift))
 
 export const template = observables => K(observables, id)
 
