@@ -40,11 +40,11 @@
     "react-dom": "^15.4.1"
   },
   "dependencies": {
-    "infestines": "^0.1.1",
+    "infestines": "^0.1.2",
     "karet": "^0.2.2",
     "kefir": "^3.6.1",
     "kefir.atom": "^4.0.1",
-    "kefir.combines": "^2.0.0",
+    "kefir.combines": "^3.0.0",
     "partial.lenses": ">=3.9.3 <5.0.0",
     "ramda": ">=0.20.1 <0.23.0"
   }
