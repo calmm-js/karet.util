@@ -1,6 +1,6 @@
 {
   "name": "karet.util",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "Utilities for working with Karet",
   "main": "lib/karet.util.js",
   "scripts": {
@@ -45,7 +45,7 @@
     "kefir": "^3.6.1",
     "kefir.atom": "^4.0.1",
     "kefir.combines": "^3.0.0",
-    "partial.lenses": ">=3.9.3 <5.0.0",
+    "partial.lenses": ">=3.9.3 <6.0.0",
     "ramda": ">=0.20.1 <0.23.0"
   }
 }
