@@ -94,7 +94,7 @@ export const staged = fn => R.curryN(fn.length, (...xs) =>
 
 //
 
-export const setProps = observables => {
+export function setProps(observables) {
   let observable
   let callback
   return e => {
@@ -218,7 +218,7 @@ export class Context extends React.Component {
 
 Context.childContextTypes = types
 
-export const withContext = originalFn => {
+export function withContext(originalFn) {
   const fn = (props, {context}) => originalFn(props, context)
   fn.contextTypes = types
   return fn
