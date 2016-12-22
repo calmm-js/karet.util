@@ -1,6 +1,6 @@
 {
   "name": "karet.util",
-  "version": "0.7.2",
+  "version": "0.7.3",
   "description": "Utilities for working with Karet",
   "main": "lib/karet.util.js",
   "scripts": {
@@ -33,19 +33,19 @@
     "babel-preset-react": "^6.16.0",
     "babel-preset-stage-2": "^6.18.0",
     "babel-register": "^6.18.0",
-    "eslint": "^3.12.1",
+    "eslint": "^3.12.2",
     "eslint-plugin-react": "^6.8.0",
     "mocha": "^3.2.0",
     "nyc": "^10.0.0",
     "react-dom": "^15.4.1"
   },
   "dependencies": {
-    "infestines": "^0.1.4",
+    "infestines": "^0.2.0",
     "karet": "^0.2.2",
     "kefir": "^3.6.1",
     "kefir.atom": "^4.0.3",
     "kefir.combines": "^3.0.0",
-    "partial.lenses": ">=3.9.3 <7.0.0",
+    "partial.lenses": ">=3.9.3 <8.0.0",
     "ramda": ">=0.20.1 <0.23.0"
   }
 }
