@@ -19,7 +19,7 @@ export default K
 export const lift1 = C.lift1
 export const lift1Shallow = C.lift1Shallow
 export const lift = C.lift
-export const liftStaged = fn => R.curryN(fn.length, R.pipe(fn, lift))
+export const liftStaged = fn => I.pipe2U(fn, lift)
 
 export const template = observables => K(observables, I.id)
 
@@ -35,36 +35,36 @@ const toConstant = x => x instanceof Observable ? x : constant(x)
 const invokeIf = (fn, x) => fn && fn(x)
 const toHandler = fns => ({type, value}) => invokeIf(fns[type], value)
 
-export const debounce = I.curry2((ms, xs) => toConstant(xs).debounce(ms))
+export const debounce = I.curry((ms, xs) => toConstant(xs).debounce(ms))
 export const changes = xs => toConstant(xs).changes()
 export const serially = xs => Kefir.concat(R.map(toConstant, xs))
 export const parallel = Kefir.merge
-export const delay = I.curry2((ms, xs) => toConstant(xs).delay(ms))
-export const endWith = I.curry2((v, xs) => toConstant(xs).concat(toConstant(v)))
-export const flatMapSerial = I.curry2((fn, xs) =>
-  toConstant(xs).flatMapConcat(I.pipe2(fn, toConstant)))
-export const flatMapErrors = I.curry2((fn, xs) =>
-  toConstant(xs).flatMapErrors(I.pipe2(fn, toConstant)))
-export const flatMapLatest = I.curry2((fn, xs) =>
-  toConstant(xs).flatMapLatest(I.pipe2(fn, toConstant)))
-export const foldPast = I.curry3((fn, s, xs) => toConstant(xs).scan(fn, s))
-export const interval = I.curry2(Kefir.interval)
-export const later = I.curry2(Kefir.later)
+export const delay = I.curry((ms, xs) => toConstant(xs).delay(ms))
+export const endWith = I.curry((v, xs) => toConstant(xs).concat(toConstant(v)))
+export const flatMapSerial = I.curry((fn, xs) =>
+  toConstant(xs).flatMapConcat(I.pipe2U(fn, toConstant)))
+export const flatMapErrors = I.curry((fn, xs) =>
+  toConstant(xs).flatMapErrors(I.pipe2U(fn, toConstant)))
+export const flatMapLatest = I.curry((fn, xs) =>
+  toConstant(xs).flatMapLatest(I.pipe2U(fn, toConstant)))
+export const foldPast = I.curry((fn, s, xs) => toConstant(xs).scan(fn, s))
+export const interval = I.curry(Kefir.interval)
+export const later = I.curry(Kefir.later)
 export const never = Kefir.never()
-export const on = I.curry2((efs, xs) => toConstant(xs).onAny(toHandler(efs)))
-export const sampledBy = I.curry2((es, xs) => toConstant(xs).sampledBy(es))
-export const skipFirst = I.curry2((n, xs) => toConstant(xs).skip(n))
-export const skipDuplicates = I.curry2((equals, xs) =>
+export const on = I.curry((efs, xs) => toConstant(xs).onAny(toHandler(efs)))
+export const sampledBy = I.curry((es, xs) => toConstant(xs).sampledBy(es))
+export const skipFirst = I.curry((n, xs) => toConstant(xs).skip(n))
+export const skipDuplicates = I.curry((equals, xs) =>
   toConstant(xs).skipDuplicates(equals))
-export const skipUnless = I.curry2((p, xs) => toConstant(xs).filter(p))
-export const skipWhen = I.curry2((p, xs) => toConstant(xs).filter(x => !p(x)))
-export const startWith = I.curry2((x, xs) => toConstant(xs).toProperty(() => x))
-export const sink = I.pipe2(startWith(undefined), lift(toUndefined))
-export const takeFirst = I.curry2((n, xs) => toConstant(xs).take(n))
-export const takeUntilBy = I.curry2((ts, xs) => toConstant(xs).takeUntilBy(ts))
+export const skipUnless = I.curry((p, xs) => toConstant(xs).filter(p))
+export const skipWhen = I.curry((p, xs) => toConstant(xs).filter(x => !p(x)))
+export const startWith = I.curry((x, xs) => toConstant(xs).toProperty(() => x))
+export const sink = I.pipe2U(startWith(undefined), lift(toUndefined))
+export const takeFirst = I.curry((n, xs) => toConstant(xs).take(n))
+export const takeUntilBy = I.curry((ts, xs) => toConstant(xs).takeUntilBy(ts))
 export const toProperty = xs => toConstant(xs).toProperty()
 
-export const set = I.curry2((settable, xs) => {
+export const set = I.curry((settable, xs) => {
   const ss = K(xs, xs => settable.set(xs))
   if (ss instanceof Observable)
     return ss.toProperty(toUndefined)
@@ -82,7 +82,7 @@ export const seqPartial = I.seqPartial
 
 export const scope = fn => fn()
 
-export const toPartial = fn => lift(R.curryN(fn.length, (...xs) =>
+export const toPartial = fn => lift(I.arityN(fn.length, (...xs) =>
   R.any(isUndefined, xs) ? undefined : fn(...xs)))
 
 export const show = x => console.log(x) || x
@@ -181,23 +181,23 @@ const mapCachedStep = fromId => (old, ids) => {
 const mapCachedMap = lift1Shallow(x => x[1])
 
 export const mapCached = staged(fromId =>
-  I.pipe(foldPast(mapCachedStep(fromId), mapCachedInit),
-         mapCachedMap))
+  I.pipe2U(foldPast(mapCachedStep(fromId), mapCachedInit),
+           mapCachedMap))
 
 //
 
 export const mapIndexed = staged(xi2y => lift1(xs => xs.map((x, i) => xi2y(x, i))))
 
-export const ifte = I.curry3((b, t, e) =>
+export const ifte = I.curry((b, t, e) =>
   toProperty(flatMapLatest(b => b ? t : e, b)))
-export const ift = I.curry2((b, t) =>
+export const ift = I.curry((b, t) =>
   toProperty(flatMapLatest(b => b ? t : undefined, b)))
 
 //
 
 const viewProp = (l, xs) => K(xs, L.get(l))
 
-export const view = I.curry2((l, xs) =>
+export const view = I.curry((l, xs) =>
   xs instanceof A.AbstractMutable ? xs.view(l) : viewProp(l, xs))
 
 //
@@ -343,7 +343,6 @@ export const invert = lift(R.invert)
 export const invertObj = lift(R.invertObj)
 export const invoker = liftStaged(R.invoker)
 export const is = lift(R.is)
-export const isArrayLike = lift(R.isArrayLike)
 export const isEmpty = lift(R.isEmpty)
 export const isNil = lift(R.isNil)
 export const join = lift(R.join)
@@ -523,4 +522,4 @@ export const trunc  = lift1Shallow(Math.trunc)
 
 //
 
-export const indices = I.pipe(length, lift1Shallow(R.range(0)))
+export const indices = I.pipe2U(length, lift1Shallow(R.range(0)))
