@@ -1,6 +1,6 @@
 {
   "name": "karet.util",
-  "version": "0.8.1",
+  "version": "0.8.2",
   "description": "Utilities for working with Karet",
   "main": "lib/karet.util.js",
   "scripts": {
@@ -40,7 +40,7 @@
     "react-dom": "^15.4.2"
   },
   "dependencies": {
-    "infestines": "^0.3.1",
+    "infestines": "^0.3.4",
     "karet": "^0.2.2",
     "kefir": "^3.6.1",
     "kefir.atom": "^4.0.3",

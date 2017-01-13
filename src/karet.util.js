@@ -87,10 +87,24 @@ export const toPartial = fn => lift(I.arityN(fn.length, (...xs) =>
 
 export const show = x => console.log(x) || x
 
-export const staged = fn => R.curryN(fn.length, (...xs) =>
-  fn.length === xs.length
-  ? fn(...xs)
-  : fn(...xs.slice(0, fn.length))(...xs.slice(fn.length)))
+export const staged = fn => R.curryN(fn.length, function () {
+  const xsN = arguments.length,
+        fnN = fn.length,
+        n = Math.min(xsN, fnN),
+        xs = Array(n)
+  for (let i=0; i<n; ++i)
+    xs[i] = arguments[i]
+
+  const fnxs = fn.apply(null, xs)
+  if (fnN === xsN)
+    return fnxs
+
+  const m = xsN - n, ys = Array(m)
+  for (let i=0; i<m; ++i)
+    ys[i] = arguments[i+n]
+
+  return fnxs.apply(null, ys)
+})
 
 //
 
@@ -129,11 +143,16 @@ export const getProps = template => ({target}) => {
     template[k].set(target[k])
 }
 
-export const bindProps = ({ref, ...template}) =>
-  ({ref: setProps(template), [ref]: getProps(template)})
+export const bindProps = templateWithRef => {
+  const ref = templateWithRef.ref
+  const template = I.dissocPartialU("ref", templateWithRef)
+  const r = {ref: setProps(template)}
+  r[ref] = getProps(template)
+  return r
+}
 
 export const bind = template =>
-  ({...template, onChange: getProps(template)})
+  I.assocPartialU("onChange", getProps(template), template)
 
 //
 
@@ -150,15 +169,20 @@ function classesImmediate() {
   return result
 }
 
-export const classes = (...cs) =>
-  ({className: K(...cs, classesImmediate)})
+export function classes() {
+  const n = arguments.length, xs = Array(n+1)
+  for (let i=0; i<n; ++i)
+    xs[i] = arguments[i]
+  xs[n] = classesImmediate
+  return {className: K.apply(null, xs)}
+}
 
 //
 
 const mapCachedInit = [{}, []]
 
 const mapCachedStep = fromId => (old, ids) => {
-  const [oldIds, oldVs] = old
+  const oldIds = old[0], oldVs = old[1]
   const newIds = {}
   const n = ids.length
   let changed = n !== oldVs.length
@@ -204,19 +228,20 @@ export const view = I.curry((l, xs) =>
 
 const types = {context: React.PropTypes.any}
 
-export class Context extends React.Component {
-  constructor(props) {
-    super(props)
-  }
-  getChildContext() {
-    return {context: this.props.context}
-  }
-  render() {
-    return this.props.children
-  }
+export function Context(props) {
+  React.Component.call(this, props)
 }
 
 Context.childContextTypes = types
+
+I.inherit(Context, React.Component, {
+  getChildContext() {
+    return {context: this.props.context}
+  },
+  render() {
+    return this.props.children
+  }
+})
 
 export function withContext(originalFn) {
   const fn = (props, {context}) => originalFn(props, context)
