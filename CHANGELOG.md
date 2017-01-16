@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.9.0
+
+Updated dependencies with major versions.
+
 ## 0.7.0
 
 * Changed semantics of `ift` and `ifte` again so that they return properties

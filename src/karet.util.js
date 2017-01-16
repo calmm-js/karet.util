@@ -1,70 +1,82 @@
-import * as A            from "kefir.atom"
-import * as Kefir        from "kefir"
-import * as I            from "infestines"
-import * as L            from "partial.lenses"
-import * as R            from "ramda"
-import K, * as C         from "kefir.combines"
-import React, * as Karet from "karet"
+import * as R from "ramda"
+import {AbstractMutable, Atom, Molecule, holding} from "kefir.atom"
+import {
+  Observable,
+  concat as Kefir_concat,
+  constant as Kefir_constant,
+  interval as Kefir_interval,
+  later as Kefir_later,
+  merge as Kefir_merge,
+  never as Kefir_never
+} from "kefir"
+import {
+  assocPartialU,
+  arityN,
+  curry as I_curry,
+  curryN as I_curryN,
+  dissocPartialU,
+  id,
+  inherit,
+  isDefined,
+  pipe2U,
+  seq,
+  seqPartial
+} from "infestines"
 
-const Observable = Kefir.Observable
-const constant = Kefir.constant
-
-//
-
-const isUndefined = x => x === undefined
+import {get} from "partial.lenses"
+import K, {lift, lift1, lift1Shallow} from "kefir.combines"
+import React, {fromKefir} from "karet"
 
 //
 
 export default K
-export const lift1 = C.lift1
-export const lift1Shallow = C.lift1Shallow
-export const lift = C.lift
-export const liftStaged = fn => I.pipe2U(fn, lift)
+export {lift, lift1, lift1Shallow}
+export const liftStaged = fn => pipe2U(fn, lift)
 
-export const template = observables => K(observables, I.id)
+export const template = observables => K(observables, id)
 
 //
 
-export const fromKefir = Karet.fromKefir
+export {fromKefir}
 
 // Kefir
 
 const toUndefined = _ => {}
-const toConstant = x => x instanceof Observable ? x : constant(x)
+const toConstant = x => x instanceof Observable ? x : Kefir_constant(x)
 
 const invokeIf = (fn, x) => fn && fn(x)
 const toHandler = fns => ({type, value}) => invokeIf(fns[type], value)
 
-export const debounce = I.curry((ms, xs) => toConstant(xs).debounce(ms))
+export const debounce = I_curry((ms, xs) => toConstant(xs).debounce(ms))
 export const changes = xs => toConstant(xs).changes()
-export const serially = xs => Kefir.concat(R.map(toConstant, xs))
-export const parallel = Kefir.merge
-export const delay = I.curry((ms, xs) => toConstant(xs).delay(ms))
-export const endWith = I.curry((v, xs) => toConstant(xs).concat(toConstant(v)))
-export const flatMapSerial = I.curry((fn, xs) =>
-  toConstant(xs).flatMapConcat(I.pipe2U(fn, toConstant)))
-export const flatMapErrors = I.curry((fn, xs) =>
-  toConstant(xs).flatMapErrors(I.pipe2U(fn, toConstant)))
-export const flatMapLatest = I.curry((fn, xs) =>
-  toConstant(xs).flatMapLatest(I.pipe2U(fn, toConstant)))
-export const foldPast = I.curry((fn, s, xs) => toConstant(xs).scan(fn, s))
-export const interval = I.curry(Kefir.interval)
-export const later = I.curry(Kefir.later)
-export const never = Kefir.never()
-export const on = I.curry((efs, xs) => toConstant(xs).onAny(toHandler(efs)))
-export const sampledBy = I.curry((es, xs) => toConstant(xs).sampledBy(es))
-export const skipFirst = I.curry((n, xs) => toConstant(xs).skip(n))
-export const skipDuplicates = I.curry((equals, xs) =>
+export const serially = xs => Kefir_concat(R.map(toConstant, xs))
+export const parallel = Kefir_merge
+export const delay = I_curry((ms, xs) => toConstant(xs).delay(ms))
+export const endWith = I_curry((v, xs) => toConstant(xs).concat(toConstant(v)))
+export const flatMapSerial = I_curry((fn, xs) =>
+  toConstant(xs).flatMapConcat(pipe2U(fn, toConstant)))
+export const flatMapErrors = I_curry((fn, xs) =>
+  toConstant(xs).flatMapErrors(pipe2U(fn, toConstant)))
+export const flatMapLatest = I_curry((fn, xs) =>
+  toConstant(xs).flatMapLatest(pipe2U(fn, toConstant)))
+export const foldPast = I_curry((fn, s, xs) => toConstant(xs).scan(fn, s))
+export const interval = I_curry(Kefir_interval)
+export const later = I_curry(Kefir_later)
+export const never = Kefir_never()
+export const on = I_curry((efs, xs) => toConstant(xs).onAny(toHandler(efs)))
+export const sampledBy = I_curry((es, xs) => toConstant(xs).sampledBy(es))
+export const skipFirst = I_curry((n, xs) => toConstant(xs).skip(n))
+export const skipDuplicates = I_curry((equals, xs) =>
   toConstant(xs).skipDuplicates(equals))
-export const skipUnless = I.curry((p, xs) => toConstant(xs).filter(p))
-export const skipWhen = I.curry((p, xs) => toConstant(xs).filter(x => !p(x)))
-export const startWith = I.curry((x, xs) => toConstant(xs).toProperty(() => x))
-export const sink = I.pipe2U(startWith(undefined), lift(toUndefined))
-export const takeFirst = I.curry((n, xs) => toConstant(xs).take(n))
-export const takeUntilBy = I.curry((ts, xs) => toConstant(xs).takeUntilBy(ts))
+export const skipUnless = I_curry((p, xs) => toConstant(xs).filter(p))
+export const skipWhen = I_curry((p, xs) => toConstant(xs).filter(x => !p(x)))
+export const startWith = I_curry((x, xs) => toConstant(xs).toProperty(() => x))
+export const sink = pipe2U(startWith(undefined), lift(toUndefined))
+export const takeFirst = I_curry((n, xs) => toConstant(xs).take(n))
+export const takeUntilBy = I_curry((ts, xs) => toConstant(xs).takeUntilBy(ts))
 export const toProperty = xs => toConstant(xs).toProperty()
 
-export const set = I.curry((settable, xs) => {
+export const set = I_curry((settable, xs) => {
   const ss = K(xs, xs => settable.set(xs))
   if (ss instanceof Observable)
     return ss.toProperty(toUndefined)
@@ -76,14 +88,12 @@ export const refTo = a => e => e && a.set(e)
 
 //
 
-export const seq = I.seq
-
-export const seqPartial = I.seqPartial
+export {seq, seqPartial}
 
 export const scope = fn => fn()
 
-export const toPartial = fn => lift(I.arityN(fn.length, (...xs) =>
-  R.any(isUndefined, xs) ? undefined : fn(...xs)))
+export const toPartial = fn => lift(arityN(fn.length, (...xs) =>
+  R.all(isDefined, xs) ? fn(...xs) : undefined))
 
 export const show = x => console.log(x) || x
 
@@ -145,14 +155,14 @@ export const getProps = template => ({target}) => {
 
 export const bindProps = templateWithRef => {
   const ref = templateWithRef.ref
-  const template = I.dissocPartialU("ref", templateWithRef)
+  const template = dissocPartialU("ref", templateWithRef)
   const r = {ref: setProps(template)}
   r[ref] = getProps(template)
   return r
 }
 
 export const bind = template =>
-  I.assocPartialU("onChange", getProps(template), template)
+  assocPartialU("onChange", getProps(template), template)
 
 //
 
@@ -204,25 +214,26 @@ const mapCachedStep = fromId => (old, ids) => {
 
 const mapCachedMap = lift1Shallow(x => x[1])
 
-export const mapCached = staged(fromId =>
-  I.pipe2U(foldPast(mapCachedStep(fromId), mapCachedInit),
-           mapCachedMap))
+export const mapCached = I_curryN(2, fromId =>
+  pipe2U(foldPast(mapCachedStep(fromId), mapCachedInit),
+         mapCachedMap))
 
 //
 
-export const mapIndexed = staged(xi2y => lift1(xs => xs.map((x, i) => xi2y(x, i))))
+export const mapIndexed = I_curryN(2, xi2y =>
+  lift1(xs => xs.map((x, i) => xi2y(x, i))))
 
-export const ifte = I.curry((b, t, e) =>
+export const ifte = I_curry((b, t, e) =>
   toProperty(flatMapLatest(b => b ? t : e, b)))
-export const ift = I.curry((b, t) =>
+export const ift = I_curry((b, t) =>
   toProperty(flatMapLatest(b => b ? t : undefined, b)))
 
 //
 
-const viewProp = (l, xs) => K(xs, L.get(l))
+const viewProp = (l, xs) => K(xs, get(l))
 
-export const view = I.curry((l, xs) =>
-  xs instanceof A.AbstractMutable ? xs.view(l) : viewProp(l, xs))
+export const view = I_curry((l, xs) =>
+  xs instanceof AbstractMutable ? xs.view(l) : viewProp(l, xs))
 
 //
 
@@ -234,7 +245,7 @@ export function Context(props) {
 
 Context.childContextTypes = types
 
-I.inherit(Context, React.Component, {
+inherit(Context, React.Component, {
   getChildContext() {
     return {context: this.props.context}
   },
@@ -268,11 +279,11 @@ export const string = (strings, ...values) =>
 
 //
 
-export const atom = value => new A.Atom(value)
-export const variable = () => new A.Atom()
-export const molecule = template => new A.Molecule(template)
+export const atom = value => new Atom(value)
+export const variable = () => new Atom()
+export const molecule = template => new Molecule(template)
 
-export const holding = A.holding
+export {holding}
 
 // Ramda
 
@@ -299,6 +310,7 @@ export const aperture = liftMaybe(R.aperture)
 export const append = liftMaybe(R.append)
 export const apply = liftMaybe(R.apply)
 export const applySpec = liftMaybe(R.applySpec)
+//ascend -> useful as lifted?
 //export const assoc = liftMaybe(R.assoc)                        -> partial.lenses
 //export const assocPath = liftMaybe(R.assocPath)                -> partial.lenses
 export const binary = liftStagedMaybe(R.binary)
@@ -324,6 +336,7 @@ export const curry = liftStagedMaybe(R.curry)
 export const curryN = liftStagedMaybe(R.curryN)
 export const dec = liftMaybe(R.dec)
 export const defaultTo = liftMaybe(R.defaultTo)
+//descend -> useful as lifted?
 export const difference = liftMaybe(R.difference)
 export const differenceWith = liftMaybe(R.differenceWith)
 //export const dissoc = liftMaybe(R.dissoc)                      -> partial.lenses
@@ -348,7 +361,8 @@ export const findLast = liftMaybe(R.findLast)
 export const findLastIndex = liftMaybe(R.findLastIndex)
 export const flatten = liftMaybe(R.flatten)
 export const flip = liftStagedMaybe(R.flip)
-//export const forEach = liftMaybe(R.forEach)                    -> useful?
+//export const forEach = liftMaybe(R.forEach)                       -> useful?
+//export const forEachObjIndexed = = liftMaybe(R.forEachObjIndexed) -> useful?
 export const fromPairs = liftMaybe(R.fromPairs)
 export const groupBy = liftMaybe(R.groupBy)
 export const groupWith = liftMaybe(R.groupWith)
@@ -463,6 +477,7 @@ export const sequence = liftMaybe(R.sequence)
 export const slice = liftMaybe(R.slice)
 export const sort = liftMaybe(R.sort)
 export const sortBy = liftMaybe(R.sortBy)
+export const sortWith = liftMaybe(R.sortWith)
 export const split = liftMaybe(R.split)
 export const splitAt = liftMaybe(R.splitAt)
 export const splitEvery = liftMaybe(R.splitEvery)
@@ -553,4 +568,4 @@ export const trunc  = lift1ShallowMaybe(Math.trunc)
 
 //
 
-export const indices = I.pipe2U(length, lift1Shallow(R.range(0)))
+export const indices = pipe2U(length, lift1Shallow(R.range(0)))
