@@ -156,6 +156,11 @@ describe("staged", () => {
 describe("Ramda", () => {
   testEq(`U.add(C(1), C(2))`, 3)
   testEq(`U.addIndex(R.map)((x, i) => [x, i], C([3, 1, 4]))`, [[3,0], [1,1], [4,2]])
+  testEq(`U.adjust(R.inc, C(1), C([1,2,3]))`, [1,3,3])
+  testEq(`U.all(R.equals(1), C([1,2,3]))`, false)
+  testEq(`U.allPass([x => x > 1, x => x < 3])(C(2))`, true)
+  testEq(`K(2, U.allPass([C(x => x > 1), C(x => x < 3)]))`, true)
+  testEq(`U.any(R.equals(1), C([1,2,3]))`, true)
   testEq('U.ifElse(U.equals("x"), () => "was x!", x => "was " + x)(C("y"))', "was y")
   testEq('U.pipe(U.add(1), U.add(2))(C(3))', 6)
   testEq(`U.always(C(42))(0)`, 42)
