@@ -117,3 +117,11 @@ describe("cond", () => {
   testEq(`U.cond([[R.equals(1), R.always("one")],
                   [R.equals(2), R.always("two")]])(Kefir.constant(2))`, "two")
 })
+
+describe("always", () => {
+  testEq(`U.always(Kefir.constant(42))(0)`, 42)
+})
+
+describe("identity", () => {
+  testEq(`U.identity(Kefir.constant(42))`, 42)
+})
