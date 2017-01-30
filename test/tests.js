@@ -135,6 +135,10 @@ describe("molecule", () => {
   testEq(`U.molecule({x: U.atom(1), y: U.atom(2)})`, {x: 1, y: 2})
 })
 
+describe("template", () => {
+  testEq(`U.template({x: C(1), y: C(2)})`, {x: 1, y: 2})
+})
+
 describe("set", () => {
   testEq(`U.set(U.atom(0), 1)`, undefined)
   testEq(`U.set(U.atom(0), C(1))`, undefined)
