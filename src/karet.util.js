@@ -32,7 +32,6 @@ import React, {fromKefir} from "karet"
 export default K
 export {lift, lift1, lift1Shallow}
 export const liftStaged = fn => pipe2U(fn, lift)
-
 export const template = observables => K(observables, id)
 
 //
