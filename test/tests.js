@@ -1,6 +1,5 @@
 import * as Kefir from "kefir"
 import * as R     from "ramda"
-import Atom       from "kefir.atom"
 import React      from "karet"
 import ReactDOM   from "react-dom/server"
 
@@ -18,7 +17,7 @@ function show(x) {
 
 const testEq = (expr, expect) => it(`${expr} => ${show(expect)}`, done => {
   const actual =
-    eval(`(Atom, K, Kefir, R, U, C) => ${expr}`)(Atom, K, Kefir, R, U, Kefir.constant)
+    eval(`(K, Kefir, R, U, C) => ${expr}`)(K, Kefir, R, U, Kefir.constant)
   const check = actual => {
     if (!R.equals(actual, expect))
       throw new Error(`Expected: ${show(expect)}, actual: ${show(actual)}`)
@@ -42,7 +41,7 @@ describe("actions", () => {
 })
 
 describe("bind", () => {
-  testEq('{const a = Atom(1);' +
+  testEq('{const a = U.atom(1);' +
          ' const e = {a: 2};' +
          ' const x = U.bind({a});' +
          ' x.onChange({target: e});' +
@@ -51,7 +50,7 @@ describe("bind", () => {
 })
 
 describe("bindProps", () => {
-  testEq('{const a = Atom(1);' +
+  testEq('{const a = U.atom(1);' +
          ' const e = {a: 2};' +
          ' const x = U.bindProps({ref: "onChange", a});' +
          ' x.ref(e);' +
@@ -59,7 +58,7 @@ describe("bindProps", () => {
          ' return e.a}',
          3)
 
-  testEq('{const a = Atom(1);' +
+  testEq('{const a = U.atom(1);' +
          ' const e = {a: 2};' +
          ' const x = U.bindProps({ref: "onChange", a});' +
          ' x.ref(e);' +
@@ -128,8 +127,12 @@ describe("scope", () => {
 })
 
 describe("refTo", () => {
-  testEq(`{const x = U.atom("x"); U.refTo(x)(null); return x}`, "x")
-  testEq(`{const x = U.atom("x"); U.refTo(x)("y"); return x}`, "y")
+  testEq(`{const x = U.variable(); U.refTo(x)(null); return x.get()}`, undefined)
+  testEq(`{const x = U.variable(); U.refTo(x)("y"); return x.get()}`, "y")
+})
+
+describe("molecule", () => {
+  testEq(`U.molecule({x: U.atom(1), y: U.atom(2)})`, {x: 1, y: 2})
 })
 
 describe("set", () => {
@@ -147,7 +150,7 @@ describe("staged", () => {
 
 describe("Ramda", () => {
   testEq(`U.add(C(1), C(2))`, 3)
-  testEq(`U.addIndex(R.map)(x => x + 1, C([1,2,3]))`, [2,3,4])
+  testEq(`U.addIndex(R.map)((x, i) => [x, i], C([3, 1, 4]))`, [[3,0], [1,1], [4,2]])
   testEq('U.ifElse(U.equals("x"), () => "was x!", x => "was " + x)(C("y"))', "was y")
   testEq('U.pipe(U.add(1), U.add(2))(C(3))', 6)
   testEq(`U.always(C(42))(0)`, 42)
