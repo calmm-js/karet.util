@@ -110,3 +110,10 @@ describe("pipe", () => {
 describe("ifElse", () => {
   testEq('U.ifElse(U.equals("x"), () => "was x!", x => "was " + x)(Kefir.constant("y"))', "was y")
 })
+
+describe("cond", () => {
+  testEq(`U.cond([[R.equals(1), R.always("one")],
+                  [R.equals(2), R.always("two")]])(2)`, "two")
+  testEq(`U.cond([[R.equals(1), R.always("one")],
+                  [R.equals(2), R.always("two")]])(Kefir.constant(2))`, "two")
+})
