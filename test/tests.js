@@ -145,6 +145,7 @@ describe("show", () => {
 })
 
 describe("staged", () => {
+  testEq(`U.staged(x => y => x + y)(1)(2)`, 3)
   testEq(`U.staged(x => y => x + y)(1, 2)`, 3)
 })
 
