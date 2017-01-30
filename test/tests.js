@@ -18,7 +18,7 @@ function show(x) {
 
 const testEq = (expr, expect) => it(`${expr} => ${show(expect)}`, done => {
   const actual =
-    eval(`(Atom, K, Kefir, R, U) => ${expr}`)(Atom, K, Kefir, R, U)
+    eval(`(Atom, K, Kefir, R, U, C) => ${expr}`)(Atom, K, Kefir, R, U, Kefir.constant)
   const check = actual => {
     if (!R.equals(actual, expect))
       throw new Error(`Expected: ${show(expect)}, actual: ${show(actual)}`)
@@ -38,7 +38,7 @@ const testRender = (vdom, expect) => it(`${expect}`, () => {
 })
 
 describe("actions", () => {
-  testEq('{let i = "" ; U.actions(false, Kefir.constant(x => i += "1" + x), undefined, x => i += "2" + x).onValue(f => f("z")); return i}', "1z2z")
+  testEq('{let i = "" ; U.actions(false, C(x => i += "1" + x), undefined, x => i += "2" + x).onValue(f => f("z")); return i}', "1z2z")
 })
 
 describe("bind", () => {
@@ -77,23 +77,23 @@ describe("classes", () => {
   testEq('U.classes("a", undefined, 0, false, "", "b")',
          {className: "a b"})
 
-  testEq('K(U.classes("a", Kefir.constant("b")), R.identity)',
+  testEq('K(U.classes("a", C("b")), R.identity)',
          {className: "a b"})
 })
 
 describe("mapCached", () => {
-  testEq('U.seq(Kefir.concat([Kefir.constant([2, 1, 1]), Kefir.constant([1, 3, 2])]), U.mapCached(i => `item ${i}`))', ["item 1", "item 3", "item 2"])
+  testEq('U.seq(Kefir.concat([C([2, 1, 1]), C([1, 3, 2])]), U.mapCached(i => `item ${i}`))', ["item 1", "item 3", "item 2"])
 })
 
 describe("sink", () => {
-  testEq('U.sink(Kefir.constant("lol"))', undefined)
+  testEq('U.sink(C("lol"))', undefined)
 })
 
 describe("string", () => {
   testEq('U.string`Hello!`', "Hello!")
   testEq('U.string`Hello, ${"constant"}!`', "Hello, constant!")
-  testEq('U.string`Hello, ${Kefir.constant("World")}!`', "Hello, World!")
-  testEq('U.string`Hello, ${"constant"} ${Kefir.constant("property")}!`', "Hello, constant property!")
+  testEq('U.string`Hello, ${C("World")}!`', "Hello, World!")
+  testEq('U.string`Hello, ${"constant"} ${C("property")}!`', "Hello, constant property!")
 })
 
 describe("Context", () => {
@@ -103,25 +103,47 @@ describe("Context", () => {
              '<div>Hello, World!</div>')
 })
 
-describe("pipe", () => {
-  testEq('U.pipe(U.add(1), U.add(2))(Kefir.constant(3))', 6)
+describe("ifte", () => {
+  testEq('U.ifte(C(true), C(1), C(2))', 1)
+  testEq('U.ifte(C(false), 1, 2)', 2)
 })
 
-describe("ifElse", () => {
-  testEq('U.ifElse(U.equals("x"), () => "was x!", x => "was " + x)(Kefir.constant("y"))', "was y")
+describe("ift", () => {
+  testEq('U.ift(C(true), C("x"))', "x")
+  testEq('U.ift(C(false), "x")', undefined)
 })
 
-describe("cond", () => {
-  testEq(`U.cond([[R.equals(1), R.always("one")],
-                  [R.equals(2), R.always("two")]])(2)`, "two")
-  testEq(`U.cond([[R.equals(1), R.always("one")],
-                  [R.equals(2), R.always("two")]])(Kefir.constant(2))`, "two")
+describe("toPartial", () => {
+  testEq(`U.toPartial(R.add)(C(1), undefined)`, undefined)
+  testEq(`U.toPartial(R.add)(C(undefined), 2)`, undefined)
+  testEq(`U.toPartial(R.add)(1, C(2))`, 3)
 })
 
-describe("always", () => {
-  testEq(`U.always(Kefir.constant(42))(0)`, 42)
+describe("mapIndexed", () => {
+  testEq(`U.mapIndexed((x, i) => [x,i], C([3,1,4]))`, [[3,0], [1,1], [4,2]])
 })
 
-describe("identity", () => {
-  testEq(`U.identity(Kefir.constant(42))`, 42)
+describe("scope", () => {
+  testEq(`U.scope(() => 101)`, 101)
+})
+
+describe("refTo", () => {
+  testEq(`{const x = U.atom("x"); U.refTo(x)(null); return x}`, "x")
+  testEq(`{const x = U.atom("x"); U.refTo(x)("y"); return x}`, "y")
+})
+
+describe("set", () => {
+  testEq(`U.set(U.atom(0), 1)`, undefined)
+  testEq(`U.set(U.atom(0), C(1))`, undefined)
+})
+
+describe("Ramda", () => {
+  testEq(`U.add(C(1), C(2))`, 3)
+  testEq(`U.addIndex(R.map)(x => x + 1, C([1,2,3]))`, [2,3,4])
+  testEq('U.ifElse(U.equals("x"), () => "was x!", x => "was " + x)(C("y"))', "was y")
+  testEq('U.pipe(U.add(1), U.add(2))(C(3))', 6)
+  testEq(`U.always(C(42))(0)`, 42)
+  testEq(`U.cond([[R.equals(1), R.always("one")], [R.equals(2), R.always("two")]])(2)`, "two")
+  testEq(`U.cond([[R.equals(1), R.always("one")], [R.equals(2), R.always("two")]])(C(2))`, "two")
+  testEq(`U.identity(C(42))`, 42)
 })
