@@ -137,6 +137,14 @@ describe("set", () => {
   testEq(`U.set(U.atom(0), C(1))`, undefined)
 })
 
+describe("show", () => {
+  testEq(`U.show("any")`, "any")
+})
+
+describe("staged", () => {
+  testEq(`U.staged(x => y => x + y)(1, 2)`, 3)
+})
+
 describe("Ramda", () => {
   testEq(`U.add(C(1), C(2))`, 3)
   testEq(`U.addIndex(R.map)(x => x + 1, C([1,2,3]))`, [2,3,4])
