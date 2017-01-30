@@ -10,8 +10,8 @@ import {
   never as Kefir_never
 } from "kefir"
 import {
-  assocPartialU,
   arityN,
+  assocPartialU,
   curry as I_curry,
   curryN as I_curryN,
   dissocPartialU,
