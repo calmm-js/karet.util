@@ -292,9 +292,9 @@ const liftStagedMaybe = maybe(liftStaged)
 const lift1Maybe = maybe(lift1)
 const lift1ShallowMaybe = maybe(lift1Shallow)
 
-//export const F = liftMaybe(R.F)
-//export const T = liftMaybe(R.T)
-//export const __ = liftMaybe(R.__)
+//export const F = R.F
+//export const T = R.T
+//export const __ = R.__
 export const add = liftMaybe(R.add)
 export const addIndex = liftStagedMaybe(R.addIndex) // Hmm...
 export const adjust = liftMaybe(R.adjust)
