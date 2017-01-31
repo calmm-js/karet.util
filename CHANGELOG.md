@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.10.0
+
+Most of the previously unsupported Ramda functions are now also provided.  The
+lifting / staging of a number of Ramda functions has been adjusted.  In
+particular, `U.is`, `U.where`, and `U.whereEq` now takes one and one arguments
+and `U.ascend`, `U.descend`, `U.eqBy` and `U.eqProps` take one and two
+arguments.  This was done to make their typical uses cases notationally more
+convenient.
+
 ## 0.9.0
 
 Updated dependencies with major versions.
