@@ -171,4 +171,7 @@ describe("Ramda", () => {
   testEq(`U.cond([[R.equals(1), R.always("one")], [R.equals(2), R.always("two")]])(2)`, "two")
   testEq(`U.cond([[R.equals(1), R.always("one")], [R.equals(2), R.always("two")]])(C(2))`, "two")
   testEq(`U.identity(C(42))`, 42)
+  testEq(`U.filter(U.where({id: U.has(U.__, C({x: 1, y: 1}))}),
+                   [{id: "y"}, {id: "z"}, {id: "x"}])`,
+         [{id: "y"}, {id: "x"}])
 })
