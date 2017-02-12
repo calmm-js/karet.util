@@ -61,6 +61,7 @@ export const flatMapLatest = I_curry((fn, xs) =>
 export const foldPast = I_curry((fn, s, xs) => toConstant(xs).scan(fn, s))
 export const interval = I_curry(Kefir_interval)
 export const later = I_curry(Kefir_later)
+export const lazy = th => seq(toProperty(), flatMapLatest(th), toProperty)
 export const never = Kefir_never()
 export const on = I_curry((efs, xs) => toConstant(xs).onAny(toHandler(efs)))
 export const sampledBy = I_curry((es, xs) => toConstant(xs).sampledBy(es))
@@ -74,6 +75,7 @@ export const sink = pipe2U(startWith(undefined), lift(toUndefined))
 export const takeFirst = I_curry((n, xs) => toConstant(xs).take(n))
 export const takeUntilBy = I_curry((ts, xs) => toConstant(xs).takeUntilBy(ts))
 export const toProperty = xs => toConstant(xs).toProperty()
+export const throttle = I_curry((ms, xs) => toConstant(xs).throttle(ms))
 
 export const set = I_curry((settable, xs) => {
   const ss = K(xs, xs => settable.set(xs))
