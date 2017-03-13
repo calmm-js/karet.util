@@ -15,6 +15,7 @@ import {
   curry as I_curry,
   curryN as I_curryN,
   dissocPartialU,
+  hasU,
   id,
   inherit,
   isDefined,
@@ -202,10 +203,10 @@ const mapCachedStep = fromId => (old, ids) => {
     const id = ids[i]
     const k = id.toString()
     let v
-    if (k in newIds)
+    if (hasU(k, newIds))
       v = newIds[k]
     else
-      v = newIds[k] = k in oldIds ? oldIds[k] : fromId(id)
+      v = newIds[k] = hasU(k, oldIds) ? oldIds[k] : fromId(id)
     newVs[i] = v
     if (!changed)
       changed = v !== oldVs[i]
