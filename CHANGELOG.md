@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.11.2
+
+Kefir was changed from a dependency to a peer dependency to avoid the
+possibility of having multiple versions of Kefir in a project.
+
 ## 0.10.0
 
 Most of the previously unsupported Ramda functions are now also provided.  The
