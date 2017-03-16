@@ -9,83 +9,90 @@ A collection of experimental utilities for working with
 [![](https://david-dm.org/calmm-js/karet.util.svg)](https://david-dm.org/calmm-js/karet.util)
 [![](https://david-dm.org/calmm-js/karet.util/dev-status.svg)](https://david-dm.org/calmm-js/karet.util?type=dev)
 
+## Contents
+
 ## Reference
 
 ### Misc
 
-#### `seq(x, ...fns)`
-#### `seqPartial(x, ...fns)`
-#### `scope(() => ...)`
+#### [≡](#contents) `U.seq(x, ...fns)`
+#### [≡](#contents) `U.seqPartial(x, ...fns)`
+#### [≡](#contents) `U.scope(() => ...)`
 
-#### `toPartial(totalFn)`
+#### [≡](#contents) `U.toPartial(totalFn)`
 
-#### `show(x) ~> x`
+#### [≡](#contents) `U.show(x) ~> x`
 
-#### `refTo(settable)(value or null)`
+#### [≡](#contents) `U.refTo(settable)(value or null)`
 
-#### `getProps({prop: settable, ...})`
-#### `setProps({prop: observable, ...})`
-#### `bindProps({ref: eventName, prop: settable, ...})`
-#### `bind({prop: settable, ...})`
+#### [≡](#contents) `U.getProps({prop: settable, ...})`
+#### [≡](#contents) `U.setProps({prop: observable, ...})`
+#### [≡](#contents) `U.bindProps({ref: eventName, prop: settable, ...})`
+#### [≡](#contents) `U.bind({prop: settable, ...})`
 
-#### `K`
-#### `template(template of observables)`
-#### `string`
-#### `lift`
+#### [≡](#contents) `K`
+#### [≡](#contents) `U.template(template of observables)`
+#### [≡](#contents) `U.string`
+#### [≡](#contents) `U.lift`
 
-#### `ift(condition, consequent)`
-#### `ifte(condition, consequent, alternative)`
+#### [≡](#contents) `U.ift(condition, consequent)`
+#### [≡](#contents) `U.ifte(condition, consequent, alternative)`
 
-#### `actions(...maybeFns)`
+#### [≡](#contents) `U.actions(...maybeFns)`
 
-#### `mapCached(x => ..., array)`
-#### `mapIndexed((x, i) => ..., array)`
-#### `indices(array)`
+#### [≡](#contents) `U.mapCached(x => ..., array)`
+#### [≡](#contents) `U.mapIndexed((x, i) => ..., array)`
+#### [≡](#contents) `U.indices(array)`
 
 ### Atom
-#### `atom(value)`
-#### `variable()`
-#### `molecule(template)`
-#### `holding(() => ...)`
-#### `view(lens, value)`
-#### `set(settable, value)`
+#### [≡](#contents) `U.atom(value)`
+#### [≡](#contents) `U.variable()`
+#### [≡](#contents) `U.molecule(template)`
+#### [≡](#contents) `U.holding(() => ...)`
+#### [≡](#contents) `U.view(lens, value)`
+#### [≡](#contents) `U.set(settable, value)`
 
 ### Karet
-#### `fromKefir()`
+#### [≡](#contents) `U.fromKefir()`
 
 ### Context
-#### `Context`
-#### `withContext`
-#### `WithContext`
+#### [≡](#contents) `U.Context`
+#### [≡](#contents) `U.withContext`
+#### [≡](#contents) `U.WithContext`
 
 ### Kefir
-#### `debounce'
-#### `changes'
-#### `serially'
-#### `parallel'
-#### `delay'
-#### `endWith'
-#### `flatMapSerial'
-#### `flatMapErrors'
-#### `flatMapLatest'
-#### `foldPast'
-#### `interval'
-#### `later'
-#### `lazy'
-#### `never'
-#### `on'
-#### `sampledBy'
-#### `skipFirst'
-#### `skipDuplicates'
-#### `skipUnless'
-#### `skipWhen'
-#### `startWith'
-#### `sink'
-#### `takeFirst'
-#### `takeUntilBy'
-#### `toProperty'
-#### `throttle'
+
+Kefir operations in curried form.
+
+#### [≡](#contents) `U.debounce(milliseconds, observable or constant) ~> observable`
+#### [≡](#contents) `U.changes(observable) ~> observable`
+#### [≡](#contents) `U.serially([...observables or constants]) ~> observable`
+#### [≡](#contents) `U.parallel([...observables or constants]) ~> observable`
+#### [≡](#contents) `U.delay(milliseconds, observable or constant) ~> observable`
+#### [≡](#contents) `U.endWith(value, observable or constant) ~> observable`
+#### [≡](#contents) `U.flatMapSerial(value => observable or constant, observable or constant) ~> observable`
+#### [≡](#contents) `U.flatMapErrors(error => observable or constant, observable or constant) ~> observable`
+#### [≡](#contents) `U.flatMapLatest(value => observable or constant, observable or constant) ~> observable`
+#### [≡](#contents) `U.foldPast`
+#### [≡](#contents) `U.interval`
+#### [≡](#contents) `U.later`
+#### [≡](#contents) `U.lazy(() => observable or constant) ~> property`
+#### [≡](#contents) `U.never ~> observable`
+#### [≡](#contents) `U.on`
+#### [≡](#contents) `U.sampledBy`
+#### [≡](#contents) `U.skipFirst`
+#### [≡](#contents) `U.skipDuplicates`
+#### [≡](#contents) `U.skipUnless`
+#### [≡](#contents) `U.skipWhen`
+#### [≡](#contents) `U.startWith`
+#### [≡](#contents) `U.sink`
+#### [≡](#contents) `U.takeFirst`
+#### [≡](#contents) `U.takeUntilBy`
+#### [≡](#contents) `U.toProperty`
+#### [≡](#contents) `U.throttle`
 
 ### Ramda
+
+Ramda functions lifted to take Kefir observables.
 
 ### Math
