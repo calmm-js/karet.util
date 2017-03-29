@@ -15,7 +15,26 @@ A collection of experimental utilities for working with
 
 ### Misc
 
-#### <a id="U-seq"></a> [≡](#contents) [`U.seq(x, ...fns)`](#U-seq)
+#### <a id="U-seq"></a> [≡](#contents) [`U.seq(value, ...fns)`](#U-seq)
+
+`U.seq` allows one to pipe a value through a sequence of functions.  In other
+words, `U.seq(x, f_1, ..., f_N)` is equivalent to `f_N( ... f_1(x) ... )`.  It
+serves a similar purpose as
+the [`->>`](https://clojuredocs.org/clojure.core/-%3E%3E) macro of Clojure or
+the `|>` operator of F#
+and [Elm](http://package.elm-lang.org/packages/elm-lang/core/latest/Basics#|>),
+for example, or
+the
+[`>|`](http://comp.lang.functional.narkive.com/zZJZg20r/a-family-of-function-application-operators-for-standard-ml) operator
+defined in Usenet post by some rando.
+
+For example:
+
+```js
+U.seq(1, x => x + 1, x => -x)
+// -2
+```
+
 #### <a id="U-seqPartial"></a> [≡](#contents) [`U.seqPartial(x, ...fns)`](#U-seqPartial)
 #### <a id="U-scope"></a> [≡](#contents) [`U.scope(() => ...)`](#U-scope)
 
