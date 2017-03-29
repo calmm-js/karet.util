@@ -46,10 +46,19 @@ U.seq(1, x => x + 1, x => -x)
 // -2
 ```
 
+A common technique in JavaScript is to use method chaining: `x.fn_1().fn_2()`.
+A problem with technique is that it requires having objects with methods.
+Sometimes you may need to manipulate values that are not objects, like `null`
+and `undefined`, and other times you may want to use functions that are not
+directly provided as methods and it may not be desirable
+to [monkey patch](https://en.wikipedia.org/wiki/Monkey_patch#Pitfalls) such
+methods.
+
 `U.seq` is designed to work with partially
 applied [curried](https://en.wikipedia.org/wiki/Currying) functions that take
 the <a href="https://en.wikipedia.org/wiki/Object_(grammar)">object</a> as their
-last argument.
+last argument and can be seen as providing a flexible alternative to method
+chaining.
 
 #### <a id="U-seqPartial"></a> [≡](#contents) [`U.seqPartial(maybeValue, ...fns)`](#U-seqPartial)
 
