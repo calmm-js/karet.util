@@ -46,7 +46,17 @@ U.seq(1, x => x + 1, x => -x)
 // -2
 ```
 
-#### <a id="U-seqPartial"></a> [≡](#contents) [`U.seqPartial(x, ...fns)`](#U-seqPartial)
+`U.seq` is designed to work with partially
+applied [curried](https://en.wikipedia.org/wiki/Currying) functions that take
+the <a href="https://en.wikipedia.org/wiki/Object_(grammar)">object</a> as their
+last argument.
+
+#### <a id="U-seqPartial"></a> [≡](#contents) [`U.seqPartial(maybeValue, ...fns)`](#U-seqPartial)
+
+`U.seqPartial` allows one to pipe a value through a sequence of function in such
+a way that if the value becomes `undefined` the process is stopped and
+`undefined` is returned without calling the remaining functions.
+
 #### <a id="U-scope"></a> [≡](#contents) [`U.scope(() => ...)`](#U-scope)
 
 #### <a id="U-toPartial"></a> [≡](#contents) [`U.toPartial(totalFn)`](#U-toPartial)
