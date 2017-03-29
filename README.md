@@ -37,7 +37,7 @@ of
 example, or
 the
 [`>|`](http://comp.lang.functional.narkive.com/zZJZg20r/a-family-of-function-application-operators-for-standard-ml) operator
-defined in Usenet post by some rando.
+defined in a Usenet post by some rando.
 
 For example:
 
