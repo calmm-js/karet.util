@@ -11,19 +11,30 @@ A collection of experimental utilities for working with
 
 ## Contents
 
+* [Reference](#reference)
+
 ## Reference
+
+This library provides a large number of named imports.  Typically one just
+imports the library as:
+
+```js
+import * as U from "karet.util"
+```
 
 ### Misc
 
-#### <a id="U-seq"></a> [≡](#contents) [`U.seq(value, ...fns)`](#U-seq)
+#### <a id="U-seq"></a> [≡](#contents) [`U.seq(value, ...fns) ~> value`](#U-seq)
 
 `U.seq` allows one to pipe a value through a sequence of functions.  In other
-words, `U.seq(x, f_1, ..., f_N)` is equivalent to `f_N( ... f_1(x) ... )`.  It
-serves a similar purpose as
+words, `U.seq(x, fn_1, ..., fn_N)` is roughly equivalent to `fn_N( ... fn_1(x)
+... )`.  It serves a similar purpose as
 the [`->>`](https://clojuredocs.org/clojure.core/-%3E%3E) macro of Clojure or
-the `|>` operator of F#
-and [Elm](http://package.elm-lang.org/packages/elm-lang/core/latest/Basics#|>),
-for example, or
+the `|>` operator
+of
+[F#](https://msdn.microsoft.com/en-us/visualfsharpdocs/conceptual/operators.%5b-h%5d-%5d%5b't1,'u%5d-function-%5bfsharp%5d) and
+[Elm](http://package.elm-lang.org/packages/elm-lang/core/latest/Basics#|>), for
+example, or
 the
 [`>|`](http://comp.lang.functional.narkive.com/zZJZg20r/a-family-of-function-application-operators-for-standard-ml) operator
 defined in Usenet post by some rando.
