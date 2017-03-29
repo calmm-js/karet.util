@@ -47,7 +47,7 @@ U.seq(1, x => x + 1, x => -x)
 ```
 
 A common technique in JavaScript is to use method chaining: `x.fn_1().fn_2()`.
-A problem with technique is that it requires having objects with methods.
+A problem with method chaining is that it requires having objects with methods.
 Sometimes you may need to manipulate values that are not objects, like `null`
 and `undefined`, and other times you may want to use functions that are not
 directly provided as methods and it may not be desirable
