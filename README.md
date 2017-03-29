@@ -66,8 +66,8 @@ Kefir operations in curried form.
 
 #### <a id="U-debounce"></a> [≡](#contents) [`U.debounce(milliseconds, observable) ~> observable`](#U-debounce)
 #### <a id="U-changes"></a> [≡](#contents) [`U.changes(observable) ~> observable`](#U-changes)
-#### <a id="U-serially"></a> [≡](#contents) [`U.serially([...observabless]) ~> observable`](#U-serially)
-#### <a id="U-parallel"></a> [≡](#contents) [`U.parallel([...observabless]) ~> observable`](#U-parallel)
+#### <a id="U-serially"></a> [≡](#contents) [`U.serially([...observables]) ~> observable`](#U-serially)
+#### <a id="U-parallel"></a> [≡](#contents) [`U.parallel([...observables]) ~> observable`](#U-parallel)
 #### <a id="U-delay"></a> [≡](#contents) [`U.delay(milliseconds, observable) ~> observable`](#U-delay)
 #### <a id="U-endWith"></a> [≡](#contents) [`U.endWith(value, observable) ~> observable`](#U-endWith)
 #### <a id="U-flatMapSerial"></a> [≡](#contents) [`U.flatMapSerial(value => observable, observable) ~> observable`](#U-flatMapSerial)
