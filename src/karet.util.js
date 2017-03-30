@@ -86,7 +86,10 @@ export const set = I_curry((settable, xs) => {
 
 //
 
-export const refTo = a => e => e && a.set(e)
+export const refTo = settable => elem => {
+  if (null !== elem)
+    settable.set(elem)
+}
 
 //
 
