@@ -68,11 +68,55 @@ a way that if the value becomes `undefined` the process is stopped and
 
 #### <a id="U-scope"></a> [≡](#contents) [`U.scope(() => ...)`](#U-scope)
 
+`U.scope` simply calls the given thunk.  IOW, `U.scope(fn)` is equivalent to
+`(fn)()`.  You can use it to create a new scope at expression level.
+
+For example:
+
+```js
+U.scope((x = 1, y = 2) => x + y)
+// 3
+```
+
 #### <a id="U-toPartial"></a> [≡](#contents) [`U.toPartial(totalFn)`](#U-toPartial)
 
-#### <a id="U-show"></a> [≡](#contents) [`U.show(x) ~> x`](#U-show)
+`U.toPartial` takes the given function and returns a curried version of the
+function that immediately returns `undefined` if any of the arguments passed is
+`undefined` and otherwise calls the given function with arguments.
+
+For example:
+
+```js
+U.toPartial((x, y) => x + y)(1, undefined)
+// undefined
+```
+
+```js
+U.toPartial((x, y) => x + y)(1, 2)
+// 3
+```
+
+#### <a id="U-show"></a> [≡](#contents) [`U.show(value) ~> value`](#U-show)
+
+`U.show` logs the given value to console and returns the value.
 
 #### <a id="U-refTo"></a> [≡](#contents) [`U.refTo(settable)(value or null)`](#U-refTo)
+
+`U.refTo` is designed for getting a reference to the DOM element of a component:
+
+```jsx
+const Component = ({dom = U.variable()}) =>
+  <div ref={U.refTo(dom)}>
+    ...
+  </div>
+```
+
+[React](https://facebook.github.io/react/docs/refs-and-the-dom.html) calls the
+`ref` callback with the DOM element on mount and with `null` on unmount.
+However, `U.refTo` does not write `null` to the variable.  The upside of
+skipping `null` and using an initially empty variable rather than an atom is
+that once the variable emits a value, you can be sure that it refers to a DOM
+element.
 
 #### <a id="U-getProps"></a> [≡](#contents) [`U.getProps({prop: settable, ...})`](#U-getProps)
 #### <a id="U-setProps"></a> [≡](#contents) [`U.setProps({prop: observable, ...})`](#U-setProps)
