@@ -60,13 +60,13 @@ the <a href="https://en.wikipedia.org/wiki/Object_(grammar)">object</a> as their
 last argument and can be seen as providing a flexible alternative to method
 chaining.
 
-#### <a id="U-seqPartial"></a> [≡](#contents) [`U.seqPartial(maybeValue, ...fns)`](#U-seqPartial)
+#### <a id="U-seqPartial"></a> [≡](#contents) [`U.seqPartial(maybeValue, ...fns) ~> maybeValue`](#U-seqPartial)
 
 `U.seqPartial` allows one to pipe a value through a sequence of function in such
 a way that if the value becomes `undefined` the process is stopped and
 `undefined` is returned without calling the remaining functions.
 
-#### <a id="U-scope"></a> [≡](#contents) [`U.scope(() => ...)`](#U-scope)
+#### <a id="U-scope"></a> [≡](#contents) [`U.scope(() => value) ~> value`](#U-scope)
 
 `U.scope` simply calls the given thunk.  IOW, `U.scope(fn)` is equivalent to
 `(fn)()`.  You can use it to create a new scope at expression level.
@@ -78,7 +78,7 @@ U.scope((x = 1, y = 2) => x + y)
 // 3
 ```
 
-#### <a id="U-toPartial"></a> [≡](#contents) [`U.toPartial(totalFn)`](#U-toPartial)
+#### <a id="U-toPartial"></a> [≡](#contents) [`U.toPartial((...values) => value) ~> (...maybeValues) => maybeValue`](#U-toPartial)
 
 `U.toPartial` takes the given function and returns a curried version of the
 function that immediately returns `undefined` if any of the arguments passed is
@@ -100,7 +100,7 @@ U.toPartial((x, y) => x + y)(1, 2)
 
 `U.show` logs the given value to console and returns the value.
 
-#### <a id="U-refTo"></a> [≡](#contents) [`U.refTo(settable)(value or null)`](#U-refTo)
+#### <a id="U-refTo"></a> [≡](#contents) [`U.refTo(settable)(value or null) ~> undefined`](#U-refTo)
 
 `U.refTo` is designed for getting a reference to the DOM element of a component:
 
