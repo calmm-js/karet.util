@@ -19,7 +19,7 @@ const testEq = (exprIn, expect) => {
   const expr = exprIn.replace(/[ \n]+/g, " ")
   return it(`${expr} => ${show(expect)}`, done => {
     const actual =
-          eval(`(K, Kefir, R, U, C) => ${expr}`)(K, Kefir, R, U, Kefir.constant)
+      eval(`(K, Kefir, R, U, C) => ${expr}`)(K, Kefir, R, U, Kefir.constant)
     const check = actual => {
       if (!R.equals(actual, expect))
         throw new Error(`Expected: ${show(expect)}, actual: ${show(actual)}`)
