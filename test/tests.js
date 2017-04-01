@@ -92,6 +92,7 @@ describe("classes", () => {
 
 describe("mapCached", () => {
   testEq(`U.seq(Kefir.concat([C([2, 1, 1]), C([1, 3, 2])]),
+                U.toProperty,
                 U.mapCached(i => "item " + i))`,
          ["item 1", "item 3", "item 2"])
 })
