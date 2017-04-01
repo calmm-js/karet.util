@@ -15,19 +15,22 @@ function show(x) {
   }
 }
 
-const testEq = (expr, expect) => it(`${expr} => ${show(expect)}`, done => {
-  const actual =
-    eval(`(K, Kefir, R, U, C) => ${expr}`)(K, Kefir, R, U, Kefir.constant)
-  const check = actual => {
-    if (!R.equals(actual, expect))
-      throw new Error(`Expected: ${show(expect)}, actual: ${show(actual)}`)
-    done()
-  }
-  if (actual instanceof Kefir.Observable)
-    actual.take(1).onValue(check)
-  else
-    check(actual)
-})
+const testEq = (exprIn, expect) => {
+  const expr = exprIn.replace(/[ \n]+/g, " ")
+  return it(`${expr} => ${show(expect)}`, done => {
+    const actual =
+          eval(`(K, Kefir, R, U, C) => ${expr}`)(K, Kefir, R, U, Kefir.constant)
+    const check = actual => {
+      if (!R.equals(actual, expect))
+        throw new Error(`Expected: ${show(expect)}, actual: ${show(actual)}`)
+      done()
+    }
+    if (actual instanceof Kefir.Observable)
+      actual.take(1).onValue(check)
+    else
+      check(actual)
+  })
+}
 
 const testRender = (vdom, expect) => it(`${expect}`, () => {
   const actual = ReactDOM.renderToStaticMarkup(vdom)
@@ -37,34 +40,41 @@ const testRender = (vdom, expect) => it(`${expect}`, () => {
 })
 
 describe("actions", () => {
-  testEq('{let i = "" ; U.actions(false, C(x => i += "1" + x), undefined, x => i += "2" + x).onValue(f => f("z")); return i}', "1z2z")
+  testEq(`{let i = "";
+           U.actions(false,
+                     C(x => i += "1" + x),
+                     undefined,
+                     x => i += "2" + x)
+            .onValue(f => f("z"));
+           return i}`,
+         "1z2z")
 })
 
 describe("bind", () => {
-  testEq('{const a = U.atom(1);' +
-         ' const e = {a: 2};' +
-         ' const x = U.bind({a});' +
-         ' x.onChange({target: e});' +
-         ' return a}',
+  testEq(`{const a = U.atom(1);
+           const e = {a: 2};
+           const x = U.bind({a});
+           x.onChange({target: e});
+           return a}`,
          2)
 })
 
 describe("bindProps", () => {
-  testEq('{const a = U.atom(1);' +
-         ' const e = {a: 2};' +
-         ' const x = U.bindProps({ref: "onChange", a});' +
-         ' x.ref(e);' +
-         ' a.set(3);' +
-         ' return e.a}',
+  testEq(`{const a = U.atom(1);
+           const e = {a: 2};
+           const x = U.bindProps({ref: "onChange", a});
+           x.ref(e);
+           a.set(3);
+           return e.a}`,
          3)
 
-  testEq('{const a = U.atom(1);' +
-         ' const e = {a: 2};' +
-         ' const x = U.bindProps({ref: "onChange", a});' +
-         ' x.ref(e);' +
-         ' e.a = 3;' +
-         ' x.onChange({target: e});' +
-         ' return a}',
+  testEq(`{const a = U.atom(1);
+           const e = {a: 2};
+           const x = U.bindProps({ref: "onChange", a});
+           x.ref(e);
+           e.a = 3;
+           x.onChange({target: e});
+           return a}`,
          3)
 })
 
@@ -81,7 +91,9 @@ describe("classes", () => {
 })
 
 describe("mapCached", () => {
-  testEq('U.seq(Kefir.concat([C([2, 1, 1]), C([1, 3, 2])]), U.mapCached(i => `item ${i}`))', ["item 1", "item 3", "item 2"])
+  testEq(`U.seq(Kefir.concat([C([2, 1, 1]), C([1, 3, 2])]),
+                U.mapCached(i => "item " + i))`,
+         ["item 1", "item 3", "item 2"])
 })
 
 describe("sink", () => {
@@ -92,13 +104,16 @@ describe("string", () => {
   testEq('U.string`Hello!`', "Hello!")
   testEq('U.string`Hello, ${"constant"}!`', "Hello, constant!")
   testEq('U.string`Hello, ${C("World")}!`', "Hello, World!")
-  testEq('U.string`Hello, ${"constant"} ${C("property")}!`', "Hello, constant property!")
+  testEq('U.string`Hello, ${"constant"} ${C("property")}!`',
+         "Hello, constant property!")
 })
 
 describe("Context", () => {
   const Who = U.withContext((_, {who}) => <div>Hello, {who}!</div>)
 
-  testRender(<U.Context context={{who: Kefir.constant("World")}}><Who/></U.Context>,
+  testRender(<U.Context context={{who: Kefir.constant("World")}}>
+               <Who/>
+             </U.Context>,
              '<div>Hello, World!</div>')
 })
 
@@ -127,7 +142,8 @@ describe("scope", () => {
 })
 
 describe("refTo", () => {
-  testEq(`{const x = U.variable(); U.refTo(x)(null); return x.get()}`, undefined)
+  testEq(`{const x = U.variable(); U.refTo(x)(null); return x.get()}`,
+         undefined)
   testEq(`{const x = U.variable(); U.refTo(x)("y"); return x.get()}`, "y")
 })
 
@@ -155,7 +171,8 @@ describe("staged", () => {
 
 describe("Ramda", () => {
   testEq(`U.add(C(1), C(2))`, 3)
-  testEq(`U.addIndex(R.map)((x, i) => [x, i], C([3, 1, 4]))`, [[3,0], [1,1], [4,2]])
+  testEq(`U.addIndex(R.map)((x, i) => [x, i], C([3, 1, 4]))`,
+         [[3,0], [1,1], [4,2]])
   testEq(`U.adjust(R.inc, C(1), C([1,2,3]))`, [1,3,3])
   testEq(`U.all(R.equals(1), C([1,2,3]))`, false)
   testEq(`U.allPass([x => x > 1, x => x < 3])(C(2))`, true)
@@ -163,13 +180,19 @@ describe("Ramda", () => {
   testEq(`U.and(C("a"), C("b"))`, "b")
   testEq(`U.any(R.equals(1), C([1,2,3]))`, true)
   testEq(`U.anyPass([x => x > 1, x => x < 3])(C(1))`, true)
-  testEq(`U.filter(U.anyPass([C(x => x > 1), C(x => x < 3)]), C([1,2,3]))`, [1,2,3])
+  testEq(`U.filter(U.anyPass([C(x => x > 1), C(x => x < 3)]), C([1,2,3]))`,
+         [1,2,3])
   testEq(`U.ap([U.multiply(2), C(U.add(3))], C([1,2,3]))`, [2, 4, 6, 4, 5, 6])
-  testEq('U.ifElse(U.equals("x"), () => "was x!", x => "was " + x)(C("y"))', "was y")
+  testEq('U.ifElse(U.equals("x"), () => "was x!", x => "was " + x)(C("y"))',
+         "was y")
   testEq('U.pipe(U.add(1), U.add(2))(C(3))', 6)
   testEq(`U.always(C(42))(0)`, 42)
-  testEq(`U.cond([[R.equals(1), R.always("one")], [R.equals(2), R.always("two")]])(2)`, "two")
-  testEq(`U.cond([[R.equals(1), R.always("one")], [R.equals(2), R.always("two")]])(C(2))`, "two")
+  testEq(`U.cond([[R.equals(1), R.always("one")],
+                  [R.equals(2), R.always("two")]])(2)`,
+         "two")
+  testEq(`U.cond([[R.equals(1), R.always("one")],
+                  [R.equals(2), R.always("two")]])(C(2))`,
+         "two")
   testEq(`U.identity(C(42))`, 42)
   testEq(`U.filter(U.where({id: U.has(U.__, C({x: 1, y: 1}))}),
                    [{id: "y"}, {id: "z"}, {id: "x"}])`,
