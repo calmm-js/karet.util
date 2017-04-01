@@ -1,5 +1,11 @@
 # Changelog
 
+## x.y.z
+
+This library now explicitly depends only on
+the [stable subset](https://github.com/calmm-js/partial.lenses/#stable-subset)
+of partial lenses.
+
 ## 0.11.2
 
 Kefir was changed from a dependency to a peer dependency to avoid the

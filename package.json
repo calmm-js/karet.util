@@ -47,7 +47,7 @@
     "karet": "^1.0.0",
     "kefir.atom": "^5.0.1",
     "kefir.combines": "^4.0.0",
-    "partial.lenses": ">=8.0.0 <10.0.0",
+    "partial.lenses": ">=2.2.0",
     "ramda": "^0.23.0"
   },
   "peerDependencies": {
