@@ -15,7 +15,7 @@ A collection of experimental utilities for working with
 
 ## Reference
 
-This library provides a large number of named imports.  Typically one just
+This library provides a large number of named exports.  Typically one just
 imports the library as:
 
 ```js
