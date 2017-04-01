@@ -97,6 +97,14 @@ describe("mapCached", () => {
          ["item 1", "item 3", "item 2"])
 })
 
+describe("mapElems", () => {
+  testEq(`U.seq(Kefir.concat([C([2, 1, 1]), C([1, 3, 2])]),
+                U.toProperty,
+                U.mapElems((x, i) => [x, i]),
+                U.flatMapLatest(U.template))`,
+         [[1, 0], [3, 1], [2, 2]])
+})
+
 describe("sink", () => {
   testEq('U.sink(C("lol"))', undefined)
 })
