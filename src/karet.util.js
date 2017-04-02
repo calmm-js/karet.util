@@ -578,3 +578,6 @@ export const trunc  = lift1ShallowMaybe(Math.trunc)
 //
 
 export const indices = pipe2U(length, lift1Shallow(R.range(0)))
+
+export const mapElems = I_curry((fn, elems) =>
+  mapCached(i => fn(view(i, elems), i), indices(elems)))
