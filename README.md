@@ -118,6 +118,8 @@ skipping `null` and using an initially empty variable rather than an atom is
 that once the variable emits a value, you can be sure that it refers to a DOM
 element.
 
+#### <a id="U-cns"></a> [≡](#contents) [`U.cns(...maybeClassName)`](#U-cns)
+
 #### <a id="U-getProps"></a> [≡](#contents) [`U.getProps({prop: settable, ...})`](#U-getProps)
 #### <a id="U-setProps"></a> [≡](#contents) [`U.setProps({prop: observable, ...})`](#U-setProps)
 #### <a id="U-bindProps"></a> [≡](#contents) [`U.bindProps({ref: eventName, prop: settable, ...})`](#U-bindProps)

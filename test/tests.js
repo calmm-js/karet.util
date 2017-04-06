@@ -90,6 +90,11 @@ describe("classes", () => {
          {className: "a b"})
 })
 
+describe("cns", () => {
+  testEq(`U.cns()`, "")
+  testEq(`U.cns(null, "a", false, undefined, C("b"), 0, "")`, "a b")
+})
+
 describe("mapCached", () => {
   testEq(`U.seq(Kefir.concat([C([2, 1, 1]), C([1, 3, 2])]),
                 U.toProperty,

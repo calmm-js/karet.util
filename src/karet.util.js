@@ -184,13 +184,15 @@ function classesImmediate() {
   return result
 }
 
-export function classes() {
+export function cns() {
   const n = arguments.length, xs = Array(n+1)
   for (let i=0; i<n; ++i)
     xs[i] = arguments[i]
   xs[n] = classesImmediate
-  return {className: K.apply(null, xs)}
+  return K.apply(null, xs)
 }
+
+export const classes = (...xs) => ({className: cns(...xs)})
 
 //
 
