@@ -4,6 +4,7 @@ import {
   Observable,
   concat as Kefir_concat,
   constant as Kefir_constant,
+  fromEvents as Kefir_fromEvents,
   interval as Kefir_interval,
   later as Kefir_later,
   merge as Kefir_merge,
@@ -77,6 +78,7 @@ export const takeFirst = I_curry((n, xs) => toConstant(xs).take(n))
 export const takeUntilBy = I_curry((ts, xs) => toConstant(xs).takeUntilBy(ts))
 export const toProperty = xs => toConstant(xs).toProperty()
 export const throttle = I_curry((ms, xs) => toConstant(xs).throttle(ms))
+export const fromEvents = I_curry(Kefir_fromEvents)
 
 export const set = I_curry((settable, xs) => {
   const ss = K(xs, xs => settable.set(xs))
