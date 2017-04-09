@@ -1,12 +1,15 @@
 {
   "name": "karet.util",
-  "version": "0.11.3",
+  "version": "0.11.4",
   "description": "Utilities for working with Karet",
-  "main": "lib/karet.util.js",
+  "main": "dist/karet.util.cjs.js",
+  "module": "dist/karet.util.es.js",
   "scripts": {
-    "dist": "babel src --source-maps inline --out-dir lib",
+    "dist": "npm run dist:es & npm run dist:cjs & wait",
+    "dist:cjs": "    NODE_ENV=           rollup -c -n karet.util -i src/karet.util.js -f cjs -o dist/karet.util.cjs.js",
+    "dist:es": "     NODE_ENV=           rollup -c -n karet.util -i src/karet.util.js -f es  -o dist/karet.util.es.js",
     "lint": "eslint src test",
-    "prepublish": "npm run lint && npm run test && npm run dist",
+    "prepublish": "npm run lint && npm run dist && npm run test",
     "report-coverage": "nyc report --reporter=lcov > coverage.lcov && codecov",
     "test": "nyc mocha"
   },
@@ -32,7 +35,7 @@
     "babel-plugin-transform-es2015-modules-commonjs": "^6.24.0",
     "babel-preset-es2015": "^6.24.0",
     "babel-preset-react": "^6.23.0",
-    "babel-preset-stage-2": "^6.22.0",
+    "babel-preset-stage-3": "^6.24.1",
     "babel-register": "^6.24.0",
     "codecov": "^2.1.0",
     "eslint": "^3.19.0",
@@ -40,7 +43,13 @@
     "kefir": "^3.7.1",
     "mocha": "^3.2.0",
     "nyc": "^10.2.0",
-    "react-dom": "^15.4.2"
+    "react-dom": "^15.4.2",
+    "rollup": "^0.41.6",
+    "rollup-plugin-babel": "^2.7.1",
+    "rollup-plugin-commonjs": "^8.0.2",
+    "rollup-plugin-node-resolve": "^3.0.0",
+    "rollup-plugin-replace": "^1.1.1",
+    "rollup-plugin-uglify": "^1.0.1"
   },
   "dependencies": {
     "infestines": "^0.4.2",
@@ -48,6 +57,7 @@
     "kefir.atom": "^5.0.1",
     "kefir.combines": "^4.0.0",
     "partial.lenses": ">=2.2.0",
+    "prop-types": "^15.5.6",
     "ramda": "^0.23.0"
   },
   "peerDependencies": {

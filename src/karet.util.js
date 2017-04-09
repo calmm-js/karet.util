@@ -28,6 +28,7 @@ import {
 import {get} from "partial.lenses"
 import K, {lift, lift1, lift1Shallow} from "kefir.combines"
 import React, {fromKefir} from "karet"
+import PropTypes from "prop-types"
 
 //
 
@@ -246,7 +247,7 @@ export const view = I_curry((l, xs) =>
 
 //
 
-const types = {context: React.PropTypes.any}
+const types = {context: PropTypes.any}
 
 export function Context(props) {
   React.Component.call(this, props)

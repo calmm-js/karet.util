@@ -3,7 +3,7 @@ import * as R     from "ramda"
 import React      from "karet"
 import ReactDOM   from "react-dom/server"
 
-import K, * as U from "../src/karet.util"
+import K, * as U from "../dist/karet.util.cjs"
 
 function show(x) {
   switch (typeof x) {
