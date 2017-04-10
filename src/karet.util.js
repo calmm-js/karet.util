@@ -1,5 +1,11 @@
 import * as R from "ramda"
-import {AbstractMutable, Atom, Molecule, holding} from "kefir.atom"
+import {
+  AbstractMutable,
+  Atom,
+  Molecule,
+  Join,
+  holding
+} from "kefir.atom"
 import {
   Observable,
   concat as Kefir_concat,
@@ -240,10 +246,12 @@ export const ift = I_curry((b, t) =>
 
 //
 
-const viewProp = (l, xs) => K(xs, get(l))
-
 export const view = I_curry((l, xs) =>
-  xs instanceof AbstractMutable ? xs.view(l) : viewProp(l, xs))
+  xs instanceof AbstractMutable
+  ? l instanceof Observable
+    ? new Join(K(l, l => xs.view(l)))
+    : xs.view(l)
+  : K(l, xs, get))
 
 //
 

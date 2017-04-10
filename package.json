@@ -1,6 +1,6 @@
 {
   "name": "karet.util",
-  "version": "0.11.4",
+  "version": "0.11.5",
   "description": "Utilities for working with Karet",
   "main": "dist/karet.util.cjs.js",
   "module": "dist/karet.util.es.js",
@@ -54,7 +54,7 @@
   "dependencies": {
     "infestines": "^0.4.2",
     "karet": "^1.0.0",
-    "kefir.atom": "^5.0.1",
+    "kefir.atom": "^5.3.0",
     "kefir.combines": "^4.0.0",
     "partial.lenses": ">=2.2.0",
     "prop-types": "^15.5.6",

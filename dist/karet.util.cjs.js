@@ -303,12 +303,10 @@ var ift = infestines.curry(function (b, t) {
 
 //
 
-var viewProp = function viewProp(l, xs) {
-  return K__default(xs, partial_lenses.get(l));
-};
-
 var view = infestines.curry(function (l, xs) {
-  return xs instanceof kefir_atom.AbstractMutable ? xs.view(l) : viewProp(l, xs);
+  return xs instanceof kefir_atom.AbstractMutable ? l instanceof kefir.Observable ? new kefir_atom.Join(K__default(l, function (l) {
+    return xs.view(l);
+  })) : xs.view(l) : K__default(l, xs, partial_lenses.get);
 });
 
 //

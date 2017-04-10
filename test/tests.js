@@ -59,6 +59,14 @@ describe("bind", () => {
          2)
 })
 
+describe("view", () => {
+  testEq(`U.view("x", Kefir.constant({x: 101}))`, 101)
+  testEq(`U.view(Kefir.constant("x"), Kefir.constant({x: 101}))`, 101)
+  testEq(`U.view("x", {x: 101})`, 101)
+  testEq(`U.view("x", U.atom({x: 101}))`, 101)
+  testEq(`U.view(Kefir.constant("x"), U.atom({x: 101}))`, 101)
+})
+
 describe("bindProps", () => {
   testEq(`{const a = U.atom(1);
            const e = {a: 2};

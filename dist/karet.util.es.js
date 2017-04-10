@@ -1,6 +1,6 @@
 import { F, T, __, add, addIndex, adjust, all, allPass, always, and, any, anyPass, ap, aperture, append, apply, applySpec, ascend, assoc, assocPath, binary, both, call, chain, clamp, comparator, complement, compose, concat, cond, construct, constructN, contains, converge, countBy, curry, curryN, dec, defaultTo, descend, difference, differenceWith, dissoc, dissocPath, divide, drop, dropLast, dropLastWhile, dropRepeats, dropRepeatsWith, dropWhile, either, empty, eqBy, eqProps, equals, evolve, filter, find, findIndex, findLast, findLastIndex, flatten, flip, fromPairs, groupBy, groupWith, gt, gte, has, hasIn, head, identical, identity, ifElse, inc, indexBy, indexOf, init, insert, insertAll, intersection, intersectionWith, intersperse, into, invert, invertObj, invoker, is, isEmpty, isNil, join, juxt, keys, keysIn, last, lastIndexOf, length, lt, lte, map, mapAccum, mapAccumRight, mapObjIndexed, match, mathMod, max, maxBy, mean, median, memoize, merge, mergeAll, mergeWith, mergeWithKey, min, minBy, modulo, multiply, nAry, negate, none, not, nth, nthArg, objOf, of, omit, or, pair, partial, partialRight, partition, path, pathEq, pathOr, pathSatisfies, pick, pickAll, pickBy, pipe, pluck, prepend, product, project, prop, propEq, propIs, propOr, propSatisfies, props, range, reduce, reduceBy, reduceRight, reduceWhile, reduced, reject, remove, repeat, replace, reverse, scan, sequence, slice, sort, sortBy, sortWith, split, splitAt, splitEvery, splitWhen, subtract, sum, symmetricDifference, symmetricDifferenceWith, tail, take, takeLast, takeLastWhile, takeWhile, tap, test, times, toLower, toPairs, toPairsIn, toString, toUpper, transduce, transpose, traverse, trim, tryCatch, type, unapply, unary, uncurryN, unfold, union, unionWith, uniq, uniqBy, uniqWith, unless, unnest, until, update, useWith, values, valuesIn, when, where, whereEq, without, xprod, zip, zipObj, zipWith } from 'ramda';
 import * as R from 'ramda';
-import { AbstractMutable, Atom, Molecule, holding } from 'kefir.atom';
+import { AbstractMutable, Atom, Join, Molecule, holding } from 'kefir.atom';
 import { Observable, concat as concat$1, constant, fromEvents, interval, later, merge as merge$1, never } from 'kefir';
 import { arityN, assocPartialU, curry as curry$1, curryN as curryN$1, dissocPartialU, hasU, id, inherit, isDefined, pipe2U, seq, seqPartial } from 'infestines';
 import { get } from 'partial.lenses';
@@ -296,12 +296,10 @@ var ift = curry$1(function (b, t) {
 
 //
 
-var viewProp = function viewProp(l, xs) {
-  return K(xs, get(l));
-};
-
 var view = curry$1(function (l, xs) {
-  return xs instanceof AbstractMutable ? xs.view(l) : viewProp(l, xs);
+  return xs instanceof AbstractMutable ? l instanceof Observable ? new Join(K(l, function (l) {
+    return xs.view(l);
+  })) : xs.view(l) : K(l, xs, get);
 });
 
 //
