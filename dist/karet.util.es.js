@@ -33,7 +33,7 @@ var toHandler = function toHandler(fns) {
   };
 };
 
-var debounce = curry$1(function (ms, xs) {
+var debounce = /*#__PURE__*/curry$1(function (ms, xs) {
   return toConstant(xs).debounce(ms);
 });
 var changes = function changes(xs) {
@@ -42,72 +42,72 @@ var changes = function changes(xs) {
 var serially = function serially(xs) {
   return concat$1(map(toConstant, xs));
 };
-var parallel = merge$1;
-var delay = curry$1(function (ms, xs) {
+var parallel = /*#__PURE__*/merge$1;
+var delay = /*#__PURE__*/curry$1(function (ms, xs) {
   return toConstant(xs).delay(ms);
 });
-var endWith = curry$1(function (v, xs) {
+var endWith = /*#__PURE__*/curry$1(function (v, xs) {
   return toConstant(xs).concat(toConstant(v));
 });
-var flatMapSerial = curry$1(function (fn, xs) {
+var flatMapSerial = /*#__PURE__*/curry$1(function (fn, xs) {
   return toConstant(xs).flatMapConcat(pipe2U(fn, toConstant));
 });
-var flatMapErrors = curry$1(function (fn, xs) {
+var flatMapErrors = /*#__PURE__*/curry$1(function (fn, xs) {
   return toConstant(xs).flatMapErrors(pipe2U(fn, toConstant));
 });
-var flatMapLatest = curry$1(function (fn, xs) {
+var flatMapLatest = /*#__PURE__*/curry$1(function (fn, xs) {
   return toConstant(xs).flatMapLatest(pipe2U(fn, toConstant));
 });
-var foldPast = curry$1(function (fn, s, xs) {
+var foldPast = /*#__PURE__*/curry$1(function (fn, s, xs) {
   return toConstant(xs).scan(fn, s);
 });
-var interval$1 = curry$1(interval);
-var later$1 = curry$1(later);
+var interval$1 = /*#__PURE__*/curry$1(interval);
+var later$1 = /*#__PURE__*/curry$1(later);
 var lazy = function lazy(th) {
   return seq(toProperty(), flatMapLatest(th), toProperty);
 };
-var never$1 = never();
-var on = curry$1(function (efs, xs) {
+var never$1 = /*#__PURE__*/never();
+var on = /*#__PURE__*/curry$1(function (efs, xs) {
   return toConstant(xs).onAny(toHandler(efs));
 });
-var sampledBy = curry$1(function (es, xs) {
+var sampledBy = /*#__PURE__*/curry$1(function (es, xs) {
   return toConstant(xs).sampledBy(es);
 });
-var skipFirst = curry$1(function (n, xs) {
+var skipFirst = /*#__PURE__*/curry$1(function (n, xs) {
   return toConstant(xs).skip(n);
 });
-var skipDuplicates = curry$1(function (equals$$1, xs) {
+var skipDuplicates = /*#__PURE__*/curry$1(function (equals$$1, xs) {
   return toConstant(xs).skipDuplicates(equals$$1);
 });
-var skipUnless = curry$1(function (p, xs) {
+var skipUnless = /*#__PURE__*/curry$1(function (p, xs) {
   return toConstant(xs).filter(p);
 });
-var skipWhen = curry$1(function (p, xs) {
+var skipWhen = /*#__PURE__*/curry$1(function (p, xs) {
   return toConstant(xs).filter(function (x) {
     return !p(x);
   });
 });
-var startWith = curry$1(function (x, xs) {
+var startWith = /*#__PURE__*/curry$1(function (x, xs) {
   return toConstant(xs).toProperty(function () {
     return x;
   });
 });
-var sink = pipe2U(startWith(undefined), lift(toUndefined));
-var takeFirst = curry$1(function (n, xs) {
+var sink = /*#__PURE__*/pipe2U(startWith(undefined), lift(toUndefined));
+var takeFirst = /*#__PURE__*/curry$1(function (n, xs) {
   return toConstant(xs).take(n);
 });
-var takeUntilBy = curry$1(function (ts, xs) {
+var takeUntilBy = /*#__PURE__*/curry$1(function (ts, xs) {
   return toConstant(xs).takeUntilBy(ts);
 });
 var toProperty = function toProperty(xs) {
   return toConstant(xs).toProperty();
 };
-var throttle = curry$1(function (ms, xs) {
+var throttle = /*#__PURE__*/curry$1(function (ms, xs) {
   return toConstant(xs).throttle(ms);
 });
-var fromEvents$1 = curry$1(fromEvents);
+var fromEvents$1 = /*#__PURE__*/curry$1(fromEvents);
 
-var set = curry$1(function (settable, xs) {
+var set = /*#__PURE__*/curry$1(function (settable, xs) {
   var ss = K(xs, function (xs) {
     return settable.set(xs);
   });
@@ -265,17 +265,17 @@ var mapCachedStep = function mapCachedStep(fromId) {
   };
 };
 
-var mapCachedMap = lift1Shallow(function (x) {
+var mapCachedMap = /*#__PURE__*/lift1Shallow(function (x) {
   return x[1];
 });
 
-var mapCached = curryN$1(2, function (fromId) {
+var mapCached = /*#__PURE__*/curryN$1(2, function (fromId) {
   return pipe2U(foldPast(mapCachedStep(fromId), mapCachedInit), mapCachedMap);
 });
 
 //
 
-var mapIndexed = curryN$1(2, function (xi2y) {
+var mapIndexed = /*#__PURE__*/curryN$1(2, function (xi2y) {
   return lift1(function (xs) {
     return xs.map(function (x, i) {
       return xi2y(x, i);
@@ -283,12 +283,12 @@ var mapIndexed = curryN$1(2, function (xi2y) {
   });
 });
 
-var ifte = curry$1(function (b, t, e) {
+var ifte = /*#__PURE__*/curry$1(function (b, t, e) {
   return toProperty(flatMapLatest(function (b) {
     return b ? t : e;
   }, b));
 });
-var ift = curry$1(function (b, t) {
+var ift = /*#__PURE__*/curry$1(function (b, t) {
   return toProperty(flatMapLatest(function (b) {
     return b ? t : undefined;
   }, b));
@@ -296,7 +296,7 @@ var ift = curry$1(function (b, t) {
 
 //
 
-var view = curry$1(function (l, xs) {
+var view = /*#__PURE__*/curry$1(function (l, xs) {
   return xs instanceof AbstractMutable ? l instanceof Observable ? new Join(K(l, function (l) {
     return xs.view(l);
   })) : xs.view(l) : K(l, xs, get);
@@ -330,7 +330,7 @@ function withContext(originalFn) {
   return fn;
 }
 
-var WithContext = withContext(function (_ref4, context) {
+var WithContext = /*#__PURE__*/withContext(function (_ref4, context) {
   var Do = _ref4.Do;
   return React.createElement(Do, context);
 });
@@ -393,14 +393,14 @@ var maybe = function maybe(f) {
   };
 };
 
-var stageLast1Of2Maybe = maybe(function (fn) {
+var stageLast1Of2Maybe = /*#__PURE__*/maybe(function (fn) {
   return function (x1) {
     return function (x2) {
       return fn(x1, x2);
     };
   };
 });
-var stageLast2Of3Maybe = maybe(function (fn) {
+var stageLast2Of3Maybe = /*#__PURE__*/maybe(function (fn) {
   return function (x1) {
     return function (x2, x3) {
       return fn(x1, x2, x3);
@@ -408,289 +408,289 @@ var stageLast2Of3Maybe = maybe(function (fn) {
   };
 });
 
-var liftMaybe = maybe(lift);
-var liftStagedMaybe = maybe(liftStaged);
-var lift1Maybe = maybe(lift1);
-var lift1ShallowMaybe = maybe(lift1Shallow);
+var liftMaybe = /*#__PURE__*/maybe(lift);
+var liftStagedMaybe = /*#__PURE__*/maybe(liftStaged);
+var lift1Maybe = /*#__PURE__*/maybe(lift1);
+var lift1ShallowMaybe = /*#__PURE__*/maybe( /*#__PURE__*/lift1Shallow);
 
-var F$1 = F;
-var T$1 = T;
-var __$1 = __;
-var add$1 = liftMaybe(add);
-var addIndex$1 = liftStagedMaybe(addIndex);
-var adjust$1 = liftMaybe(adjust);
-var all$1 = liftMaybe(all);
-var allPass$1 = liftStagedMaybe(allPass);
-var always$1 = always; // lifting won't really work
-var and$1 = liftMaybe(and);
-var any$1 = liftMaybe(any);
-var anyPass$1 = liftStagedMaybe(anyPass);
-var ap$1 = liftMaybe(ap);
-var aperture$1 = liftMaybe(aperture);
-var append$1 = liftMaybe(append);
-var apply$1 = liftMaybe(apply);
-var applySpec$1 = liftMaybe(applySpec);
-var ascend$1 = liftMaybe(stageLast2Of3Maybe(ascend));
-var assoc$1 = liftMaybe(assoc);
-var assocPath$1 = liftMaybe(assocPath);
-var binary$1 = liftStagedMaybe(binary);
-//export const bind = liftMaybe(R.bind)                          -> conflict, useful?
-var both$1 = liftStagedMaybe(both);
-var call$1 = liftStagedMaybe(call);
-var chain$1 = liftMaybe(chain);
-var clamp$1 = liftMaybe(clamp);
-//export const clone = liftMaybe(R.clone)                        -> useful?
-var comparator$1 = liftStagedMaybe(comparator);
-var complement$1 = liftStagedMaybe(complement);
-var compose$1 = liftStagedMaybe(compose);
-//export const composeK = liftMaybe(R.composeK)                  -> lift staged, useful?
-//export const composeP = liftMaybe(R.composeP)                  -> lift staged, useful?
-var concat$2 = liftMaybe(concat);
-var cond$1 = liftStagedMaybe(cond);
-var construct$1 = liftStagedMaybe(construct);
-var constructN$1 = liftStagedMaybe(constructN);
-var contains$1 = liftMaybe(contains);
-var converge$1 = liftStagedMaybe(converge);
-var countBy$1 = liftMaybe(countBy);
-var curry$2 = liftStagedMaybe(curry);
-var curryN$2 = liftStagedMaybe(curryN);
-var dec$1 = liftMaybe(dec);
-var defaultTo$1 = liftMaybe(defaultTo);
-var descend$1 = liftMaybe(stageLast2Of3Maybe(descend));
-var difference$1 = liftMaybe(difference);
-var differenceWith$1 = liftMaybe(differenceWith);
-var dissoc$1 = liftMaybe(dissoc);
-var dissocPath$1 = liftMaybe(dissocPath);
-var divide$1 = liftMaybe(divide);
-var drop$1 = liftMaybe(drop);
-var dropLast$1 = liftMaybe(dropLast);
-var dropLastWhile$1 = liftMaybe(dropLastWhile);
-var dropRepeats$1 = liftMaybe(dropRepeats);
-var dropRepeatsWith$1 = liftMaybe(dropRepeatsWith);
-var dropWhile$1 = liftMaybe(dropWhile);
-var either$1 = liftStagedMaybe(either);
-var empty$1 = liftMaybe(empty);
-var eqBy$1 = liftMaybe(stageLast2Of3Maybe(eqBy));
-var eqProps$1 = liftMaybe(stageLast2Of3Maybe(eqProps));
-var equals$1 = liftMaybe(equals);
-var evolve$1 = liftMaybe(evolve);
-var filter$1 = liftMaybe(filter);
-var find$1 = liftMaybe(find);
-var findIndex$1 = liftMaybe(findIndex);
-var findLast$1 = liftMaybe(findLast);
-var findLastIndex$1 = liftMaybe(findLastIndex);
-var flatten$1 = liftMaybe(flatten);
-var flip$1 = liftStagedMaybe(flip);
-//export const forEach = liftMaybe(R.forEach)                       -> useful?
-//export const forEachObjIndexed = = liftMaybe(R.forEachObjIndexed) -> useful?
-var fromPairs$1 = liftMaybe(fromPairs);
-var groupBy$1 = liftMaybe(groupBy);
-var groupWith$1 = liftMaybe(groupWith);
-var gt$1 = liftMaybe(gt);
-var gte$1 = liftMaybe(gte);
-var has$1 = liftMaybe(has);
-var hasIn$1 = liftMaybe(hasIn);
-var head$1 = liftMaybe(head);
-var identical$1 = liftMaybe(identical);
-var identity$1 = identity; // lifting won't really work
-var ifElse$1 = liftStagedMaybe(ifElse);
-var inc$1 = liftMaybe(inc);
-var indexBy$1 = liftMaybe(indexBy);
-var indexOf$1 = liftMaybe(indexOf);
-var init$1 = liftMaybe(init);
-var insert$1 = liftMaybe(insert);
-var insertAll$1 = liftMaybe(insertAll);
-var intersection$1 = liftMaybe(intersection);
-var intersectionWith$1 = liftMaybe(intersectionWith);
-var intersperse$1 = liftMaybe(intersperse);
-var into$1 = liftMaybe(into);
-var invert$1 = liftMaybe(invert);
-var invertObj$1 = liftMaybe(invertObj);
-var invoker$1 = liftStagedMaybe(invoker);
-var is$1 = liftMaybe(stageLast1Of2Maybe(is));
-var isEmpty$1 = liftMaybe(isEmpty);
-var isNil$1 = liftMaybe(isNil);
-var join$1 = liftMaybe(join);
-var juxt$1 = liftStagedMaybe(juxt);
-var keys$1 = lift1ShallowMaybe(keys);
-var keysIn$1 = liftMaybe(keysIn);
-var last$1 = liftMaybe(last);
-var lastIndexOf$1 = liftMaybe(lastIndexOf);
-var length$1 = lift1ShallowMaybe(length);
-//export const lens = liftMaybe(R.lens)                          -> partial.lenses
-//export const lensIndex = liftMaybe(R.lensIndex)                -> partial.lenses
-//export const lensPath = liftMaybe(R.lensPath)                  -> partial.lenses
-//export const lensProp = liftMaybe(R.lensProp)                  -> partial.lenses
-//export const lift = liftMaybe(R.lift)                          -> conflict
-//export const liftN = liftMaybe(R.liftN)                        -> conflict
-var lt$1 = liftMaybe(lt);
-var lte$1 = liftMaybe(lte);
-var map$1 = liftMaybe(map);
-var mapAccum$1 = liftMaybe(mapAccum);
-var mapAccumRight$1 = liftMaybe(mapAccumRight);
-var mapObjIndexed$1 = liftMaybe(mapObjIndexed);
-var match$1 = liftMaybe(match);
-var mathMod$1 = liftMaybe(mathMod);
-var max$1 = liftMaybe(max);
-var maxBy$1 = liftMaybe(maxBy);
-var mean$1 = liftMaybe(mean);
-var median$1 = liftMaybe(median);
-var memoize$1 = liftStagedMaybe(memoize);
-var merge$2 = liftMaybe(merge);
-var mergeAll$1 = liftMaybe(mergeAll);
-var mergeWith$1 = liftMaybe(mergeWith);
-var mergeWithKey$1 = liftMaybe(mergeWithKey);
-var min$1 = liftMaybe(min);
-var minBy$1 = liftMaybe(minBy);
-var modulo$1 = liftMaybe(modulo);
-var multiply$1 = liftMaybe(multiply);
-var nAry$1 = liftStagedMaybe(nAry);
-var negate$1 = liftMaybe(negate);
-var none$1 = liftMaybe(none);
-var not$1 = liftMaybe(not);
-var nth$1 = liftMaybe(nth);
-var nthArg$1 = liftStagedMaybe(nthArg);
-var objOf$1 = liftMaybe(objOf);
-var of$1 = liftMaybe(of);
-var omit$1 = liftMaybe(omit);
-//export const once = liftMaybe(R.once)                          -> lift staged, usually wrong thing to do?
-var or$1 = liftMaybe(or);
-//export const over = liftMaybe(R.over)                          -> partial.lenses
-var pair$1 = liftMaybe(pair);
-var partial$1 = liftStagedMaybe(partial);
-var partialRight$1 = liftStagedMaybe(partialRight);
-var partition$1 = liftMaybe(partition);
-var path$1 = liftMaybe(path);
-var pathEq$1 = liftMaybe(pathEq);
-var pathOr$1 = liftMaybe(pathOr);
-var pathSatisfies$1 = liftMaybe(pathSatisfies);
-var pick$1 = liftMaybe(pick);
-var pickAll$1 = liftMaybe(pickAll);
-var pickBy$1 = liftMaybe(pickBy);
-var pipe$1 = liftStagedMaybe(pipe);
-//export const pipeK = liftMaybe(R.pipeK)                        -> lift staged, useful?
-//export const pipeP = liftMaybe(R.pipeP)                        -> lift staged, useful?
-var pluck$1 = liftMaybe(pluck);
-var prepend$1 = liftMaybe(prepend);
-var product$1 = liftMaybe(product);
-var project$1 = liftMaybe(project);
-var prop$1 = liftMaybe(prop);
-var propEq$1 = liftMaybe(propEq);
-var propIs$1 = liftMaybe(propIs);
-var propOr$1 = liftMaybe(propOr);
-var propSatisfies$1 = liftMaybe(propSatisfies);
-var props$1 = liftMaybe(props);
-var range$1 = liftMaybe(range);
-var reduce$1 = liftMaybe(reduce);
-var reduceBy$1 = liftMaybe(reduceBy);
-var reduceRight$1 = liftMaybe(reduceRight);
-var reduceWhile$1 = liftMaybe(reduceWhile);
-var reduced$1 = liftMaybe(reduced);
-var reject$1 = liftMaybe(reject);
-var remove$1 = liftMaybe(remove);
-var repeat$1 = liftMaybe(repeat);
-var replace$1 = liftMaybe(replace);
-var reverse$1 = liftMaybe(reverse);
-var scan$1 = liftMaybe(scan);
-var sequence$1 = liftMaybe(sequence);
-//export const set = liftMaybe(R.set)                            -> partial.lenses, conflict
-var slice$1 = liftMaybe(slice);
-var sort$1 = liftMaybe(sort);
-var sortBy$1 = liftMaybe(sortBy);
-var sortWith$1 = liftMaybe(sortWith);
-var split$1 = liftMaybe(split);
-var splitAt$1 = liftMaybe(splitAt);
-var splitEvery$1 = liftMaybe(splitEvery);
-var splitWhen$1 = liftMaybe(splitWhen);
-var subtract$1 = liftMaybe(subtract);
-var sum$1 = liftMaybe(sum);
-var symmetricDifference$1 = liftMaybe(symmetricDifference);
-var symmetricDifferenceWith$1 = liftMaybe(symmetricDifferenceWith);
-var tail$1 = liftMaybe(tail);
-var take$1 = liftMaybe(take);
-var takeLast$1 = liftMaybe(takeLast);
-var takeLastWhile$1 = liftMaybe(takeLastWhile);
-var takeWhile$1 = liftMaybe(takeWhile);
-var tap$1 = liftMaybe(tap);
-var test$1 = liftMaybe(test);
-var times$1 = liftMaybe(times);
-var toLower$1 = liftMaybe(toLower);
-var toPairs$1 = liftMaybe(toPairs);
-var toPairsIn$1 = liftMaybe(toPairsIn);
-var toString$1 = liftMaybe(toString);
-var toUpper$1 = liftMaybe(toUpper);
-var transduce$1 = liftMaybe(transduce);
-var transpose$1 = liftMaybe(transpose);
-var traverse$1 = liftMaybe(traverse);
-var trim$1 = liftMaybe(trim);
-var tryCatch$1 = liftStagedMaybe(tryCatch);
-var type$1 = liftMaybe(type);
-var unapply$1 = liftStagedMaybe(unapply);
-var unary$1 = liftStagedMaybe(unary);
-var uncurryN$1 = liftStagedMaybe(uncurryN);
-var unfold$1 = liftMaybe(unfold);
-var union$1 = liftMaybe(union);
-var unionWith$1 = liftMaybe(unionWith);
-var uniq$1 = liftMaybe(uniq);
-var uniqBy$1 = liftMaybe(uniqBy);
-var uniqWith$1 = liftMaybe(uniqWith);
-var unless$1 = liftMaybe(unless);
-var unnest$1 = liftMaybe(unnest);
-var until$1 = liftMaybe(until);
-var update$1 = liftMaybe(update);
-var useWith$1 = liftStagedMaybe(useWith);
-var values$1 = lift1Maybe(values);
-var valuesIn$1 = liftMaybe(valuesIn);
-//export const view = liftMaybe(R.view)                          -> partial.lenses, conflict
-var when$1 = liftMaybe(when);
-var where$1 = liftStagedMaybe(stageLast1Of2Maybe(where));
-var whereEq$1 = liftStagedMaybe(stageLast1Of2Maybe(whereEq));
-var without$1 = liftMaybe(without);
-var xprod$1 = liftMaybe(xprod);
-var zip$1 = liftMaybe(zip);
-var zipObj$1 = liftMaybe(zipObj);
-var zipWith$1 = liftMaybe(zipWith);
+var F$1 = /*#__PURE__*/F;
+var T$1 = /*#__PURE__*/T;
+var __$1 = /*#__PURE__*/__;
+var add$1 = /*#__PURE__*/liftMaybe(add);
+var addIndex$1 = /*#__PURE__*/liftStagedMaybe(addIndex);
+var adjust$1 = /*#__PURE__*/liftMaybe(adjust);
+var all$1 = /*#__PURE__*/liftMaybe(all);
+var allPass$1 = /*#__PURE__*/liftStagedMaybe(allPass);
+var always$1 = /*#__PURE__*/always; // lifting won't really work
+var and$1 = /*#__PURE__*/liftMaybe(and);
+var any$1 = /*#__PURE__*/liftMaybe(any);
+var anyPass$1 = /*#__PURE__*/liftStagedMaybe(anyPass);
+var ap$1 = /*#__PURE__*/liftMaybe(ap);
+var aperture$1 = /*#__PURE__*/liftMaybe(aperture);
+var append$1 = /*#__PURE__*/liftMaybe(append);
+var apply$1 = /*#__PURE__*/liftMaybe(apply);
+var applySpec$1 = /*#__PURE__*/liftMaybe(applySpec);
+var ascend$1 = /*#__PURE__*/liftMaybe(stageLast2Of3Maybe(ascend));
+var assoc$1 = /*#__PURE__*/liftMaybe(assoc);
+var assocPath$1 = /*#__PURE__*/liftMaybe(assocPath);
+var binary$1 = /*#__PURE__*/liftStagedMaybe(binary);
+//export const bind = /*#__PURE__*/liftMaybe(R.bind)                          -> conflict, useful?
+var both$1 = /*#__PURE__*/liftStagedMaybe(both);
+var call$1 = /*#__PURE__*/liftStagedMaybe(call);
+var chain$1 = /*#__PURE__*/liftMaybe(chain);
+var clamp$1 = /*#__PURE__*/liftMaybe(clamp);
+//export const clone = /*#__PURE__*/liftMaybe(R.clone)                        -> useful?
+var comparator$1 = /*#__PURE__*/liftStagedMaybe(comparator);
+var complement$1 = /*#__PURE__*/liftStagedMaybe(complement);
+var compose$1 = /*#__PURE__*/liftStagedMaybe(compose);
+//export const composeK = /*#__PURE__*/liftMaybe(R.composeK)                  -> lift staged, useful?
+//export const composeP = /*#__PURE__*/liftMaybe(R.composeP)                  -> lift staged, useful?
+var concat$2 = /*#__PURE__*/liftMaybe(concat);
+var cond$1 = /*#__PURE__*/liftStagedMaybe(cond);
+var construct$1 = /*#__PURE__*/liftStagedMaybe(construct);
+var constructN$1 = /*#__PURE__*/liftStagedMaybe(constructN);
+var contains$1 = /*#__PURE__*/liftMaybe(contains);
+var converge$1 = /*#__PURE__*/liftStagedMaybe(converge);
+var countBy$1 = /*#__PURE__*/liftMaybe(countBy);
+var curry$2 = /*#__PURE__*/liftStagedMaybe(curry);
+var curryN$2 = /*#__PURE__*/liftStagedMaybe(curryN);
+var dec$1 = /*#__PURE__*/liftMaybe(dec);
+var defaultTo$1 = /*#__PURE__*/liftMaybe(defaultTo);
+var descend$1 = /*#__PURE__*/liftMaybe(stageLast2Of3Maybe(descend));
+var difference$1 = /*#__PURE__*/liftMaybe(difference);
+var differenceWith$1 = /*#__PURE__*/liftMaybe(differenceWith);
+var dissoc$1 = /*#__PURE__*/liftMaybe(dissoc);
+var dissocPath$1 = /*#__PURE__*/liftMaybe(dissocPath);
+var divide$1 = /*#__PURE__*/liftMaybe(divide);
+var drop$1 = /*#__PURE__*/liftMaybe(drop);
+var dropLast$1 = /*#__PURE__*/liftMaybe(dropLast);
+var dropLastWhile$1 = /*#__PURE__*/liftMaybe(dropLastWhile);
+var dropRepeats$1 = /*#__PURE__*/liftMaybe(dropRepeats);
+var dropRepeatsWith$1 = /*#__PURE__*/liftMaybe(dropRepeatsWith);
+var dropWhile$1 = /*#__PURE__*/liftMaybe(dropWhile);
+var either$1 = /*#__PURE__*/liftStagedMaybe(either);
+var empty$1 = /*#__PURE__*/liftMaybe(empty);
+var eqBy$1 = /*#__PURE__*/liftMaybe(stageLast2Of3Maybe(eqBy));
+var eqProps$1 = /*#__PURE__*/liftMaybe(stageLast2Of3Maybe(eqProps));
+var equals$1 = /*#__PURE__*/liftMaybe(equals);
+var evolve$1 = /*#__PURE__*/liftMaybe(evolve);
+var filter$1 = /*#__PURE__*/liftMaybe(filter);
+var find$1 = /*#__PURE__*/liftMaybe(find);
+var findIndex$1 = /*#__PURE__*/liftMaybe(findIndex);
+var findLast$1 = /*#__PURE__*/liftMaybe(findLast);
+var findLastIndex$1 = /*#__PURE__*/liftMaybe(findLastIndex);
+var flatten$1 = /*#__PURE__*/liftMaybe(flatten);
+var flip$1 = /*#__PURE__*/liftStagedMaybe(flip);
+//export const forEach = /*#__PURE__*/liftMaybe(R.forEach)                       -> useful?
+//export const forEachObjIndexed = = /*#__PURE__*/liftMaybe(R.forEachObjIndexed) -> useful?
+var fromPairs$1 = /*#__PURE__*/liftMaybe(fromPairs);
+var groupBy$1 = /*#__PURE__*/liftMaybe(groupBy);
+var groupWith$1 = /*#__PURE__*/liftMaybe(groupWith);
+var gt$1 = /*#__PURE__*/liftMaybe(gt);
+var gte$1 = /*#__PURE__*/liftMaybe(gte);
+var has$1 = /*#__PURE__*/liftMaybe(has);
+var hasIn$1 = /*#__PURE__*/liftMaybe(hasIn);
+var head$1 = /*#__PURE__*/liftMaybe(head);
+var identical$1 = /*#__PURE__*/liftMaybe(identical);
+var identity$1 = /*#__PURE__*/identity; // lifting won't really work
+var ifElse$1 = /*#__PURE__*/liftStagedMaybe(ifElse);
+var inc$1 = /*#__PURE__*/liftMaybe(inc);
+var indexBy$1 = /*#__PURE__*/liftMaybe(indexBy);
+var indexOf$1 = /*#__PURE__*/liftMaybe(indexOf);
+var init$1 = /*#__PURE__*/liftMaybe(init);
+var insert$1 = /*#__PURE__*/liftMaybe(insert);
+var insertAll$1 = /*#__PURE__*/liftMaybe(insertAll);
+var intersection$1 = /*#__PURE__*/liftMaybe(intersection);
+var intersectionWith$1 = /*#__PURE__*/liftMaybe(intersectionWith);
+var intersperse$1 = /*#__PURE__*/liftMaybe(intersperse);
+var into$1 = /*#__PURE__*/liftMaybe(into);
+var invert$1 = /*#__PURE__*/liftMaybe(invert);
+var invertObj$1 = /*#__PURE__*/liftMaybe(invertObj);
+var invoker$1 = /*#__PURE__*/liftStagedMaybe(invoker);
+var is$1 = /*#__PURE__*/liftMaybe(stageLast1Of2Maybe(is));
+var isEmpty$1 = /*#__PURE__*/liftMaybe(isEmpty);
+var isNil$1 = /*#__PURE__*/liftMaybe(isNil);
+var join$1 = /*#__PURE__*/liftMaybe(join);
+var juxt$1 = /*#__PURE__*/liftStagedMaybe(juxt);
+var keys$1 = /*#__PURE__*/lift1ShallowMaybe(keys);
+var keysIn$1 = /*#__PURE__*/liftMaybe(keysIn);
+var last$1 = /*#__PURE__*/liftMaybe(last);
+var lastIndexOf$1 = /*#__PURE__*/liftMaybe(lastIndexOf);
+var length$1 = /*#__PURE__*/lift1ShallowMaybe(length);
+//export const lens = /*#__PURE__*/liftMaybe(R.lens)                          -> partial.lenses
+//export const lensIndex = /*#__PURE__*/liftMaybe(R.lensIndex)                -> partial.lenses
+//export const lensPath = /*#__PURE__*/liftMaybe(R.lensPath)                  -> partial.lenses
+//export const lensProp = /*#__PURE__*/liftMaybe(R.lensProp)                  -> partial.lenses
+//export const lift = /*#__PURE__*/liftMaybe(R.lift)                          -> conflict
+//export const liftN = /*#__PURE__*/liftMaybe(R.liftN)                        -> conflict
+var lt$1 = /*#__PURE__*/liftMaybe(lt);
+var lte$1 = /*#__PURE__*/liftMaybe(lte);
+var map$1 = /*#__PURE__*/liftMaybe(map);
+var mapAccum$1 = /*#__PURE__*/liftMaybe(mapAccum);
+var mapAccumRight$1 = /*#__PURE__*/liftMaybe(mapAccumRight);
+var mapObjIndexed$1 = /*#__PURE__*/liftMaybe(mapObjIndexed);
+var match$1 = /*#__PURE__*/liftMaybe(match);
+var mathMod$1 = /*#__PURE__*/liftMaybe(mathMod);
+var max$1 = /*#__PURE__*/liftMaybe(max);
+var maxBy$1 = /*#__PURE__*/liftMaybe(maxBy);
+var mean$1 = /*#__PURE__*/liftMaybe(mean);
+var median$1 = /*#__PURE__*/liftMaybe(median);
+var memoize$1 = /*#__PURE__*/liftStagedMaybe(memoize);
+var merge$2 = /*#__PURE__*/liftMaybe(merge);
+var mergeAll$1 = /*#__PURE__*/liftMaybe(mergeAll);
+var mergeWith$1 = /*#__PURE__*/liftMaybe(mergeWith);
+var mergeWithKey$1 = /*#__PURE__*/liftMaybe(mergeWithKey);
+var min$1 = /*#__PURE__*/liftMaybe(min);
+var minBy$1 = /*#__PURE__*/liftMaybe(minBy);
+var modulo$1 = /*#__PURE__*/liftMaybe(modulo);
+var multiply$1 = /*#__PURE__*/liftMaybe(multiply);
+var nAry$1 = /*#__PURE__*/liftStagedMaybe(nAry);
+var negate$1 = /*#__PURE__*/liftMaybe(negate);
+var none$1 = /*#__PURE__*/liftMaybe(none);
+var not$1 = /*#__PURE__*/liftMaybe(not);
+var nth$1 = /*#__PURE__*/liftMaybe(nth);
+var nthArg$1 = /*#__PURE__*/liftStagedMaybe(nthArg);
+var objOf$1 = /*#__PURE__*/liftMaybe(objOf);
+var of$1 = /*#__PURE__*/liftMaybe(of);
+var omit$1 = /*#__PURE__*/liftMaybe(omit);
+//export const once = /*#__PURE__*/liftMaybe(R.once)                          -> lift staged, usually wrong thing to do?
+var or$1 = /*#__PURE__*/liftMaybe(or);
+//export const over = /*#__PURE__*/liftMaybe(R.over)                          -> partial.lenses
+var pair$1 = /*#__PURE__*/liftMaybe(pair);
+var partial$1 = /*#__PURE__*/liftStagedMaybe(partial);
+var partialRight$1 = /*#__PURE__*/liftStagedMaybe(partialRight);
+var partition$1 = /*#__PURE__*/liftMaybe(partition);
+var path$1 = /*#__PURE__*/liftMaybe(path);
+var pathEq$1 = /*#__PURE__*/liftMaybe(pathEq);
+var pathOr$1 = /*#__PURE__*/liftMaybe(pathOr);
+var pathSatisfies$1 = /*#__PURE__*/liftMaybe(pathSatisfies);
+var pick$1 = /*#__PURE__*/liftMaybe(pick);
+var pickAll$1 = /*#__PURE__*/liftMaybe(pickAll);
+var pickBy$1 = /*#__PURE__*/liftMaybe(pickBy);
+var pipe$1 = /*#__PURE__*/liftStagedMaybe(pipe);
+//export const pipeK = /*#__PURE__*/liftMaybe(R.pipeK)                        -> lift staged, useful?
+//export const pipeP = /*#__PURE__*/liftMaybe(R.pipeP)                        -> lift staged, useful?
+var pluck$1 = /*#__PURE__*/liftMaybe(pluck);
+var prepend$1 = /*#__PURE__*/liftMaybe(prepend);
+var product$1 = /*#__PURE__*/liftMaybe(product);
+var project$1 = /*#__PURE__*/liftMaybe(project);
+var prop$1 = /*#__PURE__*/liftMaybe(prop);
+var propEq$1 = /*#__PURE__*/liftMaybe(propEq);
+var propIs$1 = /*#__PURE__*/liftMaybe(propIs);
+var propOr$1 = /*#__PURE__*/liftMaybe(propOr);
+var propSatisfies$1 = /*#__PURE__*/liftMaybe(propSatisfies);
+var props$1 = /*#__PURE__*/liftMaybe(props);
+var range$1 = /*#__PURE__*/liftMaybe(range);
+var reduce$1 = /*#__PURE__*/liftMaybe(reduce);
+var reduceBy$1 = /*#__PURE__*/liftMaybe(reduceBy);
+var reduceRight$1 = /*#__PURE__*/liftMaybe(reduceRight);
+var reduceWhile$1 = /*#__PURE__*/liftMaybe(reduceWhile);
+var reduced$1 = /*#__PURE__*/liftMaybe(reduced);
+var reject$1 = /*#__PURE__*/liftMaybe(reject);
+var remove$1 = /*#__PURE__*/liftMaybe(remove);
+var repeat$1 = /*#__PURE__*/liftMaybe(repeat);
+var replace$1 = /*#__PURE__*/liftMaybe(replace);
+var reverse$1 = /*#__PURE__*/liftMaybe(reverse);
+var scan$1 = /*#__PURE__*/liftMaybe(scan);
+var sequence$1 = /*#__PURE__*/liftMaybe(sequence);
+//export const set = /*#__PURE__*/liftMaybe(R.set)                            -> partial.lenses, conflict
+var slice$1 = /*#__PURE__*/liftMaybe(slice);
+var sort$1 = /*#__PURE__*/liftMaybe(sort);
+var sortBy$1 = /*#__PURE__*/liftMaybe(sortBy);
+var sortWith$1 = /*#__PURE__*/liftMaybe(sortWith);
+var split$1 = /*#__PURE__*/liftMaybe(split);
+var splitAt$1 = /*#__PURE__*/liftMaybe(splitAt);
+var splitEvery$1 = /*#__PURE__*/liftMaybe(splitEvery);
+var splitWhen$1 = /*#__PURE__*/liftMaybe(splitWhen);
+var subtract$1 = /*#__PURE__*/liftMaybe(subtract);
+var sum$1 = /*#__PURE__*/liftMaybe(sum);
+var symmetricDifference$1 = /*#__PURE__*/liftMaybe(symmetricDifference);
+var symmetricDifferenceWith$1 = /*#__PURE__*/liftMaybe(symmetricDifferenceWith);
+var tail$1 = /*#__PURE__*/liftMaybe(tail);
+var take$1 = /*#__PURE__*/liftMaybe(take);
+var takeLast$1 = /*#__PURE__*/liftMaybe(takeLast);
+var takeLastWhile$1 = /*#__PURE__*/liftMaybe(takeLastWhile);
+var takeWhile$1 = /*#__PURE__*/liftMaybe(takeWhile);
+var tap$1 = /*#__PURE__*/liftMaybe(tap);
+var test$1 = /*#__PURE__*/liftMaybe(test);
+var times$1 = /*#__PURE__*/liftMaybe(times);
+var toLower$1 = /*#__PURE__*/liftMaybe(toLower);
+var toPairs$1 = /*#__PURE__*/liftMaybe(toPairs);
+var toPairsIn$1 = /*#__PURE__*/liftMaybe(toPairsIn);
+var toString$1 = /*#__PURE__*/liftMaybe(toString);
+var toUpper$1 = /*#__PURE__*/liftMaybe(toUpper);
+var transduce$1 = /*#__PURE__*/liftMaybe(transduce);
+var transpose$1 = /*#__PURE__*/liftMaybe(transpose);
+var traverse$1 = /*#__PURE__*/liftMaybe(traverse);
+var trim$1 = /*#__PURE__*/liftMaybe(trim);
+var tryCatch$1 = /*#__PURE__*/liftStagedMaybe(tryCatch);
+var type$1 = /*#__PURE__*/liftMaybe(type);
+var unapply$1 = /*#__PURE__*/liftStagedMaybe(unapply);
+var unary$1 = /*#__PURE__*/liftStagedMaybe(unary);
+var uncurryN$1 = /*#__PURE__*/liftStagedMaybe(uncurryN);
+var unfold$1 = /*#__PURE__*/liftMaybe(unfold);
+var union$1 = /*#__PURE__*/liftMaybe(union);
+var unionWith$1 = /*#__PURE__*/liftMaybe(unionWith);
+var uniq$1 = /*#__PURE__*/liftMaybe(uniq);
+var uniqBy$1 = /*#__PURE__*/liftMaybe(uniqBy);
+var uniqWith$1 = /*#__PURE__*/liftMaybe(uniqWith);
+var unless$1 = /*#__PURE__*/liftMaybe(unless);
+var unnest$1 = /*#__PURE__*/liftMaybe(unnest);
+var until$1 = /*#__PURE__*/liftMaybe(until);
+var update$1 = /*#__PURE__*/liftMaybe(update);
+var useWith$1 = /*#__PURE__*/liftStagedMaybe(useWith);
+var values$1 = /*#__PURE__*/lift1Maybe(values);
+var valuesIn$1 = /*#__PURE__*/liftMaybe(valuesIn);
+//export const view = /*#__PURE__*/liftMaybe(R.view)                          -> partial.lenses, conflict
+var when$1 = /*#__PURE__*/liftMaybe(when);
+var where$1 = /*#__PURE__*/liftStagedMaybe(stageLast1Of2Maybe(where));
+var whereEq$1 = /*#__PURE__*/liftStagedMaybe(stageLast1Of2Maybe(whereEq));
+var without$1 = /*#__PURE__*/liftMaybe(without);
+var xprod$1 = /*#__PURE__*/liftMaybe(xprod);
+var zip$1 = /*#__PURE__*/liftMaybe(zip);
+var zipObj$1 = /*#__PURE__*/liftMaybe(zipObj);
+var zipWith$1 = /*#__PURE__*/liftMaybe(zipWith);
 
 // Math
 
-var abs = lift1ShallowMaybe(Math.abs);
-var acos = lift1ShallowMaybe(Math.acos);
-var acosh = lift1ShallowMaybe(Math.acosh);
-var asin = lift1ShallowMaybe(Math.asin);
-var asinh = lift1ShallowMaybe(Math.asinh);
-var atan = lift1ShallowMaybe(Math.atan);
-var atan2 = liftMaybe(Math.atan2);
-var atanh = lift1ShallowMaybe(Math.atanh);
-var cbrt = lift1ShallowMaybe(Math.cbrt);
-var ceil = lift1ShallowMaybe(Math.ceil);
-var clz32 = lift1ShallowMaybe(Math.clz32);
-var cos = lift1ShallowMaybe(Math.cos);
-var cosh = lift1ShallowMaybe(Math.cosh);
-var exp = lift1ShallowMaybe(Math.exp);
-var expm1 = lift1ShallowMaybe(Math.expm1);
-var floor = lift1ShallowMaybe(Math.floor);
-var fround = lift1ShallowMaybe(Math.fround);
-var hypot = liftMaybe(Math.hypot);
-var imul = liftMaybe(Math.imul);
-var log = lift1ShallowMaybe(Math.log);
-var log10 = lift1ShallowMaybe(Math.log10);
-var log1p = lift1ShallowMaybe(Math.log1p);
-var log2 = lift1ShallowMaybe(Math.log2);
-var pow = liftMaybe(Math.pow);
-var round = lift1ShallowMaybe(Math.round);
-var sign = lift1ShallowMaybe(Math.sign);
-var sin = lift1ShallowMaybe(Math.sin);
-var sinh = lift1ShallowMaybe(Math.sinh);
-var sqrt = lift1ShallowMaybe(Math.sqrt);
-var tan = lift1ShallowMaybe(Math.tan);
-var tanh = lift1ShallowMaybe(Math.tanh);
-var trunc = lift1ShallowMaybe(Math.trunc);
+var abs = /*#__PURE__*/lift1ShallowMaybe(Math.abs);
+var acos = /*#__PURE__*/lift1ShallowMaybe(Math.acos);
+var acosh = /*#__PURE__*/lift1ShallowMaybe(Math.acosh);
+var asin = /*#__PURE__*/lift1ShallowMaybe(Math.asin);
+var asinh = /*#__PURE__*/lift1ShallowMaybe(Math.asinh);
+var atan = /*#__PURE__*/lift1ShallowMaybe(Math.atan);
+var atan2 = /*#__PURE__*/liftMaybe(Math.atan2);
+var atanh = /*#__PURE__*/lift1ShallowMaybe(Math.atanh);
+var cbrt = /*#__PURE__*/lift1ShallowMaybe(Math.cbrt);
+var ceil = /*#__PURE__*/lift1ShallowMaybe(Math.ceil);
+var clz32 = /*#__PURE__*/lift1ShallowMaybe(Math.clz32);
+var cos = /*#__PURE__*/lift1ShallowMaybe(Math.cos);
+var cosh = /*#__PURE__*/lift1ShallowMaybe(Math.cosh);
+var exp = /*#__PURE__*/lift1ShallowMaybe(Math.exp);
+var expm1 = /*#__PURE__*/lift1ShallowMaybe(Math.expm1);
+var floor = /*#__PURE__*/lift1ShallowMaybe(Math.floor);
+var fround = /*#__PURE__*/lift1ShallowMaybe(Math.fround);
+var hypot = /*#__PURE__*/liftMaybe(Math.hypot);
+var imul = /*#__PURE__*/liftMaybe(Math.imul);
+var log = /*#__PURE__*/lift1ShallowMaybe(Math.log);
+var log10 = /*#__PURE__*/lift1ShallowMaybe(Math.log10);
+var log1p = /*#__PURE__*/lift1ShallowMaybe(Math.log1p);
+var log2 = /*#__PURE__*/lift1ShallowMaybe(Math.log2);
+var pow = /*#__PURE__*/liftMaybe(Math.pow);
+var round = /*#__PURE__*/lift1ShallowMaybe(Math.round);
+var sign = /*#__PURE__*/lift1ShallowMaybe(Math.sign);
+var sin = /*#__PURE__*/lift1ShallowMaybe(Math.sin);
+var sinh = /*#__PURE__*/lift1ShallowMaybe(Math.sinh);
+var sqrt = /*#__PURE__*/lift1ShallowMaybe(Math.sqrt);
+var tan = /*#__PURE__*/lift1ShallowMaybe(Math.tan);
+var tanh = /*#__PURE__*/lift1ShallowMaybe(Math.tanh);
+var trunc = /*#__PURE__*/lift1ShallowMaybe(Math.trunc);
 
 //
 
-var indices = pipe2U(length$1, lift1Shallow(range(0)));
+var indices = /*#__PURE__*/pipe2U(length$1, lift1Shallow(range(0)));
 
-var mapElems = curry$1(function (fn, elems) {
+var mapElems = /*#__PURE__*/curry$1(function (fn, elems) {
   return mapCached(function (i) {
     return fn(view(i, elems), i);
   }, indices(elems));
