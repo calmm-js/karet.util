@@ -257,13 +257,10 @@ export const view = /*#__PURE__*/I_curry((l, xs) =>
 
 const types = {context: PropTypes.any}
 
-export function Context(props) {
+export const Context = /*#__PURE__*/inherit(function Context(props) {
+  Context.childContextTypes = types
   React.Component.call(this, props)
-}
-
-Context.childContextTypes = types
-
-inherit(Context, React.Component, {
+}, React.Component, {
   getChildContext() {
     return {context: this.props.context}
   },
