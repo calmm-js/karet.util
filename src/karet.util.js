@@ -24,6 +24,7 @@ import {
   dissocPartialU,
   hasU,
   id,
+  identicalU,
   inherit,
   isDefined,
   pipe2U,
@@ -590,5 +591,18 @@ export const trunc  = /*#__PURE__*/lift1ShallowMaybe(Math.trunc)
 
 export const indices = /*#__PURE__*/pipe2U(length, lift1Shallow(R.range(0)))
 
-export const mapElems = /*#__PURE__*/I_curry((fn, elems) =>
-  mapCached(i => fn(view(i, elems), i), indices(elems)))
+//
+
+export const mapElems = /*#__PURE__*/I_curry((xi2y, xs) => seq(
+  xs,
+  foldPast((ysIn, xsIn) => {
+    const xsN = xsIn.length
+    const ysN = ysIn.length
+    if (xsN === ysN)
+      return ysIn
+    const ys = Array(xsN)
+    for (let i=0; i<xsN; ++i)
+      ys[i] = i < ysN ? ysIn[i] : xi2y(view(i, xs), i)
+    return ys
+  }, []),
+  skipDuplicates(identicalU)))
