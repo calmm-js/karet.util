@@ -13,16 +13,24 @@ export default {
              "prop-types",
              "ramda",
              "kefir"],
-  globals: {"infestines": "I", "partial.lenses": "L"},
-  plugins: [].concat(
-    process.env.NODE_ENV
-    ? [replace({"process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV)})]
-    : [],
-    [nodeResolve()],
-    [commonjs({include: 'node_modules/**'})],
-    [babel()],
-    process.env.NODE_ENV === "production"
-    ? [uglify()]
-    : []
-  )
+  globals: {
+    "infestines": "I",
+    "karet": "karet",
+    "kefir": "Kefir",
+    "kefir.atom": "kefir.atom",
+    "kefir.combines": "kefir.combines",
+    "partial.lenses": "L",
+    "prop-types": "PropTypes",
+    "ramda": "R"
+  },
+  plugins: [
+    process.env.NODE_ENV && replace({
+      "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV)
+    }),
+    nodeResolve(),
+    commonjs({include: 'node_modules/**'}),
+    babel(),
+    process.env.NODE_ENV === "production" &&
+      uglify()
+  ].filter(x => x)
 }
