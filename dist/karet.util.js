@@ -1,19 +1,12 @@
-'use strict';
+(function (global, factory) {
+	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('ramda'), require('kefir.atom'), require('kefir'), require('infestines'), require('partial.lenses'), require('kefir.combines'), require('karet'), require('prop-types')) :
+	typeof define === 'function' && define.amd ? define(['exports', 'ramda', 'kefir.atom', 'kefir', 'infestines', 'partial.lenses', 'kefir.combines', 'karet', 'prop-types'], factory) :
+	(factory((global.karet = global.karet || {}, global.karet.util = global.karet.util || {}),global.R,global.kefir.atom,global.Kefir,global.I,global.L,global.kefir.combines,global.karet,global.PropTypes));
+}(this, (function (exports,R,kefir_atom,kefir,infestines,partial_lenses,K,React,PropTypes) { 'use strict';
 
-Object.defineProperty(exports, '__esModule', { value: true });
-
-function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
-
-var R = require('ramda');
-var kefir_atom = require('kefir.atom');
-var kefir = require('kefir');
-var infestines = require('infestines');
-var partial_lenses = require('partial.lenses');
-var K = require('kefir.combines');
-var K__default = _interopDefault(K);
-var React = require('karet');
-var React__default = _interopDefault(React);
-var PropTypes = _interopDefault(require('prop-types'));
+var K__default = 'default' in K ? K['default'] : K;
+var React__default = 'default' in React ? React['default'] : React;
+PropTypes = 'default' in PropTypes ? PropTypes['default'] : PropTypes;
 
 var liftStaged = function liftStaged(fn) {
   return K.lift(infestines.pipe2U(fn, K.lift));
@@ -1023,3 +1016,7 @@ exports.tanh = tanh;
 exports.trunc = trunc;
 exports.indices = indices;
 exports.mapElems = mapElems;
+
+Object.defineProperty(exports, '__esModule', { value: true });
+
+})));
