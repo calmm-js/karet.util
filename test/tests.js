@@ -119,18 +119,19 @@ describe("mapElems", () => {
 })
 
 describe("mapElemsWithIds", () => {
-  testEq(`U.seq(Kefir.concat([C([{id: "2", v: 1},
-                                 {id: "1", v: 2},
-                                 {id: "3", v: 3}]),
-                              C([{id: "1", v: 2},
-                                 {id: "2", v: 1},
-                                 {id: "3", v: 3}])]),
-                U.toProperty,
-                U.mapElemsWithIds(s => s.id, (x, i) => [x, i]),
-                U.flatMapLatest(U.template))`,
-         [[{id: "1", v: 2}, "1"],
-          [{id: "2", v: 1}, "2"],
-          [{id: "3", v: 3}, "3"]])
+  testEq(`{let uniq = 0;
+           const xs = U.atom([{id: "2"}, {id: "1"}, {id: "3"}]);
+           const ys =
+             U.seq(xs,
+                   U.mapElemsWithIds(s => s.id, (x, i) => [x, i, ++uniq]),
+                   U.flatMapLatest(U.template),
+                   U.toProperty);
+           ys.onValue(() => {});
+           xs.set([{id: "1"}, {id: "2"}, {id: "3"}]);
+           return ys}`,
+         [[{id: "1"}, "1", 2],
+          [{id: "2"}, "2", 1],
+          [{id: "3"}, "3", 3]])
 })
 
 describe("sink", () => {
