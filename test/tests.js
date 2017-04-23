@@ -111,11 +111,17 @@ describe("mapCached", () => {
 })
 
 describe("mapElems", () => {
-  testEq(`U.seq(Kefir.concat([C([2, 1, 1]), C([1, 3, 2])]),
-                U.toProperty,
-                U.mapElems((x, i) => [x, i]),
-                U.flatMapLatest(U.template))`,
-         [[1, 0], [3, 1], [2, 2]])
+  testEq(`{let uniq = 0;
+           const xs = U.atom([2, 1, 1]);
+           const ys =
+             U.seq(xs,
+                   U.mapElems((x, i) => [x, i, ++uniq]),
+                   U.flatMapLatest(U.template),
+                   U.toProperty);
+          ys.onValue(() => {});
+          xs.set([1, 3, 2]);
+          return ys}`,
+         [[1, 0, 1], [3, 1, 2], [2, 2, 3]])
 })
 
 describe("mapElemsWithIds", () => {
