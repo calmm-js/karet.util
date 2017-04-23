@@ -139,6 +139,7 @@ element.
 #### <a id="U-mapIndexed"></a> [≡](#contents) [`U.mapIndexed((x, i) => ..., array)`](#U-mapIndexed)
 #### <a id="U-indices"></a> [≡](#contents) [`U.indices(array)`](#U-indices)
 #### <a id="U-mapElems"></a> [≡](#contents) [`U.mapElems((elem, i) => ..., array)`](#U-mapElems)
+#### <a id="U-mapElemsWithIds"></a> [≡](#contents) [`U.mapElemsWithIds(elem => id, (elem, id) => ..., array)`](#U-mapElemsWithIds)
 
 ### Atom
 #### <a id="U-atom"></a> [≡](#contents) [`U.atom(value)`](#U-atom)

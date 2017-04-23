@@ -118,6 +118,21 @@ describe("mapElems", () => {
          [[1, 0], [3, 1], [2, 2]])
 })
 
+describe("mapElemsWithIds", () => {
+  testEq(`U.seq(Kefir.concat([C([{id: "2", v: 1},
+                                 {id: "1", v: 2},
+                                 {id: "3", v: 3}]),
+                              C([{id: "1", v: 2},
+                                 {id: "2", v: 1},
+                                 {id: "3", v: 3}])]),
+                U.toProperty,
+                U.mapElemsWithIds(s => s.id, (x, i) => [x, i]),
+                U.flatMapLatest(U.template))`,
+         [[{id: "1", v: 2}, "1"],
+          [{id: "2", v: 1}, "2"],
+          [{id: "3", v: 3}, "3"]])
+})
+
 describe("sink", () => {
   testEq('U.sink(C("lol"))', undefined)
 })
