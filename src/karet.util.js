@@ -609,31 +609,31 @@ export const mapElems = /*#__PURE__*/I_curry((xi2y, xs) => seq(
 
 //
 
-export const mapElemsWithIds = /*#__PURE__*/I_curry((idOf, xi2y, xsIn) => {
+export const mapElemsWithIds = /*#__PURE__*/I_curry((idOf, xi2y, xs) => {
   const id2info = {}
   const find = findHint((x, info) => idOf(x) === info.id)
   return seq(
-    xsIn,
-    foldPast((ysOld, xs) => {
-      const n = xs.length
-      let ys = ysOld.length === n ? ysOld : Array(n)
+    xs,
+    foldPast((ysIn, xsIn) => {
+      const n = xsIn.length
+      let ys = ysIn.length === n ? ysIn : Array(n)
       for (let i=0; i<n; ++i) {
-        const id = idOf(xs[i])
+        const id = idOf(xsIn[i])
         let info = id2info[id]
         if (void 0 === info) {
           info = id2info[id] = {}
           info.id = id
           info.hint = i
-          info.elem = xi2y(view(find(info), xsIn), id)
+          info.elem = xi2y(view(find(info), xs), id)
         }
         if (ys[i] !== info.elem) {
           info.hint = i
-          if (ys === ysOld)
+          if (ys === ysIn)
             ys = ys.slice(0)
           ys[i] = info.elem
         }
       }
-      if (ys !== ysOld) {
+      if (ys !== ysIn) {
         for (const id in id2info) {
           const info = id2info[id]
           if (ys[info.hint] !== info.elem)

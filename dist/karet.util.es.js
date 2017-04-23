@@ -703,30 +703,30 @@ var mapElems = /*#__PURE__*/curry$1(function (xi2y, xs) {
 
 //
 
-var mapElemsWithIds = /*#__PURE__*/curry$1(function (idOf, xi2y, xsIn) {
+var mapElemsWithIds = /*#__PURE__*/curry$1(function (idOf, xi2y, xs) {
   var id2info = {};
   var find$$1 = findHint(function (x, info) {
     return idOf(x) === info.id;
   });
-  return seq(xsIn, foldPast(function (ysOld, xs) {
-    var n = xs.length;
-    var ys = ysOld.length === n ? ysOld : Array(n);
+  return seq(xs, foldPast(function (ysIn, xsIn) {
+    var n = xsIn.length;
+    var ys = ysIn.length === n ? ysIn : Array(n);
     for (var i = 0; i < n; ++i) {
-      var _id2 = idOf(xs[i]);
+      var _id2 = idOf(xsIn[i]);
       var info = id2info[_id2];
       if (void 0 === info) {
         info = id2info[_id2] = {};
         info.id = _id2;
         info.hint = i;
-        info.elem = xi2y(view(find$$1(info), xsIn), _id2);
+        info.elem = xi2y(view(find$$1(info), xs), _id2);
       }
       if (ys[i] !== info.elem) {
         info.hint = i;
-        if (ys === ysOld) ys = ys.slice(0);
+        if (ys === ysIn) ys = ys.slice(0);
         ys[i] = info.elem;
       }
     }
-    if (ys !== ysOld) {
+    if (ys !== ysIn) {
       for (var _id3 in id2info) {
         var _info = id2info[_id3];
         if (ys[_info.hint] !== _info.elem) delete id2info[_id3];
