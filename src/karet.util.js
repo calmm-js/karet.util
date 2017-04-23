@@ -32,7 +32,7 @@ import {
   seqPartial
 } from "infestines"
 
-import {get} from "partial.lenses"
+import {findHint, get} from "partial.lenses"
 import K, {lift, lift1, lift1Shallow} from "kefir.combines"
 import React, {fromKefir} from "karet"
 import PropTypes from "prop-types"
@@ -606,3 +606,41 @@ export const mapElems = /*#__PURE__*/I_curry((xi2y, xs) => seq(
     return ys
   }, []),
   skipDuplicates(identicalU)))
+
+//
+
+export const mapElemsWithIds = /*#__PURE__*/I_curry((idOf, xi2y, xsIn) => {
+  const id2info = {}
+  const find = findHint((x, info) => idOf(x) === info.id)
+  return seq(
+    xsIn,
+    foldPast((ysOld, xs) => {
+      const n = xs.length
+      let ys = ysOld.length === n ? ysOld : Array(n)
+      for (let i=0; i<n; ++i) {
+        const id = idOf(xs[i])
+        let info = id2info[id]
+        if (void 0 === info) {
+          info = id2info[id] = {}
+          info.id = id
+          info.hint = i
+          info.elem = xi2y(view(find(info), xsIn), id)
+        }
+        if (ys[i] !== info.elem) {
+          info.hint = i
+          if (ys === ysOld)
+            ys = ys.slice(0)
+          ys[i] = info.elem
+        }
+      }
+      if (ys !== ysOld) {
+        for (const id in id2info) {
+          const info = id2info[id]
+          if (ys[info.hint] !== info.elem)
+            delete id2info[id]
+        }
+      }
+      return ys
+    }, []),
+    skipDuplicates(identicalU))
+})

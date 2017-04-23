@@ -118,6 +118,22 @@ describe("mapElems", () => {
          [[1, 0], [3, 1], [2, 2]])
 })
 
+describe("mapElemsWithIds", () => {
+  testEq(`{let uniq = 0;
+           const xs = U.atom([{id: "2"}, {id: "1"}, {id: "3"}]);
+           const ys =
+             U.seq(xs,
+                   U.mapElemsWithIds(s => s.id, (x, i) => [x, i, ++uniq]),
+                   U.flatMapLatest(U.template),
+                   U.toProperty);
+           ys.onValue(() => {});
+           xs.set([{id: "1"}, {id: "2"}, {id: "3"}]);
+           return ys}`,
+         [[{id: "1"}, "1", 2],
+          [{id: "2"}, "2", 1],
+          [{id: "3"}, "3", 3]])
+})
+
 describe("sink", () => {
   testEq('U.sink(C("lol"))', undefined)
 })

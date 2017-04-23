@@ -54,11 +54,11 @@
     "rollup-plugin-uglify": "^1.0.2"
   },
   "dependencies": {
-    "infestines": "^0.4.2",
+    "infestines": "^0.4.4",
     "karet": "^1.0.0",
     "kefir.atom": "^5.3.0",
     "kefir.combines": "^4.0.0",
-    "partial.lenses": ">=2.2.0",
+    "partial.lenses": "^10.2.0",
     "prop-types": "^15.5.6",
     "ramda": "^0.23.0"
   },
