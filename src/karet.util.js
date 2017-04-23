@@ -611,7 +611,7 @@ export const mapElems = /*#__PURE__*/I_curry((xi2y, xs) => seq(
 
 export const mapElemsWithIds = /*#__PURE__*/I_curry((idOf, xi2y, xsIn) => {
   const id2info = {}
-  const find = findHint((x, info) => idOf(x) == info.id)
+  const find = findHint((x, info) => idOf(x) === info.id)
   return seq(
     xsIn,
     foldPast((ysOld, xs) => {
