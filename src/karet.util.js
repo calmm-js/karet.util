@@ -240,10 +240,18 @@ export const mapCached = /*#__PURE__*/I_curryN(2, fromId =>
 export const mapIndexed = /*#__PURE__*/I_curryN(2, xi2y =>
   lift1(xs => xs.map((x, i) => xi2y(x, i))))
 
-export const ifte = /*#__PURE__*/I_curry((b, t, e) =>
-  toProperty(flatMapLatest(b => b ? t : e, b)))
-export const ift = /*#__PURE__*/I_curry((b, t) =>
-  toProperty(flatMapLatest(b => b ? t : undefined, b)))
+const ifteU = (b, t, e) => toProperty(flatMapLatest(b => b ? t : e, b))
+
+export const ifte = /*#__PURE__*/I_curry(ifteU)
+export const ift = /*#__PURE__*/arityN(2, ifteU)
+
+export function iftes() {
+  let n = arguments.length
+  let r = n & 1 ? arguments[--n] : undefined
+  while (0 <= (n -= 2))
+    r = ifteU(arguments[n], arguments[n+1], r)
+  return r
+}
 
 //
 

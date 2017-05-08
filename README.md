@@ -132,6 +132,7 @@ element.
 
 #### <a id="U-ift"></a> [≡](#contents) [`U.ift(condition, consequent)`](#U-ift)
 #### <a id="U-ifte"></a> [≡](#contents) [`U.ifte(condition, consequent, alternative)`](#U-ifte)
+#### <a id="U-iftes"></a> [≡](#contents) [`U.iftes(condition, consequent, ...[, alternative])`](#U-iftes)
 
 #### <a id="U-actions"></a> [≡](#contents) [`U.actions(...maybeFns)`](#U-actions)
 

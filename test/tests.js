@@ -171,6 +171,19 @@ describe("ift", () => {
   testEq('U.ift(C(false), "x")', undefined)
 })
 
+describe("iftes", () => {
+  testEq(`U.iftes()`, undefined)
+  testEq(`U.iftes(C(false), 1, 2)`, 2)
+  testEq(`U.iftes(C(false), 1,
+                  C(false), 2,
+                  3)`,
+         3)
+  testEq(`U.iftes(C(false), 1,
+                  C(false), 2,
+                  C(false), 3)`,
+         undefined)
+})
+
 describe("toPartial", () => {
   testEq(`U.toPartial(R.add)(C(1), undefined)`, undefined)
   testEq(`U.toPartial(R.add)(C(undefined), 2)`, undefined)
