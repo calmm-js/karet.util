@@ -290,16 +290,22 @@ var mapIndexed = /*#__PURE__*/infestines.curryN(2, function (xi2y) {
   });
 });
 
-var ifte = /*#__PURE__*/infestines.curry(function (b, t, e) {
+var ifteU = function ifteU(b, t, e) {
   return toProperty(flatMapLatest(function (b) {
     return b ? t : e;
   }, b));
-});
-var ift = /*#__PURE__*/infestines.curry(function (b, t) {
-  return toProperty(flatMapLatest(function (b) {
-    return b ? t : undefined;
-  }, b));
-});
+};
+
+var ifte = /*#__PURE__*/infestines.curry(ifteU);
+var ift = /*#__PURE__*/infestines.arityN(2, ifteU);
+
+function iftes() {
+  var n = arguments.length;
+  var r = n & 1 ? arguments[--n] : undefined;
+  while (0 <= (n -= 2)) {
+    r = ifteU(arguments[n], arguments[n + 1], r);
+  }return r;
+}
 
 //
 
@@ -795,6 +801,7 @@ exports.mapCached = mapCached;
 exports.mapIndexed = mapIndexed;
 exports.ifte = ifte;
 exports.ift = ift;
+exports.iftes = iftes;
 exports.view = view;
 exports.Context = Context;
 exports.withContext = withContext;
