@@ -156,7 +156,7 @@ element.
 A `Bus` stream has the following methods:
 
 * `bus.push(value)` to explicitly emit value `value`,
-* `bus.error(value)` to explicitly emit error `error`
+* `bus.error(value)` to explicitly emit error `error`, and
 * `bus.end()` to explicitly end the stream after which all the methods do
   nothing.
 
