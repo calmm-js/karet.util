@@ -153,7 +153,8 @@ element.
 ### Bus
 #### <a id="U-bus"></a> [≡](#contents) [`U.bus()`](#U-bus)
 
-A `Bus` stream has the following methods:
+`U.bus()` creates a new observable `Bus` stream.  A `Bus` stream has the
+following methods:
 
 * `bus.push(value)` to explicitly emit value `value`,
 * `bus.error(value)` to explicitly emit error `error`, and
