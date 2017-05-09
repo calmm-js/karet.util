@@ -161,6 +161,29 @@ describe("Context", () => {
              '<div>Hello, World!</div>')
 })
 
+describe("bus", () => {
+  testEq(`{const b = U.bus();
+           let result;
+           U.seq(b,
+                 U.flatMapParallel(R.negate),
+                 U.on({value: x => result = x}));
+           b.push(-101);
+           return result}`,
+         101)
+  testEq(`{const b = U.bus();
+           let result;
+           U.seq(b,
+                 U.flatMapErrors(R.negate),
+                 U.on({value: x => result = x}));
+           b.error(-69);
+           return result}`,
+         69)
+  testEq(`{const b = U.bus();
+           b.end();
+           return U.parallel([b, C(42)])}`,
+         42)
+})
+
 describe("ifte", () => {
   testEq('U.ifte(C(true), C(1), C(2))', 1)
   testEq('U.ifte(C(false), 1, 2)', 2)

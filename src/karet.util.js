@@ -8,6 +8,7 @@ import {
 } from "kefir.atom"
 import {
   Observable,
+  Stream,
   concat as Kefir_concat,
   constant as Kefir_constant,
   fromEvents as Kefir_fromEvents,
@@ -95,6 +96,18 @@ export const set = /*#__PURE__*/I_curry((settable, xs) => {
   if (ss instanceof Observable)
     return ss.toProperty(toUndefined)
 })
+
+//
+
+export const Bus = /*#__PURE__*/inherit(function Bus() {
+  Stream.call(this)
+}, Stream, {
+  push(value) { this._emitValue(value) },
+  error(value) { this._emitError(value) },
+  end() { this._emitEnd() }
+})
+
+export const bus = () => new Bus()
 
 //
 

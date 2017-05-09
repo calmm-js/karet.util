@@ -150,6 +150,16 @@ element.
 #### <a id="U-view"></a> [≡](#contents) [`U.view(lens, value)`](#U-view)
 #### <a id="U-set"></a> [≡](#contents) [`U.set(settable, value)`](#U-set)
 
+### Bus
+#### <a id="U-bus"></a> [≡](#contents) [`U.bus()`](#U-bus)
+
+A `Bus` stream has the following methods:
+
+* `bus.push(value)` to explicitly emit value `value`,
+* `bus.error(value)` to explicitly emit error `error`
+* `bus.end()` to explicitly end the stream after which all the methods do
+  nothing.
+
 ### Karet
 #### <a id="U-fromKefir"></a> [≡](#contents) [`U.fromKefir()`](#U-fromKefir)
 
