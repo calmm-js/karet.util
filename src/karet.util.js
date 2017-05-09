@@ -62,6 +62,8 @@ export const serially = xs => Kefir_concat(R.map(toConstant, xs))
 export const parallel = /*#__PURE__*/Kefir_merge
 export const delay = /*#__PURE__*/I_curry((ms, xs) => toConstant(xs).delay(ms))
 export const endWith = /*#__PURE__*/I_curry((v, xs) => toConstant(xs).concat(toConstant(v)))
+export const flatMapParallel = /*#__PURE__*/I_curry((fn, xs) =>
+  toConstant(xs).flatMap(pipe2U(fn, toConstant)))
 export const flatMapSerial = /*#__PURE__*/I_curry((fn, xs) =>
   toConstant(xs).flatMapConcat(pipe2U(fn, toConstant)))
 export const flatMapErrors = /*#__PURE__*/I_curry((fn, xs) =>
