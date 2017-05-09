@@ -49,6 +49,9 @@ var delay = /*#__PURE__*/infestines.curry(function (ms, xs) {
 var endWith = /*#__PURE__*/infestines.curry(function (v, xs) {
   return toConstant(xs).concat(toConstant(v));
 });
+var flatMapParallel = /*#__PURE__*/infestines.curry(function (fn, xs) {
+  return toConstant(xs).flatMap(infestines.pipe2U(fn, toConstant));
+});
 var flatMapSerial = /*#__PURE__*/infestines.curry(function (fn, xs) {
   return toConstant(xs).flatMapConcat(infestines.pipe2U(fn, toConstant));
 });
@@ -113,6 +116,26 @@ var set = /*#__PURE__*/infestines.curry(function (settable, xs) {
   });
   if (ss instanceof kefir.Observable) return ss.toProperty(toUndefined);
 });
+
+//
+
+var Bus = /*#__PURE__*/infestines.inherit(function Bus() {
+  kefir.Stream.call(this);
+}, kefir.Stream, {
+  push: function push(value) {
+    this._emitValue(value);
+  },
+  error: function error(value) {
+    this._emitError(value);
+  },
+  end: function end() {
+    this._emitEnd();
+  }
+});
+
+var bus = function bus() {
+  return new Bus();
+};
 
 //
 
@@ -755,6 +778,7 @@ exports.serially = serially;
 exports.parallel = parallel;
 exports.delay = delay;
 exports.endWith = endWith;
+exports.flatMapParallel = flatMapParallel;
 exports.flatMapSerial = flatMapSerial;
 exports.flatMapErrors = flatMapErrors;
 exports.flatMapLatest = flatMapLatest;
@@ -777,6 +801,8 @@ exports.toProperty = toProperty;
 exports.throttle = throttle;
 exports.fromEvents = fromEvents$1;
 exports.set = set;
+exports.Bus = Bus;
+exports.bus = bus;
 exports.refTo = refTo;
 exports.seq = infestines.seq;
 exports.seqPartial = infestines.seqPartial;
