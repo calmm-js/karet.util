@@ -1,6 +1,6 @@
 {
   "name": "karet.util",
-  "version": "0.12.2",
+  "version": "0.13.0",
   "description": "Utilities for working with Karet",
   "module": "dist/karet.util.es.js",
   "main": "dist/karet.util.cjs.js",
@@ -60,7 +60,7 @@
     "kefir.combines": "^4.0.0",
     "partial.lenses": "^11.0.0",
     "prop-types": "^15.5.6",
-    "ramda": "^0.23.0"
+    "ramda": "^0.24.0"
   },
   "peerDependencies": {
     "kefir": "^3.7.0"

@@ -12,10 +12,12 @@ var liftStaged = function liftStaged(fn) {
   return K.lift(infestines.pipe2U(fn, K.lift));
 };
 var template = function template(observables) {
-  return K__default(observables, infestines.id);
-};
+  return K__default(observables, infestines.id
 
-// Kefir
+  //
+
+  );
+};// Kefir
 
 var toUndefined = function toUndefined(_) {};
 var toConstant = function toConstant(x) {
@@ -115,11 +117,11 @@ var set = /*#__PURE__*/infestines.curry(function (settable, xs) {
     return settable.set(xs);
   });
   if (ss instanceof kefir.Observable) return ss.toProperty(toUndefined);
-});
+}
 
 //
 
-var Bus = /*#__PURE__*/infestines.inherit(function Bus() {
+);var Bus = /*#__PURE__*/infestines.inherit(function Bus() {
   kefir.Stream.call(this);
 }, kefir.Stream, {
   push: function push(value) {
@@ -179,12 +181,12 @@ var staged = function staged(fn) {
     for (var _i = 0; _i < m; ++_i) {
       ys[_i] = arguments[_i + n];
     }return fnxs.apply(null, ys);
-  });
-};
+  }
 
-//
+  //
 
-function setProps(observables) {
+  );
+};function setProps(observables) {
   var observable = void 0;
   var _callback = void 0;
   return function (e) {
@@ -234,12 +236,12 @@ var bindProps = function bindProps(templateWithRef) {
 };
 
 var bind = function bind(template) {
-  return infestines.assocPartialU("onChange", getProps(template), template);
-};
+  return infestines.assocPartialU("onChange", getProps(template), template
 
-//
+  //
 
-function classesImmediate() {
+  );
+};function classesImmediate() {
   var result = "";
   for (var i = 0, n = arguments.length; i < n; ++i) {
     var a = arguments[i];
@@ -294,11 +296,11 @@ var mapCachedMap = /*#__PURE__*/K.lift1Shallow(function (x) {
 
 var mapCached = /*#__PURE__*/infestines.curryN(2, function (fromId) {
   return infestines.pipe2U(foldPast(mapCachedStep(fromId), mapCachedInit), mapCachedMap);
-});
+}
 
 //
 
-var mapIndexed = /*#__PURE__*/infestines.curryN(2, function (xi2y) {
+);var mapIndexed = /*#__PURE__*/infestines.curryN(2, function (xi2y) {
   return K.lift1(function (xs) {
     return xs.map(function (x, i) {
       return xi2y(x, i);
@@ -329,11 +331,11 @@ var view = /*#__PURE__*/infestines.curry(function (l, xs) {
   return xs instanceof kefir_atom.AbstractMutable ? l instanceof kefir.Observable ? new kefir_atom.Join(K__default(l, function (l) {
     return xs.view(l);
   })) : xs.view(l) : K__default(l, xs, partial_lenses.get);
-});
+}
 
 //
 
-var types = { context: PropTypes.any };
+);var types = { context: PropTypes.any };
 
 var Context = /*#__PURE__*/infestines.inherit(function Context(props$$1) {
   Context.childContextTypes = types;
@@ -359,11 +361,11 @@ function withContext(originalFn) {
 var WithContext = /*#__PURE__*/withContext(function (_ref4, context) {
   var Do = _ref4.Do;
   return React__default.createElement(Do, context);
-});
+}
 
 //
 
-var actionsImmediate = function actionsImmediate() {
+);var actionsImmediate = function actionsImmediate() {
   for (var _len2 = arguments.length, fns = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
     fns[_key2] = arguments[_key2];
   }
@@ -380,12 +382,12 @@ var actions = function actions() {
     fns[_key3] = arguments[_key3];
   }
 
-  return K__default.apply(undefined, fns.concat([actionsImmediate]));
-};
+  return K__default.apply(undefined, fns.concat([actionsImmediate
 
-//
+  //
 
-var string = function string(strings) {
+  ]));
+};var string = function string(strings) {
   for (var _len4 = arguments.length, values$$1 = Array(_len4 > 1 ? _len4 - 1 : 0), _key4 = 1; _key4 < _len4; _key4++) {
     values$$1[_key4 - 1] = arguments[_key4];
   }
@@ -396,12 +398,12 @@ var string = function string(strings) {
     }
 
     return String.raw.apply(String, [strings].concat(values$$1));
-  }]));
-};
+  }
 
-//
+  //
 
-var atom = function atom(value) {
+  ]));
+};var atom = function atom(value) {
   return new kefir_atom.Atom(value);
 };
 var variable = function variable() {
@@ -437,9 +439,29 @@ var stageLast2Of3Maybe = /*#__PURE__*/maybe(function (fn) {
 var liftMaybe = /*#__PURE__*/maybe(K.lift);
 var liftStagedMaybe = /*#__PURE__*/maybe(liftStaged);
 var lift1Maybe = /*#__PURE__*/maybe(K.lift1);
-var lift1ShallowMaybe = /*#__PURE__*/maybe( /*#__PURE__*/K.lift1Shallow);
+var lift1ShallowMaybe = /*#__PURE__*/maybe( /*#__PURE__*/K.lift1Shallow
 
-var F$1 = /*#__PURE__*/R.F;
+//export const bind = /*#__PURE__*/liftMaybe(R.bind)                             -> conflict, useful?
+//export const clone = /*#__PURE__*/liftMaybe(R.clone)                           -> useful?
+//export const composeK = /*#__PURE__*/liftMaybe(R.composeK)                     -> lift staged, useful?
+//export const composeP = /*#__PURE__*/liftMaybe(R.composeP)                     -> lift staged, useful?
+//export const forEach = /*#__PURE__*/liftMaybe(R.forEach)                       -> useful?
+//export const forEachObjIndexed = = /*#__PURE__*/liftMaybe(R.forEachObjIndexed) -> useful?
+//export const intersectionWith = /*#__PURE__*/liftMaybe(R.intersectionWith)     -> deprecated
+//export const lens = /*#__PURE__*/liftMaybe(R.lens)                             -> partial.lenses
+//export const lensIndex = /*#__PURE__*/liftMaybe(R.lensIndex)                   -> partial.lenses
+//export const lensPath = /*#__PURE__*/liftMaybe(R.lensPath)                     -> partial.lenses
+//export const lensProp = /*#__PURE__*/liftMaybe(R.lensProp)                     -> partial.lenses
+//export const lift = /*#__PURE__*/liftMaybe(R.lift)                             -> conflict
+//export const liftN = /*#__PURE__*/liftMaybe(R.liftN)                           -> conflict
+//export const once = /*#__PURE__*/liftMaybe(R.once)                             -> lift staged, usually wrong thing to do?
+//export const over = /*#__PURE__*/liftMaybe(R.over)                             -> partial.lenses
+//export const pipeK = /*#__PURE__*/liftMaybe(R.pipeK)                           -> lift staged, useful?
+//export const pipeP = /*#__PURE__*/liftMaybe(R.pipeP)                           -> lift staged, useful?
+//export const set = /*#__PURE__*/liftMaybe(R.set)                               -> partial.lenses, conflict
+//export const view = /*#__PURE__*/liftMaybe(R.view)                             -> partial.lenses, conflict
+
+);var F$1 = /*#__PURE__*/R.F;
 var T$1 = /*#__PURE__*/R.T;
 var __$1 = /*#__PURE__*/R.__;
 var add$1 = /*#__PURE__*/liftMaybe(R.add);
@@ -460,17 +482,13 @@ var ascend$1 = /*#__PURE__*/liftMaybe(stageLast2Of3Maybe(R.ascend));
 var assoc$1 = /*#__PURE__*/liftMaybe(R.assoc);
 var assocPath$1 = /*#__PURE__*/liftMaybe(R.assocPath);
 var binary$1 = /*#__PURE__*/liftStagedMaybe(R.binary);
-//export const bind = /*#__PURE__*/liftMaybe(R.bind)                          -> conflict, useful?
 var both$1 = /*#__PURE__*/liftStagedMaybe(R.both);
 var call$1 = /*#__PURE__*/liftStagedMaybe(R.call);
 var chain$1 = /*#__PURE__*/liftMaybe(R.chain);
 var clamp$1 = /*#__PURE__*/liftMaybe(R.clamp);
-//export const clone = /*#__PURE__*/liftMaybe(R.clone)                        -> useful?
 var comparator$1 = /*#__PURE__*/liftStagedMaybe(R.comparator);
 var complement$1 = /*#__PURE__*/liftStagedMaybe(R.complement);
 var compose$1 = /*#__PURE__*/liftStagedMaybe(R.compose);
-//export const composeK = /*#__PURE__*/liftMaybe(R.composeK)                  -> lift staged, useful?
-//export const composeP = /*#__PURE__*/liftMaybe(R.composeP)                  -> lift staged, useful?
 var concat$2 = /*#__PURE__*/liftMaybe(R.concat);
 var cond$1 = /*#__PURE__*/liftStagedMaybe(R.cond);
 var construct$1 = /*#__PURE__*/liftStagedMaybe(R.construct);
@@ -496,6 +514,7 @@ var dropRepeatsWith$1 = /*#__PURE__*/liftMaybe(R.dropRepeatsWith);
 var dropWhile$1 = /*#__PURE__*/liftMaybe(R.dropWhile);
 var either$1 = /*#__PURE__*/liftStagedMaybe(R.either);
 var empty$1 = /*#__PURE__*/liftMaybe(R.empty);
+var endsWith$1 = /*#__PURE__*/liftMaybe(R.endsWith);
 var eqBy$1 = /*#__PURE__*/liftMaybe(stageLast2Of3Maybe(R.eqBy));
 var eqProps$1 = /*#__PURE__*/liftMaybe(stageLast2Of3Maybe(R.eqProps));
 var equals$1 = /*#__PURE__*/liftMaybe(R.equals);
@@ -507,8 +526,6 @@ var findLast$1 = /*#__PURE__*/liftMaybe(R.findLast);
 var findLastIndex$1 = /*#__PURE__*/liftMaybe(R.findLastIndex);
 var flatten$1 = /*#__PURE__*/liftMaybe(R.flatten);
 var flip$1 = /*#__PURE__*/liftStagedMaybe(R.flip);
-//export const forEach = /*#__PURE__*/liftMaybe(R.forEach)                       -> useful?
-//export const forEachObjIndexed = = /*#__PURE__*/liftMaybe(R.forEachObjIndexed) -> useful?
 var fromPairs$1 = /*#__PURE__*/liftMaybe(R.fromPairs);
 var groupBy$1 = /*#__PURE__*/liftMaybe(R.groupBy);
 var groupWith$1 = /*#__PURE__*/liftMaybe(R.groupWith);
@@ -524,10 +541,10 @@ var inc$1 = /*#__PURE__*/liftMaybe(R.inc);
 var indexBy$1 = /*#__PURE__*/liftMaybe(R.indexBy);
 var indexOf$1 = /*#__PURE__*/liftMaybe(R.indexOf);
 var init$1 = /*#__PURE__*/liftMaybe(R.init);
+var innerJoin$1 = /*#__PURE__*/liftMaybe(R.innerJoin);
 var insert$1 = /*#__PURE__*/liftMaybe(R.insert);
 var insertAll$1 = /*#__PURE__*/liftMaybe(R.insertAll);
 var intersection$1 = /*#__PURE__*/liftMaybe(R.intersection);
-var intersectionWith$1 = /*#__PURE__*/liftMaybe(R.intersectionWith);
 var intersperse$1 = /*#__PURE__*/liftMaybe(R.intersperse);
 var into$1 = /*#__PURE__*/liftMaybe(R.into);
 var invert$1 = /*#__PURE__*/liftMaybe(R.invert);
@@ -543,12 +560,6 @@ var keysIn$1 = /*#__PURE__*/liftMaybe(R.keysIn);
 var last$1 = /*#__PURE__*/liftMaybe(R.last);
 var lastIndexOf$1 = /*#__PURE__*/liftMaybe(R.lastIndexOf);
 var length$1 = /*#__PURE__*/lift1ShallowMaybe(R.length);
-//export const lens = /*#__PURE__*/liftMaybe(R.lens)                          -> partial.lenses
-//export const lensIndex = /*#__PURE__*/liftMaybe(R.lensIndex)                -> partial.lenses
-//export const lensPath = /*#__PURE__*/liftMaybe(R.lensPath)                  -> partial.lenses
-//export const lensProp = /*#__PURE__*/liftMaybe(R.lensProp)                  -> partial.lenses
-//export const lift = /*#__PURE__*/liftMaybe(R.lift)                          -> conflict
-//export const liftN = /*#__PURE__*/liftMaybe(R.liftN)                        -> conflict
 var lt$1 = /*#__PURE__*/liftMaybe(R.lt);
 var lte$1 = /*#__PURE__*/liftMaybe(R.lte);
 var map$1 = /*#__PURE__*/liftMaybe(R.map);
@@ -562,8 +573,13 @@ var maxBy$1 = /*#__PURE__*/liftMaybe(R.maxBy);
 var mean$1 = /*#__PURE__*/liftMaybe(R.mean);
 var median$1 = /*#__PURE__*/liftMaybe(R.median);
 var memoize$1 = /*#__PURE__*/liftStagedMaybe(R.memoize);
+var memoizeWith$1 = /*#__PURE__*/liftStagedMaybe(R.memoizeWith);
 var merge$2 = /*#__PURE__*/liftMaybe(R.merge);
 var mergeAll$1 = /*#__PURE__*/liftMaybe(R.mergeAll);
+var mergeDeepLeft$1 = /*#__PURE__*/liftMaybe(R.mergeDeepLeft);
+var mergeDeepRight$1 = /*#__PURE__*/liftMaybe(R.mergeDeepRight);
+var mergeDeepWith$1 = /*#__PURE__*/liftMaybe(R.mergeDeepWith);
+var mergeDeepWithKey$1 = /*#__PURE__*/liftMaybe(R.mergeDeepWithKey);
 var mergeWith$1 = /*#__PURE__*/liftMaybe(R.mergeWith);
 var mergeWithKey$1 = /*#__PURE__*/liftMaybe(R.mergeWithKey);
 var min$1 = /*#__PURE__*/liftMaybe(R.min);
@@ -576,12 +592,11 @@ var none$1 = /*#__PURE__*/liftMaybe(R.none);
 var not$1 = /*#__PURE__*/liftMaybe(R.not);
 var nth$1 = /*#__PURE__*/liftMaybe(R.nth);
 var nthArg$1 = /*#__PURE__*/liftStagedMaybe(R.nthArg);
+var o$1 = /*#__PURE__*/liftMaybe(R.o);
 var objOf$1 = /*#__PURE__*/liftMaybe(R.objOf);
 var of$1 = /*#__PURE__*/liftMaybe(R.of);
 var omit$1 = /*#__PURE__*/liftMaybe(R.omit);
-//export const once = /*#__PURE__*/liftMaybe(R.once)                          -> lift staged, usually wrong thing to do?
 var or$1 = /*#__PURE__*/liftMaybe(R.or);
-//export const over = /*#__PURE__*/liftMaybe(R.over)                          -> partial.lenses
 var pair$1 = /*#__PURE__*/liftMaybe(R.pair);
 var partial$1 = /*#__PURE__*/liftStagedMaybe(R.partial);
 var partialRight$1 = /*#__PURE__*/liftStagedMaybe(R.partialRight);
@@ -594,8 +609,6 @@ var pick$1 = /*#__PURE__*/liftMaybe(R.pick);
 var pickAll$1 = /*#__PURE__*/liftMaybe(R.pickAll);
 var pickBy$1 = /*#__PURE__*/liftMaybe(R.pickBy);
 var pipe$1 = /*#__PURE__*/liftStagedMaybe(R.pipe);
-//export const pipeK = /*#__PURE__*/liftMaybe(R.pipeK)                        -> lift staged, useful?
-//export const pipeP = /*#__PURE__*/liftMaybe(R.pipeP)                        -> lift staged, useful?
 var pluck$1 = /*#__PURE__*/liftMaybe(R.pluck);
 var prepend$1 = /*#__PURE__*/liftMaybe(R.prepend);
 var product$1 = /*#__PURE__*/liftMaybe(R.product);
@@ -619,7 +632,6 @@ var replace$1 = /*#__PURE__*/liftMaybe(R.replace);
 var reverse$1 = /*#__PURE__*/liftMaybe(R.reverse);
 var scan$1 = /*#__PURE__*/liftMaybe(R.scan);
 var sequence$1 = /*#__PURE__*/liftMaybe(R.sequence);
-//export const set = /*#__PURE__*/liftMaybe(R.set)                            -> partial.lenses, conflict
 var slice$1 = /*#__PURE__*/liftMaybe(R.slice);
 var sort$1 = /*#__PURE__*/liftMaybe(R.sort);
 var sortBy$1 = /*#__PURE__*/liftMaybe(R.sortBy);
@@ -628,6 +640,7 @@ var split$1 = /*#__PURE__*/liftMaybe(R.split);
 var splitAt$1 = /*#__PURE__*/liftMaybe(R.splitAt);
 var splitEvery$1 = /*#__PURE__*/liftMaybe(R.splitEvery);
 var splitWhen$1 = /*#__PURE__*/liftMaybe(R.splitWhen);
+var startsWith$1 = /*#__PURE__*/liftMaybe(R.startsWith);
 var subtract$1 = /*#__PURE__*/liftMaybe(R.subtract);
 var sum$1 = /*#__PURE__*/liftMaybe(R.sum);
 var symmetricDifference$1 = /*#__PURE__*/liftMaybe(R.symmetricDifference);
@@ -667,7 +680,6 @@ var update$1 = /*#__PURE__*/liftMaybe(R.update);
 var useWith$1 = /*#__PURE__*/liftStagedMaybe(R.useWith);
 var values$1 = /*#__PURE__*/lift1Maybe(R.values);
 var valuesIn$1 = /*#__PURE__*/liftMaybe(R.valuesIn);
-//export const view = /*#__PURE__*/liftMaybe(R.view)                          -> partial.lenses, conflict
 var when$1 = /*#__PURE__*/liftMaybe(R.when);
 var where$1 = /*#__PURE__*/liftStagedMaybe(stageLast1Of2Maybe(R.where));
 var whereEq$1 = /*#__PURE__*/liftStagedMaybe(stageLast1Of2Maybe(R.whereEq));
@@ -675,11 +687,11 @@ var without$1 = /*#__PURE__*/liftMaybe(R.without);
 var xprod$1 = /*#__PURE__*/liftMaybe(R.xprod);
 var zip$1 = /*#__PURE__*/liftMaybe(R.zip);
 var zipObj$1 = /*#__PURE__*/liftMaybe(R.zipObj);
-var zipWith$1 = /*#__PURE__*/liftMaybe(R.zipWith);
+var zipWith$1 = /*#__PURE__*/liftMaybe(R.zipWith
 
 // Math
 
-var abs = /*#__PURE__*/lift1ShallowMaybe(Math.abs);
+);var abs = /*#__PURE__*/lift1ShallowMaybe(Math.abs);
 var acos = /*#__PURE__*/lift1ShallowMaybe(Math.acos);
 var acosh = /*#__PURE__*/lift1ShallowMaybe(Math.acosh);
 var asin = /*#__PURE__*/lift1ShallowMaybe(Math.asin);
@@ -710,15 +722,15 @@ var sinh = /*#__PURE__*/lift1ShallowMaybe(Math.sinh);
 var sqrt = /*#__PURE__*/lift1ShallowMaybe(Math.sqrt);
 var tan = /*#__PURE__*/lift1ShallowMaybe(Math.tan);
 var tanh = /*#__PURE__*/lift1ShallowMaybe(Math.tanh);
-var trunc = /*#__PURE__*/lift1ShallowMaybe(Math.trunc);
+var trunc = /*#__PURE__*/lift1ShallowMaybe(Math.trunc
 
 //
 
-var indices = /*#__PURE__*/infestines.pipe2U(length$1, K.lift1Shallow(R.range(0)));
+);var indices = /*#__PURE__*/infestines.pipe2U(length$1, K.lift1Shallow(R.range(0))
 
 //
 
-var mapElems = /*#__PURE__*/infestines.curry(function (xi2y, xs) {
+);var mapElems = /*#__PURE__*/infestines.curry(function (xi2y, xs) {
   return infestines.seq(xs, foldPast(function (ysIn, xsIn) {
     var xsN = xsIn.length;
     var ysN = ysIn.length;
@@ -728,11 +740,11 @@ var mapElems = /*#__PURE__*/infestines.curry(function (xi2y, xs) {
       ys[i] = i < ysN ? ysIn[i] : xi2y(view(i, xs), i);
     }return ys;
   }, []), skipDuplicates(infestines.identicalU));
-});
+}
 
 //
 
-var mapElemsWithIds = /*#__PURE__*/infestines.curry(function (idOf, xi2y, xs) {
+);var mapElemsWithIds = /*#__PURE__*/infestines.curry(function (idOf, xi2y, xs) {
   var id2info = {};
   var find$$1 = partial_lenses.findHint(function (x, info) {
     return idOf(x) === info.id;
@@ -884,6 +896,7 @@ exports.dropRepeatsWith = dropRepeatsWith$1;
 exports.dropWhile = dropWhile$1;
 exports.either = either$1;
 exports.empty = empty$1;
+exports.endsWith = endsWith$1;
 exports.eqBy = eqBy$1;
 exports.eqProps = eqProps$1;
 exports.equals = equals$1;
@@ -910,10 +923,10 @@ exports.inc = inc$1;
 exports.indexBy = indexBy$1;
 exports.indexOf = indexOf$1;
 exports.init = init$1;
+exports.innerJoin = innerJoin$1;
 exports.insert = insert$1;
 exports.insertAll = insertAll$1;
 exports.intersection = intersection$1;
-exports.intersectionWith = intersectionWith$1;
 exports.intersperse = intersperse$1;
 exports.into = into$1;
 exports.invert = invert$1;
@@ -942,8 +955,13 @@ exports.maxBy = maxBy$1;
 exports.mean = mean$1;
 exports.median = median$1;
 exports.memoize = memoize$1;
+exports.memoizeWith = memoizeWith$1;
 exports.merge = merge$2;
 exports.mergeAll = mergeAll$1;
+exports.mergeDeepLeft = mergeDeepLeft$1;
+exports.mergeDeepRight = mergeDeepRight$1;
+exports.mergeDeepWith = mergeDeepWith$1;
+exports.mergeDeepWithKey = mergeDeepWithKey$1;
 exports.mergeWith = mergeWith$1;
 exports.mergeWithKey = mergeWithKey$1;
 exports.min = min$1;
@@ -956,6 +974,7 @@ exports.none = none$1;
 exports.not = not$1;
 exports.nth = nth$1;
 exports.nthArg = nthArg$1;
+exports.o = o$1;
 exports.objOf = objOf$1;
 exports.of = of$1;
 exports.omit = omit$1;
@@ -1003,6 +1022,7 @@ exports.split = split$1;
 exports.splitAt = splitAt$1;
 exports.splitEvery = splitEvery$1;
 exports.splitWhen = splitWhen$1;
+exports.startsWith = startsWith$1;
 exports.subtract = subtract$1;
 exports.sum = sum$1;
 exports.symmetricDifference = symmetricDifference$1;
