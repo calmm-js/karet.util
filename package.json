@@ -44,7 +44,7 @@
     "eslint-plugin-react": "^7.0.1",
     "kefir": "^3.7.2",
     "mocha": "^3.4.2",
-    "nyc": "^10.3.2",
+    "nyc": "^11.0.1",
     "react-dom": "^15.5.4",
     "rollup": "^0.41.6",
     "rollup-plugin-babel": "^2.7.1",
