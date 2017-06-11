@@ -177,6 +177,7 @@ Kefir operations in curried form.
 #### <a id="U-debounce"></a> [≡](#contents) [`U.debounce(milliseconds, observable) ~> observable`](#U-debounce)
 #### <a id="U-delay"></a> [≡](#contents) [`U.delay(milliseconds, observable) ~> observable`](#U-delay)
 #### <a id="U-endWith"></a> [≡](#contents) [`U.endWith(value, observable) ~> observable`](#U-endWith)
+#### <a id="U-mapValue"></a> [≡](#contents) [`U.mapValue(currentValue => newValue, observable) ~> observable`](#U-mapValue)
 #### <a id="U-flatMapErrors"></a> [≡](#contents) [`U.flatMapErrors(error => observable, observable) ~> observable`](#U-flatMapErrors)
 #### <a id="U-flatMapLatest"></a> [≡](#contents) [`U.flatMapLatest(value => observable, observable) ~> observable`](#U-flatMapLatest)
 #### <a id="U-flatMapParallel"></a> [≡](#contents) [`U.flatMapParallel(value => observable, observable) ~> observable`](#U-flatMapParallel)

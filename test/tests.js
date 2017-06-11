@@ -278,3 +278,7 @@ describe("Ramda", () => {
                    [{id: "y"}, {id: "z"}, {id: "x"}])`,
          [{id: "y"}, {id: "x"}])
 })
+
+describe("Kefir", () => {
+  testEq('U.mapValue((v) => v * 2, C(2))', 4)
+})
