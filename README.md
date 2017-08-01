@@ -22,6 +22,15 @@ imports the library as:
 import * as U from "karet.util"
 ```
 
+### About lifted functions
+
+Many of the functions in this library are [*lifted*](#U-lift) so that they
+accept both ordinary values and observables as inputs.  When such functions are
+given only ordinary values as inputs, they return immediately with the result
+value.  OTOH, when such a function is given at least an observable as an input,
+they return an observable of results.  Lifted functions are indicated in this
+documentation by marking lifted arguments and results with an asterisk `&ast;`.
+
 ### Misc
 
 #### <a id="U-seq"></a> [≡](#contents) [`U.seq(value, ...fns) ~> value`](#U-seq)
@@ -118,7 +127,7 @@ skipping `null` and using an initially empty variable rather than an atom is
 that once the variable emits a value, you can be sure that it refers to a DOM
 element.
 
-#### <a id="U-cns"></a> [≡](#contents) [`U.cns(...maybeStrings) ~> string`](#U-cns)
+#### <a id="U-cns"></a> [≡](#contents) [`U.cns(...maybeStrings*) ~> string*`](#U-cns)
 
 `U.cns` is designed for creating a list of class names for the `className`
 property.  It concatenates the given optional strings with a space between.
@@ -156,13 +165,13 @@ const Checkbox = ({checked}) =>
 #### <a id="U-bind"></a> [≡](#contents) [`U.bind({prop: settable, ...}) ~> {onChange: eventCallback, prop: settable, ...}`](#U-bind)
 
 #### <a id="K"></a> [≡](#contents) [`K`](#K)
-#### <a id="U-template"></a> [≡](#contents) [`U.template(template of observables)`](#U-template)
-#### <a id="U-string"></a> [≡](#contents) <a href="#U-string"><code>U.string&grave;template&grave; ~&gt; string</code></a>
+#### <a id="U-template"></a> [≡](#contents) [`U.template(template*) ~> value*`](#U-template)
+#### <a id="U-string"></a> [≡](#contents) <a href="#U-string"><code>U.string&grave;template&ast;&grave; ~&gt; string&ast;</code></a>
 #### <a id="U-lift"></a> [≡](#contents) [`U.lift`](#U-lift)
 
-#### <a id="U-ift"></a> [≡](#contents) [`U.ift(condition, consequent)`](#U-ift)
-#### <a id="U-ifte"></a> [≡](#contents) [`U.ifte(condition, consequent, alternative)`](#U-ifte)
-#### <a id="U-iftes"></a> [≡](#contents) [`U.iftes(condition, consequent, ...[, alternative])`](#U-iftes)
+#### <a id="U-ift"></a> [≡](#contents) [`U.ift(condition*, consequent*) ~> value*`](#U-ift)
+#### <a id="U-ifte"></a> [≡](#contents) [`U.ifte(condition*, consequent*, alternative*) ~> value*`](#U-ifte)
+#### <a id="U-iftes"></a> [≡](#contents) [`U.iftes(condition*, consequent*, ...[, alternative*]) ~> value*`](#U-iftes)
 
 #### <a id="U-actions"></a> [≡](#contents) [`U.actions(...maybeFns)`](#U-actions)
 
@@ -173,12 +182,12 @@ const Checkbox = ({checked}) =>
 #### <a id="U-mapElemsWithIds"></a> [≡](#contents) [`U.mapElemsWithIds(elem => id, (elem, id) => ..., array)`](#U-mapElemsWithIds)
 
 ### Atom
-#### <a id="U-atom"></a> [≡](#contents) [`U.atom(value)`](#U-atom)
-#### <a id="U-variable"></a> [≡](#contents) [`U.variable()`](#U-variable)
-#### <a id="U-molecule"></a> [≡](#contents) [`U.molecule(template)`](#U-molecule)
-#### <a id="U-holding"></a> [≡](#contents) [`U.holding(() => ...)`](#U-holding)
-#### <a id="U-view"></a> [≡](#contents) [`U.view(lens, value)`](#U-view)
-#### <a id="U-set"></a> [≡](#contents) [`U.set(settable, value)`](#U-set)
+#### <a id="U-atom"></a> [≡](#contents) [`U.atom(value) ~> atom`](#U-atom)
+#### <a id="U-variable"></a> [≡](#contents) [`U.variable() ~> atom`](#U-variable)
+#### <a id="U-molecule"></a> [≡](#contents) [`U.molecule(atomTemplate) ~> atom`](#U-molecule)
+#### <a id="U-holding"></a> [≡](#contents) [`U.holding(() => ...) ~> undefined`](#U-holding)
+#### <a id="U-view"></a> [≡](#contents) [`U.view(lens*, value* or atom) ~> value* or atom`](#U-view)
+#### <a id="U-set"></a> [≡](#contents) [`U.set(settable, value*) ~> undefined*`](#U-set)
 
 ### Bus
 #### <a id="U-bus"></a> [≡](#contents) [`U.bus()`](#U-bus)
