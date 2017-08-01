@@ -178,7 +178,7 @@ const Checkbox = ({checked}) =>
 #### <a id="U-mapCached"></a> [≡](#contents) [`U.mapCached(x => ..., array*)`](#U-mapCached)
 #### <a id="U-mapIndexed"></a> [≡](#contents) [`U.mapIndexed((x, i) => y, [...xs]*) ~> [...ys]*`](#U-mapIndexed)
 #### <a id="U-indices"></a> [≡](#contents) [`U.indices([...xs]*) ~> [...is]*`](#U-indices)
-#### <a id="U-mapElems"></a> [≡](#contents) [`U.mapElems((x*, i) => y, [...xs*]) ~> [...ys]*`](#U-mapElems)
+#### <a id="U-mapElems"></a> [≡](#contents) [`U.mapElems((x*, i) => y, [...xs]*) ~> [...ys]*`](#U-mapElems)
 #### <a id="U-mapElemsWithIds"></a> [≡](#contents) [`U.mapElemsWithIds(x => id, (x*, id) => y, [...xs]*) ~> [...ys]*`](#U-mapElemsWithIds)
 
 ### Atom
