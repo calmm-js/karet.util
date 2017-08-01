@@ -118,7 +118,17 @@ skipping `null` and using an initially empty variable rather than an atom is
 that once the variable emits a value, you can be sure that it refers to a DOM
 element.
 
-#### <a id="U-cns"></a> [≡](#contents) [`U.cns(...maybeClassName)`](#U-cns)
+#### <a id="U-cns"></a> [≡](#contents) [`U.cns(...maybeStrings) ~> string`](#U-cns)
+
+`U.cns` is designed for creating a list of class names for the `className`
+property.  It concatenates the given optional strings with a space between.
+
+For example:
+
+```js
+U.cns("a-class-name", false, "another-one", undefined)
+// "a-class-name another-one"
+```
 
 #### <a id="U-getProps"></a> [≡](#contents) [`U.getProps({prop: settable, ...})`](#U-getProps)
 #### <a id="U-setProps"></a> [≡](#contents) [`U.setProps({prop: observable, ...})`](#U-setProps)
