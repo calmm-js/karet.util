@@ -29,7 +29,7 @@ accept both ordinary values and observables as inputs.  When such functions are
 given only ordinary values as inputs, they return immediately with the result
 value.  OTOH, when such a function is given at least an observable as an input,
 they return an observable of results.  Lifted functions are indicated in this
-documentation by marking lifted arguments and results with an asterisk `&ast;`.
+documentation by marking lifted arguments and results with an asterisk `*`.
 
 ### Misc
 
