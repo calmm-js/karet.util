@@ -173,13 +173,13 @@ const Checkbox = ({checked}) =>
 #### <a id="U-ifte"></a> [≡](#contents) [`U.ifte(condition*, consequent*, alternative*) ~> value*`](#U-ifte)
 #### <a id="U-iftes"></a> [≡](#contents) [`U.iftes(condition*, consequent*, ...[, alternative*]) ~> value*`](#U-iftes)
 
-#### <a id="U-actions"></a> [≡](#contents) [`U.actions(...maybeFns)`](#U-actions)
+#### <a id="U-actions"></a> [≡](#contents) [`U.actions(...maybeCallbacks*) ~> callback*`](#U-actions)
 
-#### <a id="U-mapCached"></a> [≡](#contents) [`U.mapCached(x => ..., array)`](#U-mapCached)
-#### <a id="U-mapIndexed"></a> [≡](#contents) [`U.mapIndexed((x, i) => ..., array)`](#U-mapIndexed)
-#### <a id="U-indices"></a> [≡](#contents) [`U.indices(array)`](#U-indices)
-#### <a id="U-mapElems"></a> [≡](#contents) [`U.mapElems((elem, i) => ..., array)`](#U-mapElems)
-#### <a id="U-mapElemsWithIds"></a> [≡](#contents) [`U.mapElemsWithIds(elem => id, (elem, id) => ..., array)`](#U-mapElemsWithIds)
+#### <a id="U-mapCached"></a> [≡](#contents) [`U.mapCached(x => ..., array*)`](#U-mapCached)
+#### <a id="U-mapIndexed"></a> [≡](#contents) [`U.mapIndexed((x, i) => y, [...xs]*) ~> [...ys]*`](#U-mapIndexed)
+#### <a id="U-indices"></a> [≡](#contents) [`U.indices([...xs]*) ~> [...is]*`](#U-indices)
+#### <a id="U-mapElems"></a> [≡](#contents) [`U.mapElems((x*, i) => y, [...xs*]) ~> [...ys]*`](#U-mapElems)
+#### <a id="U-mapElemsWithIds"></a> [≡](#contents) [`U.mapElemsWithIds(x => id, (x*, id) => y, [...xs]*) ~> [...ys]*`](#U-mapElemsWithIds)
 
 ### Atom
 #### <a id="U-atom"></a> [≡](#contents) [`U.atom(value) ~> atom`](#U-atom)
