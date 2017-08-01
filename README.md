@@ -131,6 +131,26 @@ U.cns("a-class-name", false, "another-one", undefined)
 ```
 
 #### <a id="U-getProps"></a> [≡](#contents) [`U.getProps({prop: settable, ...}) ~> eventCallback`](#U-getProps)
+
+`U.getProps` returns an event callback that gets the values of the properties
+given in the template from the event target.
+
+For example:
+
+```jsx
+const TextInput = ({value}) =>
+  <input type="text"
+         value={value}
+         onChange={U.getProps({value})}/>
+```
+
+```jsx
+const Checkbox = ({checked}) =>
+  <input type="checkbox"
+         checked={checked}
+         onChange={U.getProps({checked})}/>
+```
+
 #### <a id="U-setProps"></a> [≡](#contents) [`U.setProps({prop: observable, ...}) ~> refCallback`](#U-setProps)
 #### <a id="U-bindProps"></a> [≡](#contents) [`U.bindProps({ref: eventName, prop: settable, ...}) ~> {ref: refCallback, [eventName]: eventCallback, prop: settable, ...}`](#U-bindProps)
 #### <a id="U-bind"></a> [≡](#contents) [`U.bind({prop: settable, ...}) ~> {onChange: eventCallback, prop: settable, ...}`](#U-bind)
