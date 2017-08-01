@@ -100,7 +100,7 @@ U.toPartial((x, y) => x + y)(1, 2)
 
 `U.show` logs the given value to console and returns the value.
 
-#### <a id="U-refTo"></a> [≡](#contents) [`U.refTo(settable)(value or null) ~> undefined`](#U-refTo)
+#### <a id="U-refTo"></a> [≡](#contents) [`U.refTo(settable) ~> refCallback`](#U-refTo)
 
 `U.refTo` is designed for getting a reference to the DOM element of a component:
 
@@ -130,10 +130,10 @@ U.cns("a-class-name", false, "another-one", undefined)
 // "a-class-name another-one"
 ```
 
-#### <a id="U-getProps"></a> [≡](#contents) [`U.getProps({prop: settable, ...})`](#U-getProps)
-#### <a id="U-setProps"></a> [≡](#contents) [`U.setProps({prop: observable, ...})`](#U-setProps)
-#### <a id="U-bindProps"></a> [≡](#contents) [`U.bindProps({ref: eventName, prop: settable, ...})`](#U-bindProps)
-#### <a id="U-bind"></a> [≡](#contents) [`U.bind({prop: settable, ...})`](#U-bind)
+#### <a id="U-getProps"></a> [≡](#contents) [`U.getProps({prop: settable, ...}) ~> eventCallback`](#U-getProps)
+#### <a id="U-setProps"></a> [≡](#contents) [`U.setProps({prop: observable, ...}) ~> refCallback`](#U-setProps)
+#### <a id="U-bindProps"></a> [≡](#contents) [`U.bindProps({ref: eventName, prop: settable, ...}) ~> {ref: refCallback, [eventName]: eventCallback, prop: settable, ...}`](#U-bindProps)
+#### <a id="U-bind"></a> [≡](#contents) [`U.bind({prop: settable, ...}) ~> {onChange: eventCallback, prop: settable, ...}`](#U-bind)
 
 #### <a id="K"></a> [≡](#contents) [`K`](#K)
 #### <a id="U-template"></a> [≡](#contents) [`U.template(template of observables)`](#U-template)
