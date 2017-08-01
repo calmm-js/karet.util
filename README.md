@@ -157,7 +157,7 @@ const Checkbox = ({checked}) =>
 
 #### <a id="K"></a> [≡](#contents) [`K`](#K)
 #### <a id="U-template"></a> [≡](#contents) [`U.template(template of observables)`](#U-template)
-#### <a id="U-string"></a> [≡](#contents) [`U.string`](#U-string)
+#### <a id="U-string"></a> [≡](#contents) <a href="#U-string"><code>U.string&grave;template&grave; ~&gt; string</code></a>
 #### <a id="U-lift"></a> [≡](#contents) [`U.lift`](#U-lift)
 
 #### <a id="U-ift"></a> [≡](#contents) [`U.ift(condition, consequent)`](#U-ift)
