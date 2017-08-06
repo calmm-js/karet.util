@@ -100,7 +100,7 @@ describe("classes", () => {
 
 describe("cns", () => {
   testEq(`U.cns()`, "")
-  testEq(`U.cns(null, "a", false, undefined, C("b"), 0, "")`, "a b")
+  testEq(`U.cns(null, ["a", false], undefined, C("b"), 0, "")`, "a b")
 })
 
 describe("mapCached", () => {

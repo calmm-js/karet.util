@@ -197,26 +197,9 @@ export const bind = template =>
 
 //
 
-function classesImmediate() {
-  let result = ""
-  for (let i=0, n=arguments.length; i<n; ++i) {
-    const a = arguments[i]
-    if (a) {
-      if (result)
-        result += " "
-      result += a
-    }
-  }
-  return result
-}
+const flatJoin = /*#__PURE__*/lift1(L.join(" ", [L.flatten, L.when(id)]))
 
-export function cns() {
-  const n = arguments.length, xs = Array(n+1)
-  for (let i=0; i<n; ++i)
-    xs[i] = arguments[i]
-  xs[n] = classesImmediate
-  return K.apply(null, xs)
-}
+export const cns = (...xs) => flatJoin(xs)
 
 export const classes = (...xs) => ({className: cns(...xs)})
 
