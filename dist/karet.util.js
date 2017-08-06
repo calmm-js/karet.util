@@ -1,23 +1,21 @@
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('ramda'), require('kefir.atom'), require('kefir'), require('infestines'), require('partial.lenses'), require('kefir.combines'), require('karet'), require('prop-types')) :
 	typeof define === 'function' && define.amd ? define(['exports', 'ramda', 'kefir.atom', 'kefir', 'infestines', 'partial.lenses', 'kefir.combines', 'karet', 'prop-types'], factory) :
-	(factory((global.karet = global.karet || {}, global.karet.util = global.karet.util || {}),global.R,global.kefir.atom,global.Kefir,global.I,global.L,global.kefir.combines,global.karet,global.PropTypes));
-}(this, (function (exports,R,kefir_atom,kefir,infestines,partial_lenses,K,React,PropTypes) { 'use strict';
+	(factory((global.karet = global.karet || {}, global.karet.util = {}),global.R,global.kefir.atom,global.Kefir,global.I,global.L,global.kefir.combines,global.karet,global.PropTypes));
+}(this, (function (exports,R,kefir_atom,kefir,infestines,L,K,React,PropTypes) { 'use strict';
 
 var K__default = 'default' in K ? K['default'] : K;
 var React__default = 'default' in React ? React['default'] : React;
-PropTypes = 'default' in PropTypes ? PropTypes['default'] : PropTypes;
+PropTypes = PropTypes && PropTypes.hasOwnProperty('default') ? PropTypes['default'] : PropTypes;
 
 var liftStaged = function liftStaged(fn) {
   return K.lift(infestines.pipe2U(fn, K.lift));
 };
 var template = function template(observables) {
-  return K__default(observables, infestines.id
+  return K__default(observables, infestines.id);
+};
 
-  //
-
-  );
-};// Kefir
+// Kefir
 
 var toUndefined = function toUndefined(_) {};
 var toConstant = function toConstant(x) {
@@ -50,6 +48,9 @@ var delay = /*#__PURE__*/infestines.curry(function (ms, xs) {
 });
 var endWith = /*#__PURE__*/infestines.curry(function (v, xs) {
   return toConstant(xs).concat(toConstant(v));
+});
+var mapValue = /*#__PURE__*/infestines.curry(function (fn, xs) {
+  return toConstant(xs).map(fn);
 });
 var flatMapParallel = /*#__PURE__*/infestines.curry(function (fn, xs) {
   return toConstant(xs).flatMap(infestines.pipe2U(fn, toConstant));
@@ -117,11 +118,11 @@ var set = /*#__PURE__*/infestines.curry(function (settable, xs) {
     return settable.set(xs);
   });
   if (ss instanceof kefir.Observable) return ss.toProperty(toUndefined);
-}
+});
 
 //
 
-);var Bus = /*#__PURE__*/infestines.inherit(function Bus() {
+var Bus = /*#__PURE__*/infestines.inherit(function Bus() {
   kefir.Stream.call(this);
 }, kefir.Stream, {
   push: function push(value) {
@@ -181,12 +182,12 @@ var staged = function staged(fn) {
     for (var _i = 0; _i < m; ++_i) {
       ys[_i] = arguments[_i + n];
     }return fnxs.apply(null, ys);
-  }
+  });
+};
 
-  //
+//
 
-  );
-};function setProps(observables) {
+function setProps(observables) {
   var observable = void 0;
   var _callback = void 0;
   return function (e) {
@@ -236,31 +237,20 @@ var bindProps = function bindProps(templateWithRef) {
 };
 
 var bind = function bind(template) {
-  return infestines.assocPartialU("onChange", getProps(template), template
+  return infestines.assocPartialU("onChange", getProps(template), template);
+};
 
-  //
+//
 
-  );
-};function classesImmediate() {
-  var result = "";
-  for (var i = 0, n = arguments.length; i < n; ++i) {
-    var a = arguments[i];
-    if (a) {
-      if (result) result += " ";
-      result += a;
-    }
+var flatJoin = /*#__PURE__*/K.lift1(L.join(" ", [L.flatten, L.when(infestines.id)]));
+
+var cns = function cns() {
+  for (var _len2 = arguments.length, xs = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+    xs[_key2] = arguments[_key2];
   }
-  return result;
-}
 
-function cns() {
-  var n = arguments.length,
-      xs = Array(n + 1);
-  for (var i = 0; i < n; ++i) {
-    xs[i] = arguments[i];
-  }xs[n] = classesImmediate;
-  return K__default.apply(null, xs);
-}
+  return flatJoin(xs);
+};
 
 var classes = function classes() {
   return { className: cns.apply(undefined, arguments) };
@@ -296,11 +286,11 @@ var mapCachedMap = /*#__PURE__*/K.lift1Shallow(function (x) {
 
 var mapCached = /*#__PURE__*/infestines.curryN(2, function (fromId) {
   return infestines.pipe2U(foldPast(mapCachedStep(fromId), mapCachedInit), mapCachedMap);
-}
+});
 
 //
 
-);var mapIndexed = /*#__PURE__*/infestines.curryN(2, function (xi2y) {
+var mapIndexed = /*#__PURE__*/infestines.curryN(2, function (xi2y) {
   return K.lift1(function (xs) {
     return xs.map(function (x, i) {
       return xi2y(x, i);
@@ -317,7 +307,7 @@ var ifteU = function ifteU(b, t, e) {
 var ifte = /*#__PURE__*/infestines.curry(ifteU);
 var ift = /*#__PURE__*/infestines.arityN(2, ifteU);
 
-function iftes() {
+function iftes(_c, _t) {
   var n = arguments.length;
   var r = n & 1 ? arguments[--n] : undefined;
   while (0 <= (n -= 2)) {
@@ -330,12 +320,12 @@ function iftes() {
 var view = /*#__PURE__*/infestines.curry(function (l, xs) {
   return xs instanceof kefir_atom.AbstractMutable ? l instanceof kefir.Observable ? new kefir_atom.Join(K__default(l, function (l) {
     return xs.view(l);
-  })) : xs.view(l) : K__default(l, xs, partial_lenses.get);
-}
+  })) : xs.view(l) : K__default(l, xs, L.get);
+});
 
 //
 
-);var types = { context: PropTypes.any };
+var types = { context: PropTypes.any };
 
 var Context = /*#__PURE__*/infestines.inherit(function Context(props$$1) {
   Context.childContextTypes = types;
@@ -361,13 +351,13 @@ function withContext(originalFn) {
 var WithContext = /*#__PURE__*/withContext(function (_ref4, context) {
   var Do = _ref4.Do;
   return React__default.createElement(Do, context);
-}
+});
 
 //
 
-);var actionsImmediate = function actionsImmediate() {
-  for (var _len2 = arguments.length, fns = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-    fns[_key2] = arguments[_key2];
+var actionsImmediate = function actionsImmediate() {
+  for (var _len3 = arguments.length, fns = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+    fns[_key3] = arguments[_key3];
   }
 
   return function () {
@@ -378,32 +368,32 @@ var WithContext = /*#__PURE__*/withContext(function (_ref4, context) {
 };
 
 var actions = function actions() {
-  for (var _len3 = arguments.length, fns = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
-    fns[_key3] = arguments[_key3];
+  for (var _len4 = arguments.length, fns = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+    fns[_key4] = arguments[_key4];
   }
 
-  return K__default.apply(undefined, fns.concat([actionsImmediate
+  return K__default.apply(undefined, fns.concat([actionsImmediate]));
+};
 
-  //
+//
 
-  ]));
-};var string = function string(strings) {
-  for (var _len4 = arguments.length, values$$1 = Array(_len4 > 1 ? _len4 - 1 : 0), _key4 = 1; _key4 < _len4; _key4++) {
-    values$$1[_key4 - 1] = arguments[_key4];
+var string = function string(strings) {
+  for (var _len5 = arguments.length, values$$1 = Array(_len5 > 1 ? _len5 - 1 : 0), _key5 = 1; _key5 < _len5; _key5++) {
+    values$$1[_key5 - 1] = arguments[_key5];
   }
 
   return K__default.apply(undefined, values$$1.concat([function () {
-    for (var _len5 = arguments.length, values$$1 = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
-      values$$1[_key5] = arguments[_key5];
+    for (var _len6 = arguments.length, values$$1 = Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
+      values$$1[_key6] = arguments[_key6];
     }
 
     return String.raw.apply(String, [strings].concat(values$$1));
-  }
+  }]));
+};
 
-  //
+//
 
-  ]));
-};var atom = function atom(value) {
+var atom = function atom(value) {
   return new kefir_atom.Atom(value);
 };
 var variable = function variable() {
@@ -439,7 +429,7 @@ var stageLast2Of3Maybe = /*#__PURE__*/maybe(function (fn) {
 var liftMaybe = /*#__PURE__*/maybe(K.lift);
 var liftStagedMaybe = /*#__PURE__*/maybe(liftStaged);
 var lift1Maybe = /*#__PURE__*/maybe(K.lift1);
-var lift1ShallowMaybe = /*#__PURE__*/maybe( /*#__PURE__*/K.lift1Shallow
+var lift1ShallowMaybe = /*#__PURE__*/maybe( /*#__PURE__*/K.lift1Shallow);
 
 //export const bind = /*#__PURE__*/liftMaybe(R.bind)                             -> conflict, useful?
 //export const clone = /*#__PURE__*/liftMaybe(R.clone)                           -> useful?
@@ -461,7 +451,7 @@ var lift1ShallowMaybe = /*#__PURE__*/maybe( /*#__PURE__*/K.lift1Shallow
 //export const set = /*#__PURE__*/liftMaybe(R.set)                               -> partial.lenses, conflict
 //export const view = /*#__PURE__*/liftMaybe(R.view)                             -> partial.lenses, conflict
 
-);var F$1 = /*#__PURE__*/R.F;
+var F$1 = /*#__PURE__*/R.F;
 var T$1 = /*#__PURE__*/R.T;
 var __$1 = /*#__PURE__*/R.__;
 var add$1 = /*#__PURE__*/liftMaybe(R.add);
@@ -524,7 +514,7 @@ var find$1 = /*#__PURE__*/liftMaybe(R.find);
 var findIndex$1 = /*#__PURE__*/liftMaybe(R.findIndex);
 var findLast$1 = /*#__PURE__*/liftMaybe(R.findLast);
 var findLastIndex$1 = /*#__PURE__*/liftMaybe(R.findLastIndex);
-var flatten$1 = /*#__PURE__*/liftMaybe(R.flatten);
+var flatten$2 = /*#__PURE__*/liftMaybe(R.flatten);
 var flip$1 = /*#__PURE__*/liftStagedMaybe(R.flip);
 var fromPairs$1 = /*#__PURE__*/liftMaybe(R.fromPairs);
 var groupBy$1 = /*#__PURE__*/liftMaybe(R.groupBy);
@@ -553,7 +543,7 @@ var invoker$1 = /*#__PURE__*/liftStagedMaybe(R.invoker);
 var is$1 = /*#__PURE__*/liftMaybe(stageLast1Of2Maybe(R.is));
 var isEmpty$1 = /*#__PURE__*/liftMaybe(R.isEmpty);
 var isNil$1 = /*#__PURE__*/liftMaybe(R.isNil);
-var join$1 = /*#__PURE__*/liftMaybe(R.join);
+var join$2 = /*#__PURE__*/liftMaybe(R.join);
 var juxt$1 = /*#__PURE__*/liftStagedMaybe(R.juxt);
 var keys$1 = /*#__PURE__*/lift1ShallowMaybe(R.keys);
 var keysIn$1 = /*#__PURE__*/liftMaybe(R.keysIn);
@@ -680,18 +670,18 @@ var update$1 = /*#__PURE__*/liftMaybe(R.update);
 var useWith$1 = /*#__PURE__*/liftStagedMaybe(R.useWith);
 var values$1 = /*#__PURE__*/lift1Maybe(R.values);
 var valuesIn$1 = /*#__PURE__*/liftMaybe(R.valuesIn);
-var when$1 = /*#__PURE__*/liftMaybe(R.when);
+var when$2 = /*#__PURE__*/liftMaybe(R.when);
 var where$1 = /*#__PURE__*/liftStagedMaybe(stageLast1Of2Maybe(R.where));
 var whereEq$1 = /*#__PURE__*/liftStagedMaybe(stageLast1Of2Maybe(R.whereEq));
 var without$1 = /*#__PURE__*/liftMaybe(R.without);
 var xprod$1 = /*#__PURE__*/liftMaybe(R.xprod);
 var zip$1 = /*#__PURE__*/liftMaybe(R.zip);
 var zipObj$1 = /*#__PURE__*/liftMaybe(R.zipObj);
-var zipWith$1 = /*#__PURE__*/liftMaybe(R.zipWith
+var zipWith$1 = /*#__PURE__*/liftMaybe(R.zipWith);
 
 // Math
 
-);var abs = /*#__PURE__*/lift1ShallowMaybe(Math.abs);
+var abs = /*#__PURE__*/lift1ShallowMaybe(Math.abs);
 var acos = /*#__PURE__*/lift1ShallowMaybe(Math.acos);
 var acosh = /*#__PURE__*/lift1ShallowMaybe(Math.acosh);
 var asin = /*#__PURE__*/lift1ShallowMaybe(Math.asin);
@@ -722,15 +712,15 @@ var sinh = /*#__PURE__*/lift1ShallowMaybe(Math.sinh);
 var sqrt = /*#__PURE__*/lift1ShallowMaybe(Math.sqrt);
 var tan = /*#__PURE__*/lift1ShallowMaybe(Math.tan);
 var tanh = /*#__PURE__*/lift1ShallowMaybe(Math.tanh);
-var trunc = /*#__PURE__*/lift1ShallowMaybe(Math.trunc
+var trunc = /*#__PURE__*/lift1ShallowMaybe(Math.trunc);
 
 //
 
-);var indices = /*#__PURE__*/infestines.pipe2U(length$1, K.lift1Shallow(R.range(0))
+var indices = /*#__PURE__*/infestines.pipe2U(length$1, K.lift1Shallow(R.range(0)));
 
 //
 
-);var mapElems = /*#__PURE__*/infestines.curry(function (xi2y, xs) {
+var mapElems = /*#__PURE__*/infestines.curry(function (xi2y, xs) {
   return infestines.seq(xs, foldPast(function (ysIn, xsIn) {
     var xsN = xsIn.length;
     var ysN = ysIn.length;
@@ -740,13 +730,13 @@ var trunc = /*#__PURE__*/lift1ShallowMaybe(Math.trunc
       ys[i] = i < ysN ? ysIn[i] : xi2y(view(i, xs), i);
     }return ys;
   }, []), skipDuplicates(infestines.identicalU));
-}
+});
 
 //
 
-);var mapElemsWithIds = /*#__PURE__*/infestines.curry(function (idOf, xi2y, xs) {
+var mapElemsWithIds = /*#__PURE__*/infestines.curry(function (idOf, xi2y, xs) {
   var id2info = {};
-  var find$$1 = partial_lenses.findHint(function (x, info) {
+  var find$$1 = L.findHint(function (x, info) {
     return idOf(x) === info.id;
   });
   return infestines.seq(xs, foldPast(function (ysIn, xsIn) {
@@ -790,6 +780,7 @@ exports.serially = serially;
 exports.parallel = parallel;
 exports.delay = delay;
 exports.endWith = endWith;
+exports.mapValue = mapValue;
 exports.flatMapParallel = flatMapParallel;
 exports.flatMapSerial = flatMapSerial;
 exports.flatMapErrors = flatMapErrors;
@@ -906,7 +897,7 @@ exports.find = find$1;
 exports.findIndex = findIndex$1;
 exports.findLast = findLast$1;
 exports.findLastIndex = findLastIndex$1;
-exports.flatten = flatten$1;
+exports.flatten = flatten$2;
 exports.flip = flip$1;
 exports.fromPairs = fromPairs$1;
 exports.groupBy = groupBy$1;
@@ -935,7 +926,7 @@ exports.invoker = invoker$1;
 exports.is = is$1;
 exports.isEmpty = isEmpty$1;
 exports.isNil = isNil$1;
-exports.join = join$1;
+exports.join = join$2;
 exports.juxt = juxt$1;
 exports.keys = keys$1;
 exports.keysIn = keysIn$1;
@@ -1062,7 +1053,7 @@ exports.update = update$1;
 exports.useWith = useWith$1;
 exports.values = values$1;
 exports.valuesIn = valuesIn$1;
-exports.when = when$1;
+exports.when = when$2;
 exports.where = where$1;
 exports.whereEq = whereEq$1;
 exports.without = without$1;
