@@ -33,7 +33,7 @@ import {
   seqPartial
 } from "infestines"
 
-import {findHint, get} from "partial.lenses"
+import * as L from "partial.lenses"
 import K, {lift, lift1, lift1Shallow} from "kefir.combines"
 import React, {fromKefir} from "karet"
 import PropTypes from "prop-types"
@@ -276,7 +276,7 @@ export const view = /*#__PURE__*/I_curry((l, xs) =>
   ? l instanceof Observable
     ? new Join(K(l, l => xs.view(l)))
     : xs.view(l)
-  : K(l, xs, get))
+  : K(l, xs, L.get))
 
 //
 
@@ -645,7 +645,7 @@ export const mapElems = /*#__PURE__*/I_curry((xi2y, xs) => seq(
 
 export const mapElemsWithIds = /*#__PURE__*/I_curry((idOf, xi2y, xs) => {
   const id2info = {}
-  const find = findHint((x, info) => idOf(x) === info.id)
+  const find = L.findHint((x, info) => idOf(x) === info.id)
   return seq(
     xs,
     foldPast((ysIn, xsIn) => {
