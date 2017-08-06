@@ -261,7 +261,7 @@ const ifteU = (b, t, e) => toProperty(flatMapLatest(b => b ? t : e, b))
 export const ifte = /*#__PURE__*/I_curry(ifteU)
 export const ift = /*#__PURE__*/arityN(2, ifteU)
 
-export function iftes() {
+export function iftes(_c, _t) {
   let n = arguments.length
   let r = n & 1 ? arguments[--n] : undefined
   while (0 <= (n -= 2))
