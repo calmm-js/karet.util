@@ -1,11 +1,10 @@
 (function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('ramda'), require('kefir.atom'), require('kefir'), require('infestines'), require('partial.lenses'), require('kefir.combines'), require('karet'), require('prop-types')) :
-	typeof define === 'function' && define.amd ? define(['exports', 'ramda', 'kefir.atom', 'kefir', 'infestines', 'partial.lenses', 'kefir.combines', 'karet', 'prop-types'], factory) :
-	(factory((global.karet = global.karet || {}, global.karet.util = {}),global.R,global.kefir.atom,global.Kefir,global.I,global.L,global.kefir.combines,global.karet,global.PropTypes));
-}(this, (function (exports,R,kefir_atom,kefir,infestines,L,K,React,PropTypes) { 'use strict';
+	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('ramda'), require('kefir.atom'), require('kefir'), require('infestines'), require('partial.lenses'), require('kefir.combines'), require('karet'), require('react'), require('prop-types')) :
+	typeof define === 'function' && define.amd ? define(['exports', 'ramda', 'kefir.atom', 'kefir', 'infestines', 'partial.lenses', 'kefir.combines', 'karet', 'react', 'prop-types'], factory) :
+	(factory((global.karet = global.karet || {}, global.karet.util = {}),global.R,global.kefir.atom,global.Kefir,global.I,global.L,global.kefir.combines,global.karet,global.React,global.PropTypes));
+}(this, (function (exports,R,kefir_atom,kefir,infestines,L,K,karet,react,PropTypes) { 'use strict';
 
 var K__default = 'default' in K ? K['default'] : K;
-var React__default = 'default' in React ? React['default'] : React;
 PropTypes = PropTypes && PropTypes.hasOwnProperty('default') ? PropTypes['default'] : PropTypes;
 
 var liftStaged = function liftStaged(fn) {
@@ -258,21 +257,20 @@ var classes = function classes() {
 
 //
 
-var mapCachedInit = [{}, []];
+var mapCachedInit = [new Map(), []];
 
 var mapCachedStep = function mapCachedStep(fromId) {
   return function (old, ids) {
     var oldIds = old[0],
         oldVs = old[1];
-    var newIds = {};
+    var newIds = new Map();
     var n = ids.length;
     var changed = n !== oldVs.length;
     var newVs = Array(n);
     for (var i = 0; i < n; ++i) {
       var _id = ids[i];
-      var k = _id.toString();
       var v = void 0;
-      if (infestines.hasU(k, newIds)) v = newIds[k];else v = newIds[k] = infestines.hasU(k, oldIds) ? oldIds[k] : fromId(_id);
+      if (newIds.has(_id)) v = newIds.get(_id);else newIds.set(_id, v = oldIds.has(_id) ? oldIds.get(_id) : fromId(_id));
       newVs[i] = v;
       if (!changed) changed = v !== oldVs[i];
     }
@@ -329,8 +327,8 @@ var types = { context: PropTypes.any };
 
 var Context = /*#__PURE__*/infestines.inherit(function Context(props$$1) {
   Context.childContextTypes = types;
-  React__default.Component.call(this, props$$1);
-}, React__default.Component, {
+  react.Component.call(this, props$$1);
+}, react.Component, {
   getChildContext: function getChildContext() {
     return { context: this.props.context };
   },
@@ -350,7 +348,7 @@ function withContext(originalFn) {
 
 var WithContext = /*#__PURE__*/withContext(function (_ref4, context) {
   var Do = _ref4.Do;
-  return React__default.createElement(Do, context);
+  return React.createElement(Do, context);
 });
 
 //
@@ -734,8 +732,9 @@ var mapElems = /*#__PURE__*/infestines.curry(function (xi2y, xs) {
 
 //
 
-var mapElemsWithIds = /*#__PURE__*/infestines.curry(function (idOf, xi2y, xs) {
-  var id2info = {};
+var mapElemsWithIds = /*#__PURE__*/infestines.curry(function (idL, xi2y, xs) {
+  var id2info = new Map();
+  var idOf = L.get(idL);
   var find$$1 = L.findHint(function (x, info) {
     return idOf(x) === info.id;
   });
@@ -744,9 +743,9 @@ var mapElemsWithIds = /*#__PURE__*/infestines.curry(function (idOf, xi2y, xs) {
     var ys = ysIn.length === n ? ysIn : Array(n);
     for (var i = 0; i < n; ++i) {
       var _id2 = idOf(xsIn[i]);
-      var info = id2info[_id2];
+      var info = id2info.get(_id2);
       if (void 0 === info) {
-        info = id2info[_id2] = {};
+        id2info.set(_id2, info = {});
         info.id = _id2;
         info.hint = i;
         info.elem = xi2y(view(find$$1(info), xs), _id2);
@@ -758,10 +757,9 @@ var mapElemsWithIds = /*#__PURE__*/infestines.curry(function (idOf, xi2y, xs) {
       }
     }
     if (ys !== ysIn) {
-      for (var _id3 in id2info) {
-        var _info = id2info[_id3];
-        if (ys[_info.hint] !== _info.elem) delete id2info[_id3];
-      }
+      id2info.forEach(function (info, id$$1) {
+        if (ys[info.hint] !== info.elem) id2info.delete(id$$1);
+      });
     }
     return ys;
   }, []), skipDuplicates(infestines.identicalU));
@@ -773,7 +771,7 @@ exports.lift1 = K.lift1;
 exports.lift1Shallow = K.lift1Shallow;
 exports.liftStaged = liftStaged;
 exports.template = template;
-exports.fromKefir = React.fromKefir;
+exports.fromKefir = karet.fromKefir;
 exports.debounce = debounce;
 exports.changes = changes;
 exports.serially = serially;
