@@ -7,12 +7,13 @@ import uglify      from "rollup-plugin-uglify"
 export default {
   external: ["infestines",
              "karet",
+             "kefir",
              "kefir.atom",
              "kefir.combines",
              "partial.lenses",
              "prop-types",
              "ramda",
-             "kefir"],
+             "react"],
   globals: {
     "infestines": "I",
     "karet": "karet",
@@ -21,14 +22,23 @@ export default {
     "kefir.combines": "kefir.combines",
     "partial.lenses": "L",
     "prop-types": "PropTypes",
-    "ramda": "R"
+    "ramda": "R",
+    "react": "React"
   },
   plugins: [
     process.env.NODE_ENV && replace({
       "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV)
     }),
     nodeResolve(),
-    commonjs({include: 'node_modules/**'}),
+    commonjs({
+      include: "node_modules/**",
+      namedExports: {
+        "node_modules/react/react.js": [
+          "Component",
+          "createElement"
+        ]
+      }
+    }),
     babel(),
     process.env.NODE_ENV === "production" &&
       uglify()

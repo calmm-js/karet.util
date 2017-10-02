@@ -35,7 +35,8 @@ import {
 
 import * as L from "partial.lenses"
 import K, {lift, lift1, lift1Shallow} from "kefir.combines"
-import React, {fromKefir} from "karet"
+import {fromKefir} from "karet"
+import {Component} from "react"
 import PropTypes from "prop-types"
 
 //
@@ -267,8 +268,8 @@ const types = {context: PropTypes.any}
 
 export const Context = /*#__PURE__*/inherit(function Context(props) {
   Context.childContextTypes = types
-  React.Component.call(this, props)
-}, React.Component, {
+  Component.call(this, props)
+}, Component, {
   getChildContext() {
     return {context: this.props.context}
   },
