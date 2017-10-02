@@ -23,7 +23,6 @@ import {
   curry as I_curry,
   curryN as I_curryN,
   dissocPartialU,
-  hasU,
   id,
   identicalU,
   inherit,
@@ -206,22 +205,21 @@ export const classes = (...xs) => ({className: cns(...xs)})
 
 //
 
-const mapCachedInit = [{}, []]
+const mapCachedInit = [new Map(), []]
 
 const mapCachedStep = fromId => (old, ids) => {
   const oldIds = old[0], oldVs = old[1]
-  const newIds = {}
+  const newIds = new Map()
   const n = ids.length
   let changed = n !== oldVs.length
   const newVs = Array(n)
   for (let i=0; i<n; ++i) {
     const id = ids[i]
-    const k = id.toString()
     let v
-    if (hasU(k, newIds))
-      v = newIds[k]
+    if (newIds.has(id))
+      v = newIds.get(id)
     else
-      v = newIds[k] = hasU(k, oldIds) ? oldIds[k] : fromId(id)
+      newIds.set(id, v = oldIds.has(id) ? oldIds.get(id) : fromId(id))
     newVs[i] = v
     if (!changed)
       changed = v !== oldVs[i]
