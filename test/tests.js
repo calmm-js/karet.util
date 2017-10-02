@@ -1,6 +1,6 @@
 import * as Kefir from "kefir"
 import * as R     from "ramda"
-import React      from "karet"
+import * as React from "karet"
 import ReactDOM   from "react-dom/server"
 
 import K, * as U from "../dist/karet.util.cjs"
