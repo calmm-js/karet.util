@@ -625,8 +625,9 @@ export const mapElems = /*#__PURE__*/I_curry((xi2y, xs) => seq(
 
 //
 
-export const mapElemsWithIds = /*#__PURE__*/I_curry((idOf, xi2y, xs) => {
-  const id2info = {}
+export const mapElemsWithIds = /*#__PURE__*/I_curry((idL, xi2y, xs) => {
+  const id2info = new Map()
+  const idOf = L.get(idL)
   const find = L.findHint((x, info) => idOf(x) === info.id)
   return seq(
     xs,
@@ -635,9 +636,9 @@ export const mapElemsWithIds = /*#__PURE__*/I_curry((idOf, xi2y, xs) => {
       let ys = ysIn.length === n ? ysIn : Array(n)
       for (let i=0; i<n; ++i) {
         const id = idOf(xsIn[i])
-        let info = id2info[id]
+        let info = id2info.get(id)
         if (void 0 === info) {
-          info = id2info[id] = {}
+          id2info.set(id, info = {})
           info.id = id
           info.hint = i
           info.elem = xi2y(view(find(info), xs), id)
@@ -650,11 +651,10 @@ export const mapElemsWithIds = /*#__PURE__*/I_curry((idOf, xi2y, xs) => {
         }
       }
       if (ys !== ysIn) {
-        for (const id in id2info) {
-          const info = id2info[id]
+        id2info.forEach((info, id) => {
           if (ys[info.hint] !== info.elem)
-            delete id2info[id]
-        }
+            id2info.delete(id)
+        })
       }
       return ys
     }, []),

@@ -179,7 +179,36 @@ const Checkbox = ({checked}) =>
 #### <a id="U-mapIndexed"></a> [≡](#contents) [`U.mapIndexed((x, i) => y, [...xs]*) ~> [...ys]*`](#U-mapIndexed)
 #### <a id="U-indices"></a> [≡](#contents) [`U.indices([...xs]*) ~> [...is]*`](#U-indices)
 #### <a id="U-mapElems"></a> [≡](#contents) [`U.mapElems((x*, i) => y, [...xs]*) ~> [...ys]*`](#U-mapElems)
-#### <a id="U-mapElemsWithIds"></a> [≡](#contents) [`U.mapElemsWithIds(x => id, (x*, id) => y, [...xs]*) ~> [...ys]*`](#U-mapElemsWithIds)
+
+#### <a id="U-mapElemsWithIds"></a> [≡](#contents) [`U.mapElemsWithIds(idLens, (x*, id) => y, [...xs]*) ~> [...ys]*`](#U-mapElemsWithIds)
+
+`U.mapElemsWithIds` perform a cached incremental map over state containing an
+array of values with unique ids.  On changes, the mapping function is only
+called for elements that were not in the state previously.  `U.mapElemsWithIds`
+is particularly designed for rendering a list of potentially stateful components
+efficiently.
+
+For example:
+
+```jsx
+const state = U.atom([
+  {id: 1, value: "Keep"},
+  {id: 2, value: "Calmm"},
+  {id: 3, value: "and"},
+  {id: 4, value: "React!"}
+])
+
+const Elems = ({elems}) =>
+  <ul>
+    {U.seq(elems,
+           U.mapElemsWithIds("id", (elem, id) =>
+             <li key={id}>{U.view("value", elem)}</li>))}
+  </ul>
+```
+
+`U.mapElemsWithIds` is asymptically optimal in the sense that any change (new
+elements added or old elements removed, positions of elements changed, ...) has
+`Theta(n)` complexity.  That is the best that can be achieved with plain arrays.
 
 ### Atom
 #### <a id="U-atom"></a> [≡](#contents) [`U.atom(value) ~> atom`](#U-atom)
