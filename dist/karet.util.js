@@ -326,7 +326,6 @@ var view = /*#__PURE__*/infestines.curry(function (l, xs) {
 var types = { context: PropTypes.any };
 
 var Context = /*#__PURE__*/infestines.inherit(function Context(props$$1) {
-  Context.childContextTypes = types;
   react.Component.call(this, props$$1);
 }, react.Component, {
   getChildContext: function getChildContext() {
@@ -335,6 +334,8 @@ var Context = /*#__PURE__*/infestines.inherit(function Context(props$$1) {
   render: function render() {
     return this.props.children;
   }
+}, {
+  childContextTypes: types
 });
 
 function withContext(originalFn) {
