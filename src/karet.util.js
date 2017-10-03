@@ -265,7 +265,6 @@ export const view = /*#__PURE__*/I_curry((l, xs) =>
 const types = {context: PropTypes.any}
 
 export const Context = /*#__PURE__*/inherit(function Context(props) {
-  Context.childContextTypes = types
   Component.call(this, props)
 }, Component, {
   getChildContext() {
@@ -274,6 +273,8 @@ export const Context = /*#__PURE__*/inherit(function Context(props) {
   render() {
     return this.props.children
   }
+}, {
+  childContextTypes: types
 })
 
 export function withContext(originalFn) {
