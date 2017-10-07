@@ -129,7 +129,7 @@ describe("mapElemsWithIds", () => {
            const xs = U.atom([{id: "2"}, {id: "1"}, {id: "3"}]);
            const ys =
              U.seq(xs,
-                   U.mapElemsWithIds(s => s.id, (x, i) => [x, i, ++uniq]),
+                   U.mapElemsWithIds('id', (x, i) => [x, i, ++uniq]),
                    U.flatMapLatest(U.template),
                    U.toProperty);
            ys.onValue(() => {});

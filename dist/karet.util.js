@@ -509,7 +509,7 @@ var eqProps$1 = /*#__PURE__*/liftMaybe(stageLast2Of3Maybe(R.eqProps));
 var equals$1 = /*#__PURE__*/liftMaybe(R.equals);
 var evolve$1 = /*#__PURE__*/liftMaybe(R.evolve);
 var filter$1 = /*#__PURE__*/liftMaybe(R.filter);
-var find$1 = /*#__PURE__*/liftMaybe(R.find);
+var find$2 = /*#__PURE__*/liftMaybe(R.find);
 var findIndex$1 = /*#__PURE__*/liftMaybe(R.findIndex);
 var findLast$1 = /*#__PURE__*/liftMaybe(R.findLast);
 var findLastIndex$1 = /*#__PURE__*/liftMaybe(R.findLastIndex);
@@ -736,9 +736,9 @@ var mapElems = /*#__PURE__*/infestines.curry(function (xi2y, xs) {
 var mapElemsWithIds = /*#__PURE__*/infestines.curry(function (idL, xi2y, xs) {
   var id2info = new Map();
   var idOf = L.get(idL);
-  var find$$1 = L.findHint(function (x, info) {
+  var pred = function pred(x, _, info) {
     return idOf(x) === info.id;
-  });
+  };
   return infestines.seq(xs, foldPast(function (ysIn, xsIn) {
     var n = xsIn.length;
     var ys = ysIn.length === n ? ysIn : Array(n);
@@ -749,7 +749,7 @@ var mapElemsWithIds = /*#__PURE__*/infestines.curry(function (idL, xi2y, xs) {
         id2info.set(_id2, info = {});
         info.id = _id2;
         info.hint = i;
-        info.elem = xi2y(view(find$$1(info), xs), _id2);
+        info.elem = xi2y(view(L.find(pred, info), xs), _id2);
       }
       if (ys[i] !== info.elem) {
         info.hint = i;
@@ -892,7 +892,7 @@ exports.eqProps = eqProps$1;
 exports.equals = equals$1;
 exports.evolve = evolve$1;
 exports.filter = filter$1;
-exports.find = find$1;
+exports.find = find$2;
 exports.findIndex = findIndex$1;
 exports.findLast = findLast$1;
 exports.findLastIndex = findLastIndex$1;

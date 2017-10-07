@@ -629,7 +629,7 @@ export const mapElems = /*#__PURE__*/I_curry((xi2y, xs) => seq(
 export const mapElemsWithIds = /*#__PURE__*/I_curry((idL, xi2y, xs) => {
   const id2info = new Map()
   const idOf = L.get(idL)
-  const find = L.findHint((x, info) => idOf(x) === info.id)
+  const pred = (x, _, info) => idOf(x) === info.id
   return seq(
     xs,
     foldPast((ysIn, xsIn) => {
@@ -642,7 +642,7 @@ export const mapElemsWithIds = /*#__PURE__*/I_curry((idL, xi2y, xs) => {
           id2info.set(id, info = {})
           info.id = id
           info.hint = i
-          info.elem = xi2y(view(find(info), xs), id)
+          info.elem = xi2y(view(L.find(pred, info), xs), id)
         }
         if (ys[i] !== info.elem) {
           info.hint = i
