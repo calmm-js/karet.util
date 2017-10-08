@@ -206,7 +206,7 @@ const Elems = ({elems}) =>
   </ul>
 ```
 
-`U.mapElemsWithIds` is asymptically optimal in the sense that any change (new
+`U.mapElemsWithIds` is asymptotically optimal in the sense that any change (new
 elements added or old elements removed, positions of elements changed, ...) has
 `Theta(n)` complexity.  That is the best that can be achieved with plain arrays.
 
