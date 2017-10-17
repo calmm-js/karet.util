@@ -604,6 +604,11 @@ export const tan    = /*#__PURE__*/lift1ShallowMaybe(Math.tan)
 export const tanh   = /*#__PURE__*/lift1ShallowMaybe(Math.tanh)
 export const trunc  = /*#__PURE__*/lift1ShallowMaybe(Math.trunc)
 
+// JSON
+
+export const parse = /*#__PURE__*/lift(JSON.parse)
+export const stringify = /*#__PURE__*/lift(JSON.stringify)
+
 //
 
 export const indices = /*#__PURE__*/pipe2U(length, lift1Shallow(R.range(0)))
