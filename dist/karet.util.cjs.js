@@ -721,6 +721,11 @@ var tan = /*#__PURE__*/lift1ShallowMaybe(Math.tan);
 var tanh = /*#__PURE__*/lift1ShallowMaybe(Math.tanh);
 var trunc = /*#__PURE__*/lift1ShallowMaybe(Math.trunc);
 
+// JSON
+
+var parse = /*#__PURE__*/K.lift(JSON.parse);
+var stringify = /*#__PURE__*/K.lift(JSON.stringify);
+
 //
 
 var indices = /*#__PURE__*/infestines.pipe2U(length$1, K.lift1Shallow(R.range(0)));
@@ -1100,6 +1105,8 @@ exports.sqrt = sqrt;
 exports.tan = tan;
 exports.tanh = tanh;
 exports.trunc = trunc;
+exports.parse = parse;
+exports.stringify = stringify;
 exports.indices = indices;
 exports.mapElems = mapElems;
 exports.mapElemsWithIds = mapElemsWithIds;
