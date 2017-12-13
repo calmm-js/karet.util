@@ -92,6 +92,7 @@ var skipFirst = /*#__PURE__*/infestines.curry(function (n, xs) {
 var skipDuplicates = /*#__PURE__*/infestines.curry(function (equals$$1, xs) {
   return toConstant(xs).skipDuplicates(equals$$1);
 });
+var skipIdenticals = /*#__PURE__*/skipDuplicates(infestines.identicalU);
 var skipUnless = /*#__PURE__*/infestines.curry(function (p, xs) {
   return toConstant(xs).filter(p);
 });
@@ -733,15 +734,20 @@ var indices = /*#__PURE__*/infestines.pipe2U(length$1, K.lift1Shallow(R.range(0)
 //
 
 var mapElems = /*#__PURE__*/infestines.curry(function (xi2y, xs) {
+  var vs = [];
   return infestines.seq(xs, foldPast(function (ysIn, xsIn) {
-    var xsN = xsIn.length;
     var ysN = ysIn.length;
+    var xsN = xsIn.length;
     if (xsN === ysN) return ysIn;
-    var ys = Array(xsN);
-    for (var i = 0; i < xsN; ++i) {
-      ys[i] = i < ysN ? ysIn[i] : xi2y(view(i, xs), i);
-    }return ys;
-  }, []), skipDuplicates(infestines.identicalU));
+    var m = Math.min(ysN, xsN);
+    var ys = ysIn.slice(0, m);
+    for (var i = xsN; i < ysN; ++i) {
+      vs[i]._onDeactivation();
+    }for (var _i2 = m; _i2 < xsN; ++_i2) {
+      ys[_i2] = xi2y(vs[_i2] = view(_i2, xs), _i2);
+    }vs.length = xsN;
+    return ys;
+  }, []), skipIdenticals);
 });
 
 //
@@ -762,7 +768,7 @@ var mapElemsWithIds = /*#__PURE__*/infestines.curry(function (idL, xi2y, xs) {
         id2info.set(_id2, info = {});
         info.id = _id2;
         info.hint = i;
-        info.elem = xi2y(view(L.find(pred, info), xs), _id2);
+        info.elem = xi2y(info.view = view(L.find(pred, info), xs), _id2);
       }
       if (ys[i] !== info.elem) {
         info.hint = i;
@@ -772,11 +778,14 @@ var mapElemsWithIds = /*#__PURE__*/infestines.curry(function (idL, xi2y, xs) {
     }
     if (ys !== ysIn) {
       id2info.forEach(function (info, id$$1) {
-        if (ys[info.hint] !== info.elem) id2info.delete(id$$1);
+        if (ys[info.hint] !== info.elem) {
+          info.view._onDeactivation();
+          id2info.delete(id$$1);
+        }
       });
     }
     return ys;
-  }, []), skipDuplicates(infestines.identicalU));
+  }, []), skipIdenticals);
 });
 
 exports['default'] = K__default;
@@ -806,6 +815,7 @@ exports.on = on;
 exports.sampledBy = sampledBy;
 exports.skipFirst = skipFirst;
 exports.skipDuplicates = skipDuplicates;
+exports.skipIdenticals = skipIdenticals;
 exports.skipUnless = skipUnless;
 exports.skipWhen = skipWhen;
 exports.startWith = startWith;

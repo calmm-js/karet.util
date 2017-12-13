@@ -82,6 +82,7 @@ export const sampledBy = /*#__PURE__*/I_curry((es, xs) => toConstant(xs).sampled
 export const skipFirst = /*#__PURE__*/I_curry((n, xs) => toConstant(xs).skip(n))
 export const skipDuplicates = /*#__PURE__*/I_curry((equals, xs) =>
   toConstant(xs).skipDuplicates(equals))
+export const skipIdenticals = /*#__PURE__*/skipDuplicates(identicalU)
 export const skipUnless = /*#__PURE__*/I_curry((p, xs) => toConstant(xs).filter(p))
 export const skipWhen = /*#__PURE__*/I_curry((p, xs) => toConstant(xs).filter(x => !p(x)))
 export const startWith = /*#__PURE__*/I_curry((x, xs) => toConstant(xs).toProperty(() => x))
@@ -615,19 +616,26 @@ export const indices = /*#__PURE__*/pipe2U(length, lift1Shallow(R.range(0)))
 
 //
 
-export const mapElems = /*#__PURE__*/I_curry((xi2y, xs) => seq(
-  xs,
-  foldPast((ysIn, xsIn) => {
-    const xsN = xsIn.length
-    const ysN = ysIn.length
-    if (xsN === ysN)
-      return ysIn
-    const ys = Array(xsN)
-    for (let i=0; i<xsN; ++i)
-      ys[i] = i < ysN ? ysIn[i] : xi2y(view(i, xs), i)
-    return ys
-  }, []),
-  skipDuplicates(identicalU)))
+export const mapElems = /*#__PURE__*/I_curry((xi2y, xs) => {
+  const vs = []
+  return seq(
+    xs,
+    foldPast((ysIn, xsIn) => {
+      const ysN = ysIn.length
+      const xsN = xsIn.length
+      if (xsN === ysN)
+        return ysIn
+      const m = Math.min(ysN, xsN)
+      const ys = ysIn.slice(0, m)
+      for (let i=xsN; i<ysN; ++i)
+        vs[i]._onDeactivation()
+      for (let i=m; i<xsN; ++i)
+        ys[i] = xi2y(vs[i] = view(i, xs), i)
+      vs.length = xsN
+      return ys
+    }, []),
+    skipIdenticals)
+})
 
 //
 
@@ -647,7 +655,7 @@ export const mapElemsWithIds = /*#__PURE__*/I_curry((idL, xi2y, xs) => {
           id2info.set(id, info = {})
           info.id = id
           info.hint = i
-          info.elem = xi2y(view(L.find(pred, info), xs), id)
+          info.elem = xi2y(info.view = view(L.find(pred, info), xs), id)
         }
         if (ys[i] !== info.elem) {
           info.hint = i
@@ -658,11 +666,13 @@ export const mapElemsWithIds = /*#__PURE__*/I_curry((idL, xi2y, xs) => {
       }
       if (ys !== ysIn) {
         id2info.forEach((info, id) => {
-          if (ys[info.hint] !== info.elem)
+          if (ys[info.hint] !== info.elem) {
+            info.view._onDeactivation()
             id2info.delete(id)
+          }
         })
       }
       return ys
     }, []),
-    skipDuplicates(identicalU))
+    skipIdenticals)
 })
