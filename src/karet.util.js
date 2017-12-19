@@ -1,11 +1,5 @@
-import * as R from "ramda"
-import {
-  AbstractMutable,
-  Atom,
-  Molecule,
-  Join,
-  holding
-} from "kefir.atom"
+import * as R from 'ramda'
+import { AbstractMutable, Atom, Molecule, Join, holding } from 'kefir.atom'
 import {
   Observable,
   Stream,
@@ -16,7 +10,7 @@ import {
   later as Kefir_later,
   merge as Kefir_merge,
   never as Kefir_never
-} from "kefir"
+} from 'kefir'
 import {
   arityN,
   assocPartialU,
@@ -30,123 +24,137 @@ import {
   pipe2U,
   seq,
   seqPartial
-} from "infestines"
+} from 'infestines'
 
-import * as L from "partial.lenses"
-import K, {lift, lift1, lift1Shallow} from "kefir.combines"
-import {fromKefir} from "karet"
-import {Component} from "react"
-import PropTypes from "prop-types"
+import * as L from 'partial.lenses'
+import K, { lift, lift1, lift1Shallow } from 'kefir.combines'
+import { fromKefir } from 'karet'
+import { Component } from 'react'
+import PropTypes from 'prop-types'
 
 //
 
 export default K
-export {lift, lift1, lift1Shallow}
+export { lift, lift1, lift1Shallow }
 export const liftStaged = fn => lift(pipe2U(fn, lift))
 export const template = observables => K(observables, id)
 
 //
 
-export {fromKefir}
+export { fromKefir }
 
 // Kefir
 
 const toUndefined = _ => {}
-const toConstant = x => x instanceof Observable ? x : Kefir_constant(x)
+const toConstant = x => (x instanceof Observable ? x : Kefir_constant(x))
 
 const invokeIf = (fn, x) => fn && fn(x)
-const toHandler = fns => ({type, value}) => invokeIf(fns[type], value)
+const toHandler = fns => ({ type, value }) => invokeIf(fns[type], value)
 
-export const debounce = /*#__PURE__*/I_curry((ms, xs) => toConstant(xs).debounce(ms))
+export const debounce = I_curry((ms, xs) => toConstant(xs).debounce(ms))
 export const changes = xs => toConstant(xs).changes()
 export const serially = xs => Kefir_concat(R.map(toConstant, xs))
-export const parallel = /*#__PURE__*/Kefir_merge
-export const delay = /*#__PURE__*/I_curry((ms, xs) => toConstant(xs).delay(ms))
-export const endWith = /*#__PURE__*/I_curry((v, xs) => toConstant(xs).concat(toConstant(v)))
-export const mapValue = /*#__PURE__*/I_curry((fn, xs) => toConstant(xs).map(fn))
-export const flatMapParallel = /*#__PURE__*/I_curry((fn, xs) =>
-  toConstant(xs).flatMap(pipe2U(fn, toConstant)))
-export const flatMapSerial = /*#__PURE__*/I_curry((fn, xs) =>
-  toConstant(xs).flatMapConcat(pipe2U(fn, toConstant)))
-export const flatMapErrors = /*#__PURE__*/I_curry((fn, xs) =>
-  toConstant(xs).flatMapErrors(pipe2U(fn, toConstant)))
-export const flatMapLatest = /*#__PURE__*/I_curry((fn, xs) =>
-  toConstant(xs).flatMapLatest(pipe2U(fn, toConstant)))
-export const foldPast = /*#__PURE__*/I_curry((fn, s, xs) => toConstant(xs).scan(fn, s))
-export const interval = /*#__PURE__*/I_curry(Kefir_interval)
-export const later = /*#__PURE__*/I_curry(Kefir_later)
+export const parallel = Kefir_merge
+export const delay = I_curry((ms, xs) => toConstant(xs).delay(ms))
+export const endWith = I_curry((v, xs) => toConstant(xs).concat(toConstant(v)))
+export const mapValue = I_curry((fn, xs) => toConstant(xs).map(fn))
+export const flatMapParallel = I_curry((fn, xs) =>
+  toConstant(xs).flatMap(pipe2U(fn, toConstant))
+)
+export const flatMapSerial = I_curry((fn, xs) =>
+  toConstant(xs).flatMapConcat(pipe2U(fn, toConstant))
+)
+export const flatMapErrors = I_curry((fn, xs) =>
+  toConstant(xs).flatMapErrors(pipe2U(fn, toConstant))
+)
+export const flatMapLatest = I_curry((fn, xs) =>
+  toConstant(xs).flatMapLatest(pipe2U(fn, toConstant))
+)
+export const foldPast = I_curry((fn, s, xs) => toConstant(xs).scan(fn, s))
+export const interval = I_curry(Kefir_interval)
+export const later = I_curry(Kefir_later)
 export const lazy = th => seq(toProperty(), flatMapLatest(th), toProperty)
-export const never = /*#__PURE__*/Kefir_never()
-export const on = /*#__PURE__*/I_curry((efs, xs) => toConstant(xs).onAny(toHandler(efs)))
-export const sampledBy = /*#__PURE__*/I_curry((es, xs) => toConstant(xs).sampledBy(es))
-export const skipFirst = /*#__PURE__*/I_curry((n, xs) => toConstant(xs).skip(n))
-export const skipDuplicates = /*#__PURE__*/I_curry((equals, xs) =>
-  toConstant(xs).skipDuplicates(equals))
-export const skipIdenticals = /*#__PURE__*/skipDuplicates(identicalU)
-export const skipUnless = /*#__PURE__*/I_curry((p, xs) => toConstant(xs).filter(p))
-export const skipWhen = /*#__PURE__*/I_curry((p, xs) => toConstant(xs).filter(x => !p(x)))
-export const startWith = /*#__PURE__*/I_curry((x, xs) => toConstant(xs).toProperty(() => x))
-export const sink = /*#__PURE__*/pipe2U(startWith(undefined), lift(toUndefined))
-export const takeFirst = /*#__PURE__*/I_curry((n, xs) => toConstant(xs).take(n))
-export const takeUntilBy = /*#__PURE__*/I_curry((ts, xs) => toConstant(xs).takeUntilBy(ts))
+export const never = Kefir_never()
+export const on = I_curry((efs, xs) => toConstant(xs).onAny(toHandler(efs)))
+export const sampledBy = I_curry((es, xs) => toConstant(xs).sampledBy(es))
+export const skipFirst = I_curry((n, xs) => toConstant(xs).skip(n))
+export const skipDuplicates = I_curry((equals, xs) =>
+  toConstant(xs).skipDuplicates(equals)
+)
+export const skipIdenticals = skipDuplicates(identicalU)
+export const skipUnless = I_curry((p, xs) => toConstant(xs).filter(p))
+export const skipWhen = I_curry((p, xs) => toConstant(xs).filter(x => !p(x)))
+export const startWith = I_curry((x, xs) => toConstant(xs).toProperty(() => x))
+export const sink = pipe2U(startWith(undefined), lift(toUndefined))
+export const takeFirst = I_curry((n, xs) => toConstant(xs).take(n))
+export const takeUntilBy = I_curry((ts, xs) => toConstant(xs).takeUntilBy(ts))
 export const toProperty = xs => toConstant(xs).toProperty()
-export const throttle = /*#__PURE__*/I_curry((ms, xs) => toConstant(xs).throttle(ms))
-export const fromEvents = /*#__PURE__*/I_curry(Kefir_fromEvents)
+export const throttle = I_curry((ms, xs) => toConstant(xs).throttle(ms))
+export const fromEvents = I_curry(Kefir_fromEvents)
 
-export const set = /*#__PURE__*/I_curry((settable, xs) => {
+export const set = I_curry((settable, xs) => {
   const ss = K(xs, xs => settable.set(xs))
-  if (ss instanceof Observable)
-    return ss.toProperty(toUndefined)
+  if (ss instanceof Observable) return ss.toProperty(toUndefined)
 })
 
 //
 
-export const Bus = /*#__PURE__*/inherit(function Bus() {
-  Stream.call(this)
-}, Stream, {
-  push(value) { this._emitValue(value) },
-  error(value) { this._emitError(value) },
-  end() { this._emitEnd() }
-})
+export const Bus = inherit(
+  function Bus() {
+    Stream.call(this)
+  },
+  Stream,
+  {
+    push(value) {
+      this._emitValue(value)
+    },
+    error(value) {
+      this._emitError(value)
+    },
+    end() {
+      this._emitEnd()
+    }
+  }
+)
 
 export const bus = () => new Bus()
 
 //
 
 export const refTo = settable => elem => {
-  if (null !== elem)
-    settable.set(elem)
+  if (null !== elem) settable.set(elem)
 }
 
 //
 
-export {seq, seqPartial}
+export { seq, seqPartial }
 
 export const scope = fn => fn()
 
-export const toPartial = fn => lift(arityN(fn.length, (...xs) =>
-  R.all(isDefined, xs) ? fn(...xs) : undefined))
+export const toPartial = fn =>
+  lift(
+    arityN(fn.length, (...xs) => (R.all(isDefined, xs) ? fn(...xs) : undefined))
+  )
 
 export const show = x => console.log(x) || x
 
-export const staged = fn => R.curryN(fn.length, function () {
-  const xsN = arguments.length,
-        fnN = fn.length,
-        n = Math.min(xsN, fnN),
-        xs = Array(n)
-  for (let i=0; i<n; ++i)
-    xs[i] = arguments[i]
+export const staged = fn =>
+  R.curryN(fn.length, function() {
+    const xsN = arguments.length,
+      fnN = fn.length,
+      n = Math.min(xsN, fnN),
+      xs = Array(n)
+    for (let i = 0; i < n; ++i) xs[i] = arguments[i]
 
-  const fnxs = fn.apply(null, xs)
-  if (fnN === xsN)
-    return fnxs
+    const fnxs = fn.apply(null, xs)
+    if (fnN === xsN) return fnxs
 
-  const m = xsN - n, ys = Array(m)
-  for (let i=0; i<m; ++i)
-    ys[i] = arguments[i+n]
+    const m = xsN - n,
+      ys = Array(m)
+    for (let i = 0; i < m; ++i) ys[i] = arguments[i + n]
 
-  return fnxs.apply(null, ys)
-})
+    return fnxs.apply(null, ys)
+  })
 
 //
 
@@ -161,15 +169,14 @@ export function setProps(observables) {
     if (e) {
       callback = ev => {
         switch (ev.type) {
-          case "value": {
+          case 'value': {
             const observables = ev.value
-            for (const k in observables)
-              e[k] = observables[k]
+            for (const k in observables) e[k] = observables[k]
             break
           }
-          case "error":
+          case 'error':
             throw ev.value
-          case "end":
+          case 'end':
             observable = callback = null
             break
         }
@@ -180,119 +187,119 @@ export function setProps(observables) {
   }
 }
 
-export const getProps = template => ({target}) => {
-  for (const k in template)
-    template[k].set(target[k])
+export const getProps = template => ({ target }) => {
+  for (const k in template) template[k].set(target[k])
 }
 
 export const bindProps = templateWithRef => {
   const ref = templateWithRef.ref
-  const template = dissocPartialU("ref", templateWithRef)
-  const r = {ref: setProps(template)}
+  const template = dissocPartialU('ref', templateWithRef)
+  const r = { ref: setProps(template) }
   r[ref] = getProps(template)
   return r
 }
 
 export const bind = template =>
-  assocPartialU("onChange", getProps(template), template)
+  assocPartialU('onChange', getProps(template), template)
 
 //
 
-const flatJoin = /*#__PURE__*/lift1(L.join(" ", [L.flatten, L.when(id)]))
+const flatJoin = lift1(L.join(' ', [L.flatten, L.when(id)]))
 
 export const cns = (...xs) => flatJoin(xs)
 
-export const classes = (...xs) => ({className: cns(...xs)})
+export const classes = (...xs) => ({ className: cns(...xs) })
 
 //
 
 const mapCachedInit = [new Map(), []]
 
 const mapCachedStep = fromId => (old, ids) => {
-  const oldIds = old[0], oldVs = old[1]
+  const oldIds = old[0],
+    oldVs = old[1]
   const newIds = new Map()
   const n = ids.length
   let changed = n !== oldVs.length
   const newVs = Array(n)
-  for (let i=0; i<n; ++i) {
+  for (let i = 0; i < n; ++i) {
     const id = ids[i]
     let v
-    if (newIds.has(id))
-      v = newIds.get(id)
-    else
-      newIds.set(id, v = oldIds.has(id) ? oldIds.get(id) : fromId(id))
+    if (newIds.has(id)) v = newIds.get(id)
+    else newIds.set(id, (v = oldIds.has(id) ? oldIds.get(id) : fromId(id)))
     newVs[i] = v
-    if (!changed)
-      changed = v !== oldVs[i]
+    if (!changed) changed = v !== oldVs[i]
   }
   return changed ? [newIds, newVs] : old
 }
 
-const mapCachedMap = /*#__PURE__*/lift1Shallow(x => x[1])
+const mapCachedMap = lift1Shallow(x => x[1])
 
-export const mapCached = /*#__PURE__*/I_curryN(2, fromId =>
-  pipe2U(foldPast(mapCachedStep(fromId), mapCachedInit),
-         mapCachedMap))
+export const mapCached = I_curryN(2, fromId =>
+  pipe2U(foldPast(mapCachedStep(fromId), mapCachedInit), mapCachedMap)
+)
 
 //
 
-export const mapIndexed = /*#__PURE__*/I_curryN(2, xi2y =>
-  lift1(xs => xs.map((x, i) => xi2y(x, i))))
+export const mapIndexed = I_curryN(2, xi2y =>
+  lift1(xs => xs.map((x, i) => xi2y(x, i)))
+)
 
-const ifteU = (b, t, e) => toProperty(flatMapLatest(b => b ? t : e, b))
+const ifteU = (b, t, e) => toProperty(flatMapLatest(b => (b ? t : e), b))
 
-export const ifte = /*#__PURE__*/I_curry(ifteU)
-export const ift = /*#__PURE__*/arityN(2, ifteU)
+export const ifte = I_curry(ifteU)
+export const ift = arityN(2, ifteU)
 
 export function iftes(_c, _t) {
   let n = arguments.length
   let r = n & 1 ? arguments[--n] : undefined
-  while (0 <= (n -= 2))
-    r = ifteU(arguments[n], arguments[n+1], r)
+  while (0 <= (n -= 2)) r = ifteU(arguments[n], arguments[n + 1], r)
   return r
 }
 
 //
 
-export const view = /*#__PURE__*/I_curry((l, xs) =>
-  xs instanceof AbstractMutable
-  ? l instanceof Observable
-    ? new Join(K(l, l => xs.view(l)))
-    : xs.view(l)
-  : K(l, xs, L.get))
+export const view = I_curry(
+  (l, xs) =>
+    xs instanceof AbstractMutable
+      ? l instanceof Observable ? new Join(K(l, l => xs.view(l))) : xs.view(l)
+      : K(l, xs, L.get)
+)
 
 //
 
-const types = {context: PropTypes.any}
+const types = { context: PropTypes.any }
 
-export const Context = /*#__PURE__*/inherit(function Context(props) {
-  Component.call(this, props)
-}, Component, {
-  getChildContext() {
-    return {context: this.props.context}
+export const Context = inherit(
+  function Context(props) {
+    Component.call(this, props)
   },
-  render() {
-    return this.props.children
+  Component,
+  {
+    getChildContext() {
+      return { context: this.props.context }
+    },
+    render() {
+      return this.props.children
+    }
+  },
+  {
+    childContextTypes: types
   }
-}, {
-  childContextTypes: types
-})
+)
 
 export function withContext(originalFn) {
-  const fn = (props, {context}) => originalFn(props, context)
+  const fn = (props, { context }) => originalFn(props, context)
   fn.contextTypes = types
   return fn
 }
 
-export const WithContext = /*#__PURE__*/withContext(({Do}, context) =>
-  <Do {...context}/>)
+export const WithContext = withContext(({ Do }, context) => <Do {...context} />)
 
 //
 
 const actionsImmediate = (...fns) => (...args) => {
-  for (let i=0, n=fns.length; i<n; ++i)
-    if (fns[i] instanceof Function)
-      fns[i](...args)
+  for (let i = 0, n = fns.length; i < n; ++i)
+    if (fns[i] instanceof Function) fns[i](...args)
 }
 
 export const actions = (...fns) => K(...fns, actionsImmediate)
@@ -308,338 +315,336 @@ export const atom = value => new Atom(value)
 export const variable = () => new Atom()
 export const molecule = template => new Molecule(template)
 
-export {holding}
+export { holding }
 
 // Ramda
 
 const maybe = f => x => x && f(x)
 
-const stageLast1Of2Maybe = /*#__PURE__*/maybe(fn => x1 => x2 => fn(x1, x2))
-const stageLast2Of3Maybe = /*#__PURE__*/maybe(fn => x1 => (x2, x3) => fn(x1, x2, x3))
+const stageLast1Of2Maybe = maybe(fn => x1 => x2 => fn(x1, x2))
+const stageLast2Of3Maybe = maybe(fn => x1 => (x2, x3) => fn(x1, x2, x3))
 
-const liftMaybe = /*#__PURE__*/maybe(lift)
-const liftStagedMaybe = /*#__PURE__*/maybe(liftStaged)
-const lift1Maybe = /*#__PURE__*/maybe(lift1)
-const lift1ShallowMaybe = /*#__PURE__*/maybe(/*#__PURE__*/lift1Shallow)
+const liftMaybe = maybe(lift)
+const liftStagedMaybe = maybe(liftStaged)
+const lift1Maybe = maybe(lift1)
+const lift1ShallowMaybe = maybe(lift1Shallow)
 
-//export const bind = /*#__PURE__*/liftMaybe(R.bind)                             -> conflict, useful?
-//export const clone = /*#__PURE__*/liftMaybe(R.clone)                           -> useful?
-//export const composeK = /*#__PURE__*/liftMaybe(R.composeK)                     -> lift staged, useful?
-//export const composeP = /*#__PURE__*/liftMaybe(R.composeP)                     -> lift staged, useful?
-//export const forEach = /*#__PURE__*/liftMaybe(R.forEach)                       -> useful?
-//export const forEachObjIndexed = = /*#__PURE__*/liftMaybe(R.forEachObjIndexed) -> useful?
-//export const lens = /*#__PURE__*/liftMaybe(R.lens)                             -> partial.lenses
-//export const lensIndex = /*#__PURE__*/liftMaybe(R.lensIndex)                   -> partial.lenses
-//export const lensPath = /*#__PURE__*/liftMaybe(R.lensPath)                     -> partial.lenses
-//export const lensProp = /*#__PURE__*/liftMaybe(R.lensProp)                     -> partial.lenses
-//export const lift = /*#__PURE__*/liftMaybe(R.lift)                             -> conflict
-//export const liftN = /*#__PURE__*/liftMaybe(R.liftN)                           -> conflict
-//export const memoize = /*#__PURE__*/liftStagedMaybe(R.memoize)                 -> deprecated
-//export const once = /*#__PURE__*/liftMaybe(R.once)                             -> lift staged, usually wrong thing to do?
-//export const over = /*#__PURE__*/liftMaybe(R.over)                             -> partial.lenses
-//export const pipeK = /*#__PURE__*/liftMaybe(R.pipeK)                           -> lift staged, useful?
-//export const pipeP = /*#__PURE__*/liftMaybe(R.pipeP)                           -> lift staged, useful?
-//export const set = /*#__PURE__*/liftMaybe(R.set)                               -> partial.lenses, conflict
-//export const view = /*#__PURE__*/liftMaybe(R.view)                             -> partial.lenses, conflict
+//export const bind = liftMaybe(R.bind)                             -> conflict, useful?
+//export const clone = liftMaybe(R.clone)                           -> useful?
+//export const composeK = liftMaybe(R.composeK)                     -> lift staged, useful?
+//export const composeP = liftMaybe(R.composeP)                     -> lift staged, useful?
+//export const forEach = liftMaybe(R.forEach)                       -> useful?
+//export const forEachObjIndexed = = liftMaybe(R.forEachObjIndexed) -> useful?
+//export const lens = liftMaybe(R.lens)                             -> partial.lenses
+//export const lensIndex = liftMaybe(R.lensIndex)                   -> partial.lenses
+//export const lensPath = liftMaybe(R.lensPath)                     -> partial.lenses
+//export const lensProp = liftMaybe(R.lensProp)                     -> partial.lenses
+//export const lift = liftMaybe(R.lift)                             -> conflict
+//export const liftN = liftMaybe(R.liftN)                           -> conflict
+//export const memoize = liftStagedMaybe(R.memoize)                 -> deprecated
+//export const once = liftMaybe(R.once)                             -> lift staged, usually wrong thing to do?
+//export const over = liftMaybe(R.over)                             -> partial.lenses
+//export const pipeK = liftMaybe(R.pipeK)                           -> lift staged, useful?
+//export const pipeP = liftMaybe(R.pipeP)                           -> lift staged, useful?
+//export const set = liftMaybe(R.set)                               -> partial.lenses, conflict
+//export const view = liftMaybe(R.view)                             -> partial.lenses, conflict
 
-export const F = /*#__PURE__*/R.F
-export const T = /*#__PURE__*/R.T
-export const __ = /*#__PURE__*/R.__
-export const add = /*#__PURE__*/liftMaybe(R.add)
-export const addIndex = /*#__PURE__*/liftStagedMaybe(R.addIndex)
-export const adjust = /*#__PURE__*/liftMaybe(R.adjust)
-export const all = /*#__PURE__*/liftMaybe(R.all)
-export const allPass = /*#__PURE__*/liftStagedMaybe(R.allPass)
-export const always = /*#__PURE__*/R.always // lifting won't really work
-export const and = /*#__PURE__*/liftMaybe(R.and)
-export const any = /*#__PURE__*/liftMaybe(R.any)
-export const anyPass = /*#__PURE__*/liftStagedMaybe(R.anyPass)
-export const ap = /*#__PURE__*/liftMaybe(R.ap)
-export const aperture = /*#__PURE__*/liftMaybe(R.aperture)
-export const append = /*#__PURE__*/liftMaybe(R.append)
-export const apply = /*#__PURE__*/liftMaybe(R.apply)
-export const applySpec = /*#__PURE__*/liftMaybe(R.applySpec)
-export const applyTo = /*#__PURE__*/liftMaybe(R.applyTo)
-export const ascend = /*#__PURE__*/liftMaybe(stageLast2Of3Maybe(R.ascend))
-export const assoc = /*#__PURE__*/liftMaybe(R.assoc)
-export const assocPath = /*#__PURE__*/liftMaybe(R.assocPath)
-export const binary = /*#__PURE__*/liftStagedMaybe(R.binary)
-export const both = /*#__PURE__*/liftStagedMaybe(R.both)
-export const call = /*#__PURE__*/liftStagedMaybe(R.call)
-export const chain = /*#__PURE__*/liftMaybe(R.chain)
-export const clamp = /*#__PURE__*/liftMaybe(R.clamp)
-export const comparator = /*#__PURE__*/liftStagedMaybe(R.comparator)
-export const complement = /*#__PURE__*/liftStagedMaybe(R.complement)
-export const compose = /*#__PURE__*/liftStagedMaybe(R.compose)
-export const concat = /*#__PURE__*/liftMaybe(R.concat)
-export const cond = /*#__PURE__*/liftStagedMaybe(R.cond)
-export const construct = /*#__PURE__*/liftStagedMaybe(R.construct)
-export const constructN = /*#__PURE__*/liftStagedMaybe(R.constructN)
-export const contains = /*#__PURE__*/liftMaybe(R.contains)
-export const converge = /*#__PURE__*/liftStagedMaybe(R.converge)
-export const countBy = /*#__PURE__*/liftMaybe(R.countBy)
-export const curry = /*#__PURE__*/liftStagedMaybe(R.curry)
-export const curryN = /*#__PURE__*/liftStagedMaybe(R.curryN)
-export const dec = /*#__PURE__*/liftMaybe(R.dec)
-export const defaultTo = /*#__PURE__*/liftMaybe(R.defaultTo)
-export const descend = /*#__PURE__*/liftMaybe(stageLast2Of3Maybe(R.descend))
-export const difference = /*#__PURE__*/liftMaybe(R.difference)
-export const differenceWith = /*#__PURE__*/liftMaybe(R.differenceWith)
-export const dissoc = /*#__PURE__*/liftMaybe(R.dissoc)
-export const dissocPath = /*#__PURE__*/liftMaybe(R.dissocPath)
-export const divide = /*#__PURE__*/liftMaybe(R.divide)
-export const drop = /*#__PURE__*/liftMaybe(R.drop)
-export const dropLast = /*#__PURE__*/liftMaybe(R.dropLast)
-export const dropLastWhile = /*#__PURE__*/liftMaybe(R.dropLastWhile)
-export const dropRepeats = /*#__PURE__*/liftMaybe(R.dropRepeats)
-export const dropRepeatsWith = /*#__PURE__*/liftMaybe(R.dropRepeatsWith)
-export const dropWhile = /*#__PURE__*/liftMaybe(R.dropWhile)
-export const either = /*#__PURE__*/liftStagedMaybe(R.either)
-export const empty = /*#__PURE__*/liftMaybe(R.empty)
-export const endsWith = /*#__PURE__*/liftMaybe(R.endsWith)
-export const eqBy = /*#__PURE__*/liftMaybe(stageLast2Of3Maybe(R.eqBy))
-export const eqProps = /*#__PURE__*/liftMaybe(stageLast2Of3Maybe(R.eqProps))
-export const equals = /*#__PURE__*/liftMaybe(R.equals)
-export const evolve = /*#__PURE__*/liftMaybe(R.evolve)
-export const filter = /*#__PURE__*/liftMaybe(R.filter)
-export const find = /*#__PURE__*/liftMaybe(R.find)
-export const findIndex = /*#__PURE__*/liftMaybe(R.findIndex)
-export const findLast = /*#__PURE__*/liftMaybe(R.findLast)
-export const findLastIndex = /*#__PURE__*/liftMaybe(R.findLastIndex)
-export const flatten = /*#__PURE__*/liftMaybe(R.flatten)
-export const flip = /*#__PURE__*/liftStagedMaybe(R.flip)
-export const fromPairs = /*#__PURE__*/liftMaybe(R.fromPairs)
-export const groupBy = /*#__PURE__*/liftMaybe(R.groupBy)
-export const groupWith = /*#__PURE__*/liftMaybe(R.groupWith)
-export const gt = /*#__PURE__*/liftMaybe(R.gt)
-export const gte = /*#__PURE__*/liftMaybe(R.gte)
-export const has = /*#__PURE__*/liftMaybe(R.has)
-export const hasIn = /*#__PURE__*/liftMaybe(R.hasIn)
-export const head = /*#__PURE__*/liftMaybe(R.head)
-export const identical = /*#__PURE__*/liftMaybe(R.identical)
-export const identity = /*#__PURE__*/R.identity // lifting won't really work
-export const ifElse = /*#__PURE__*/liftStagedMaybe(R.ifElse)
-export const inc = /*#__PURE__*/liftMaybe(R.inc)
-export const indexBy = /*#__PURE__*/liftMaybe(R.indexBy)
-export const indexOf = /*#__PURE__*/liftMaybe(R.indexOf)
-export const init = /*#__PURE__*/liftMaybe(R.init)
-export const innerJoin = /*#__PURE__*/liftMaybe(R.innerJoin)
-export const insert = /*#__PURE__*/liftMaybe(R.insert)
-export const insertAll = /*#__PURE__*/liftMaybe(R.insertAll)
-export const intersection = /*#__PURE__*/liftMaybe(R.intersection)
-export const intersperse = /*#__PURE__*/liftMaybe(R.intersperse)
-export const into = /*#__PURE__*/liftMaybe(R.into)
-export const invert = /*#__PURE__*/liftMaybe(R.invert)
-export const invertObj = /*#__PURE__*/liftMaybe(R.invertObj)
-export const invoker = /*#__PURE__*/liftStagedMaybe(R.invoker)
-export const is = /*#__PURE__*/liftMaybe(stageLast1Of2Maybe(R.is))
-export const isEmpty = /*#__PURE__*/liftMaybe(R.isEmpty)
-export const isNil = /*#__PURE__*/liftMaybe(R.isNil)
-export const join = /*#__PURE__*/liftMaybe(R.join)
-export const juxt = /*#__PURE__*/liftStagedMaybe(R.juxt)
-export const keys = /*#__PURE__*/lift1ShallowMaybe(R.keys)
-export const keysIn = /*#__PURE__*/liftMaybe(R.keysIn)
-export const last = /*#__PURE__*/liftMaybe(R.last)
-export const lastIndexOf = /*#__PURE__*/liftMaybe(R.lastIndexOf)
-export const length = /*#__PURE__*/lift1ShallowMaybe(R.length)
-export const lt = /*#__PURE__*/liftMaybe(R.lt)
-export const lte = /*#__PURE__*/liftMaybe(R.lte)
-export const map = /*#__PURE__*/liftMaybe(R.map)
-export const mapAccum = /*#__PURE__*/liftMaybe(R.mapAccum)
-export const mapAccumRight = /*#__PURE__*/liftMaybe(R.mapAccumRight)
-export const mapObjIndexed = /*#__PURE__*/liftMaybe(R.mapObjIndexed)
-export const match = /*#__PURE__*/liftMaybe(R.match)
-export const mathMod = /*#__PURE__*/liftMaybe(R.mathMod)
-export const max = /*#__PURE__*/liftMaybe(R.max)
-export const maxBy = /*#__PURE__*/liftMaybe(R.maxBy)
-export const mean = /*#__PURE__*/liftMaybe(R.mean)
-export const median = /*#__PURE__*/liftMaybe(R.median)
-export const memoizeWith = /*#__PURE__*/liftStagedMaybe(R.memoizeWith)
-export const merge = /*#__PURE__*/liftMaybe(R.merge)
-export const mergeAll = /*#__PURE__*/liftMaybe(R.mergeAll)
-export const mergeDeepLeft = /*#__PURE__*/liftMaybe(R.mergeDeepLeft)
-export const mergeDeepRight = /*#__PURE__*/liftMaybe(R.mergeDeepRight)
-export const mergeDeepWith = /*#__PURE__*/liftMaybe(R.mergeDeepWith)
-export const mergeDeepWithKey = /*#__PURE__*/liftMaybe(R.mergeDeepWithKey)
-export const mergeWith = /*#__PURE__*/liftMaybe(R.mergeWith)
-export const mergeWithKey = /*#__PURE__*/liftMaybe(R.mergeWithKey)
-export const min = /*#__PURE__*/liftMaybe(R.min)
-export const minBy = /*#__PURE__*/liftMaybe(R.minBy)
-export const modulo = /*#__PURE__*/liftMaybe(R.modulo)
-export const multiply = /*#__PURE__*/liftMaybe(R.multiply)
-export const nAry = /*#__PURE__*/liftStagedMaybe(R.nAry)
-export const negate = /*#__PURE__*/liftMaybe(R.negate)
-export const none = /*#__PURE__*/liftMaybe(R.none)
-export const not = /*#__PURE__*/liftMaybe(R.not)
-export const nth = /*#__PURE__*/liftMaybe(R.nth)
-export const nthArg = /*#__PURE__*/liftStagedMaybe(R.nthArg)
-export const o = /*#__PURE__*/liftMaybe(R.o)
-export const objOf = /*#__PURE__*/liftMaybe(R.objOf)
-export const of = /*#__PURE__*/liftMaybe(R.of)
-export const omit = /*#__PURE__*/liftMaybe(R.omit)
-export const or = /*#__PURE__*/liftMaybe(R.or)
-export const pair = /*#__PURE__*/liftMaybe(R.pair)
-export const partial = /*#__PURE__*/liftStagedMaybe(R.partial)
-export const partialRight = /*#__PURE__*/liftStagedMaybe(R.partialRight)
-export const partition = /*#__PURE__*/liftMaybe(R.partition)
-export const path = /*#__PURE__*/liftMaybe(R.path)
-export const pathEq = /*#__PURE__*/liftMaybe(R.pathEq)
-export const pathOr = /*#__PURE__*/liftMaybe(R.pathOr)
-export const pathSatisfies = /*#__PURE__*/liftMaybe(R.pathSatisfies)
-export const pick = /*#__PURE__*/liftMaybe(R.pick)
-export const pickAll = /*#__PURE__*/liftMaybe(R.pickAll)
-export const pickBy = /*#__PURE__*/liftMaybe(R.pickBy)
-export const pipe = /*#__PURE__*/liftStagedMaybe(R.pipe)
-export const pluck = /*#__PURE__*/liftMaybe(R.pluck)
-export const prepend = /*#__PURE__*/liftMaybe(R.prepend)
-export const product = /*#__PURE__*/liftMaybe(R.product)
-export const project = /*#__PURE__*/liftMaybe(R.project)
-export const prop = /*#__PURE__*/liftMaybe(R.prop)
-export const propEq = /*#__PURE__*/liftMaybe(R.propEq)
-export const propIs = /*#__PURE__*/liftMaybe(R.propIs)
-export const propOr = /*#__PURE__*/liftMaybe(R.propOr)
-export const propSatisfies = /*#__PURE__*/liftMaybe(R.propSatisfies)
-export const props = /*#__PURE__*/liftMaybe(R.props)
-export const range = /*#__PURE__*/liftMaybe(R.range)
-export const reduce = /*#__PURE__*/liftMaybe(R.reduce)
-export const reduceBy = /*#__PURE__*/liftMaybe(R.reduceBy)
-export const reduceRight = /*#__PURE__*/liftMaybe(R.reduceRight)
-export const reduceWhile = /*#__PURE__*/liftMaybe(R.reduceWhile)
-export const reduced = /*#__PURE__*/liftMaybe(R.reduced)
-export const reject = /*#__PURE__*/liftMaybe(R.reject)
-export const remove = /*#__PURE__*/liftMaybe(R.remove)
-export const repeat = /*#__PURE__*/liftMaybe(R.repeat)
-export const replace = /*#__PURE__*/liftMaybe(R.replace)
-export const reverse = /*#__PURE__*/liftMaybe(R.reverse)
-export const scan = /*#__PURE__*/liftMaybe(R.scan)
-export const sequence = /*#__PURE__*/liftMaybe(R.sequence)
-export const slice = /*#__PURE__*/liftMaybe(R.slice)
-export const sort = /*#__PURE__*/liftMaybe(R.sort)
-export const sortBy = /*#__PURE__*/liftMaybe(R.sortBy)
-export const sortWith = /*#__PURE__*/liftMaybe(R.sortWith)
-export const split = /*#__PURE__*/liftMaybe(R.split)
-export const splitAt = /*#__PURE__*/liftMaybe(R.splitAt)
-export const splitEvery = /*#__PURE__*/liftMaybe(R.splitEvery)
-export const splitWhen = /*#__PURE__*/liftMaybe(R.splitWhen)
-export const startsWith = /*#__PURE__*/liftMaybe(R.startsWith)
-export const subtract = /*#__PURE__*/liftMaybe(R.subtract)
-export const sum = /*#__PURE__*/liftMaybe(R.sum)
-export const symmetricDifference = /*#__PURE__*/liftMaybe(R.symmetricDifference)
-export const symmetricDifferenceWith = /*#__PURE__*/liftMaybe(R.symmetricDifferenceWith)
-export const tail = /*#__PURE__*/liftMaybe(R.tail)
-export const take = /*#__PURE__*/liftMaybe(R.take)
-export const takeLast = /*#__PURE__*/liftMaybe(R.takeLast)
-export const takeLastWhile = /*#__PURE__*/liftMaybe(R.takeLastWhile)
-export const takeWhile = /*#__PURE__*/liftMaybe(R.takeWhile)
-export const tap = /*#__PURE__*/liftMaybe(R.tap)
-export const test = /*#__PURE__*/liftMaybe(R.test)
-export const times = /*#__PURE__*/liftMaybe(R.times)
-export const toLower = /*#__PURE__*/liftMaybe(R.toLower)
-export const toPairs = /*#__PURE__*/liftMaybe(R.toPairs)
-export const toPairsIn = /*#__PURE__*/liftMaybe(R.toPairsIn)
-export const toString = /*#__PURE__*/liftMaybe(R.toString)
-export const toUpper = /*#__PURE__*/liftMaybe(R.toUpper)
-export const transduce = /*#__PURE__*/liftMaybe(R.transduce)
-export const transpose = /*#__PURE__*/liftMaybe(R.transpose)
-export const traverse = /*#__PURE__*/liftMaybe(R.traverse)
-export const trim = /*#__PURE__*/liftMaybe(R.trim)
-export const tryCatch = /*#__PURE__*/liftStagedMaybe(R.tryCatch)
-export const type = /*#__PURE__*/liftMaybe(R.type)
-export const unapply = /*#__PURE__*/liftStagedMaybe(R.unapply)
-export const unary = /*#__PURE__*/liftStagedMaybe(R.unary)
-export const uncurryN = /*#__PURE__*/liftStagedMaybe(R.uncurryN)
-export const unfold = /*#__PURE__*/liftMaybe(R.unfold)
-export const union = /*#__PURE__*/liftMaybe(R.union)
-export const unionWith = /*#__PURE__*/liftMaybe(R.unionWith)
-export const uniq = /*#__PURE__*/liftMaybe(R.uniq)
-export const uniqBy = /*#__PURE__*/liftMaybe(R.uniqBy)
-export const uniqWith = /*#__PURE__*/liftMaybe(R.uniqWith)
-export const unless = /*#__PURE__*/liftMaybe(R.unless)
-export const unnest = /*#__PURE__*/liftMaybe(R.unnest)
-export const until = /*#__PURE__*/liftMaybe(R.until)
-export const update = /*#__PURE__*/liftMaybe(R.update)
-export const useWith = /*#__PURE__*/liftStagedMaybe(R.useWith)
-export const values = /*#__PURE__*/lift1Maybe(R.values)
-export const valuesIn = /*#__PURE__*/liftMaybe(R.valuesIn)
-export const when = /*#__PURE__*/liftMaybe(R.when)
-export const where = /*#__PURE__*/liftStagedMaybe(stageLast1Of2Maybe(R.where))
-export const whereEq = /*#__PURE__*/liftStagedMaybe(stageLast1Of2Maybe(R.whereEq))
-export const without = /*#__PURE__*/liftMaybe(R.without)
-export const xprod = /*#__PURE__*/liftMaybe(R.xprod)
-export const zip = /*#__PURE__*/liftMaybe(R.zip)
-export const zipObj = /*#__PURE__*/liftMaybe(R.zipObj)
-export const zipWith = /*#__PURE__*/liftMaybe(R.zipWith)
+export const F = R.F
+export const T = R.T
+export const __ = R.__
+export const add = liftMaybe(R.add)
+export const addIndex = liftStagedMaybe(R.addIndex)
+export const adjust = liftMaybe(R.adjust)
+export const all = liftMaybe(R.all)
+export const allPass = liftStagedMaybe(R.allPass)
+export const always = R.always // lifting won't really work
+export const and = liftMaybe(R.and)
+export const any = liftMaybe(R.any)
+export const anyPass = liftStagedMaybe(R.anyPass)
+export const ap = liftMaybe(R.ap)
+export const aperture = liftMaybe(R.aperture)
+export const append = liftMaybe(R.append)
+export const apply = liftMaybe(R.apply)
+export const applySpec = liftMaybe(R.applySpec)
+export const applyTo = liftMaybe(R.applyTo)
+export const ascend = liftMaybe(stageLast2Of3Maybe(R.ascend))
+export const assoc = liftMaybe(R.assoc)
+export const assocPath = liftMaybe(R.assocPath)
+export const binary = liftStagedMaybe(R.binary)
+export const both = liftStagedMaybe(R.both)
+export const call = liftStagedMaybe(R.call)
+export const chain = liftMaybe(R.chain)
+export const clamp = liftMaybe(R.clamp)
+export const comparator = liftStagedMaybe(R.comparator)
+export const complement = liftStagedMaybe(R.complement)
+export const compose = liftStagedMaybe(R.compose)
+export const concat = liftMaybe(R.concat)
+export const cond = liftStagedMaybe(R.cond)
+export const construct = liftStagedMaybe(R.construct)
+export const constructN = liftStagedMaybe(R.constructN)
+export const contains = liftMaybe(R.contains)
+export const converge = liftStagedMaybe(R.converge)
+export const countBy = liftMaybe(R.countBy)
+export const curry = liftStagedMaybe(R.curry)
+export const curryN = liftStagedMaybe(R.curryN)
+export const dec = liftMaybe(R.dec)
+export const defaultTo = liftMaybe(R.defaultTo)
+export const descend = liftMaybe(stageLast2Of3Maybe(R.descend))
+export const difference = liftMaybe(R.difference)
+export const differenceWith = liftMaybe(R.differenceWith)
+export const dissoc = liftMaybe(R.dissoc)
+export const dissocPath = liftMaybe(R.dissocPath)
+export const divide = liftMaybe(R.divide)
+export const drop = liftMaybe(R.drop)
+export const dropLast = liftMaybe(R.dropLast)
+export const dropLastWhile = liftMaybe(R.dropLastWhile)
+export const dropRepeats = liftMaybe(R.dropRepeats)
+export const dropRepeatsWith = liftMaybe(R.dropRepeatsWith)
+export const dropWhile = liftMaybe(R.dropWhile)
+export const either = liftStagedMaybe(R.either)
+export const empty = liftMaybe(R.empty)
+export const endsWith = liftMaybe(R.endsWith)
+export const eqBy = liftMaybe(stageLast2Of3Maybe(R.eqBy))
+export const eqProps = liftMaybe(stageLast2Of3Maybe(R.eqProps))
+export const equals = liftMaybe(R.equals)
+export const evolve = liftMaybe(R.evolve)
+export const filter = liftMaybe(R.filter)
+export const find = liftMaybe(R.find)
+export const findIndex = liftMaybe(R.findIndex)
+export const findLast = liftMaybe(R.findLast)
+export const findLastIndex = liftMaybe(R.findLastIndex)
+export const flatten = liftMaybe(R.flatten)
+export const flip = liftStagedMaybe(R.flip)
+export const fromPairs = liftMaybe(R.fromPairs)
+export const groupBy = liftMaybe(R.groupBy)
+export const groupWith = liftMaybe(R.groupWith)
+export const gt = liftMaybe(R.gt)
+export const gte = liftMaybe(R.gte)
+export const has = liftMaybe(R.has)
+export const hasIn = liftMaybe(R.hasIn)
+export const head = liftMaybe(R.head)
+export const identical = liftMaybe(R.identical)
+export const identity = R.identity // lifting won't really work
+export const ifElse = liftStagedMaybe(R.ifElse)
+export const inc = liftMaybe(R.inc)
+export const indexBy = liftMaybe(R.indexBy)
+export const indexOf = liftMaybe(R.indexOf)
+export const init = liftMaybe(R.init)
+export const innerJoin = liftMaybe(R.innerJoin)
+export const insert = liftMaybe(R.insert)
+export const insertAll = liftMaybe(R.insertAll)
+export const intersection = liftMaybe(R.intersection)
+export const intersperse = liftMaybe(R.intersperse)
+export const into = liftMaybe(R.into)
+export const invert = liftMaybe(R.invert)
+export const invertObj = liftMaybe(R.invertObj)
+export const invoker = liftStagedMaybe(R.invoker)
+export const is = liftMaybe(stageLast1Of2Maybe(R.is))
+export const isEmpty = liftMaybe(R.isEmpty)
+export const isNil = liftMaybe(R.isNil)
+export const join = liftMaybe(R.join)
+export const juxt = liftStagedMaybe(R.juxt)
+export const keys = lift1ShallowMaybe(R.keys)
+export const keysIn = liftMaybe(R.keysIn)
+export const last = liftMaybe(R.last)
+export const lastIndexOf = liftMaybe(R.lastIndexOf)
+export const length = lift1ShallowMaybe(R.length)
+export const lt = liftMaybe(R.lt)
+export const lte = liftMaybe(R.lte)
+export const map = liftMaybe(R.map)
+export const mapAccum = liftMaybe(R.mapAccum)
+export const mapAccumRight = liftMaybe(R.mapAccumRight)
+export const mapObjIndexed = liftMaybe(R.mapObjIndexed)
+export const match = liftMaybe(R.match)
+export const mathMod = liftMaybe(R.mathMod)
+export const max = liftMaybe(R.max)
+export const maxBy = liftMaybe(R.maxBy)
+export const mean = liftMaybe(R.mean)
+export const median = liftMaybe(R.median)
+export const memoizeWith = liftStagedMaybe(R.memoizeWith)
+export const merge = liftMaybe(R.merge)
+export const mergeAll = liftMaybe(R.mergeAll)
+export const mergeDeepLeft = liftMaybe(R.mergeDeepLeft)
+export const mergeDeepRight = liftMaybe(R.mergeDeepRight)
+export const mergeDeepWith = liftMaybe(R.mergeDeepWith)
+export const mergeDeepWithKey = liftMaybe(R.mergeDeepWithKey)
+export const mergeWith = liftMaybe(R.mergeWith)
+export const mergeWithKey = liftMaybe(R.mergeWithKey)
+export const min = liftMaybe(R.min)
+export const minBy = liftMaybe(R.minBy)
+export const modulo = liftMaybe(R.modulo)
+export const multiply = liftMaybe(R.multiply)
+export const nAry = liftStagedMaybe(R.nAry)
+export const negate = liftMaybe(R.negate)
+export const none = liftMaybe(R.none)
+export const not = liftMaybe(R.not)
+export const nth = liftMaybe(R.nth)
+export const nthArg = liftStagedMaybe(R.nthArg)
+export const o = liftMaybe(R.o)
+export const objOf = liftMaybe(R.objOf)
+export const of = liftMaybe(R.of)
+export const omit = liftMaybe(R.omit)
+export const or = liftMaybe(R.or)
+export const pair = liftMaybe(R.pair)
+export const partial = liftStagedMaybe(R.partial)
+export const partialRight = liftStagedMaybe(R.partialRight)
+export const partition = liftMaybe(R.partition)
+export const path = liftMaybe(R.path)
+export const pathEq = liftMaybe(R.pathEq)
+export const pathOr = liftMaybe(R.pathOr)
+export const pathSatisfies = liftMaybe(R.pathSatisfies)
+export const pick = liftMaybe(R.pick)
+export const pickAll = liftMaybe(R.pickAll)
+export const pickBy = liftMaybe(R.pickBy)
+export const pipe = liftStagedMaybe(R.pipe)
+export const pluck = liftMaybe(R.pluck)
+export const prepend = liftMaybe(R.prepend)
+export const product = liftMaybe(R.product)
+export const project = liftMaybe(R.project)
+export const prop = liftMaybe(R.prop)
+export const propEq = liftMaybe(R.propEq)
+export const propIs = liftMaybe(R.propIs)
+export const propOr = liftMaybe(R.propOr)
+export const propSatisfies = liftMaybe(R.propSatisfies)
+export const props = liftMaybe(R.props)
+export const range = liftMaybe(R.range)
+export const reduce = liftMaybe(R.reduce)
+export const reduceBy = liftMaybe(R.reduceBy)
+export const reduceRight = liftMaybe(R.reduceRight)
+export const reduceWhile = liftMaybe(R.reduceWhile)
+export const reduced = liftMaybe(R.reduced)
+export const reject = liftMaybe(R.reject)
+export const remove = liftMaybe(R.remove)
+export const repeat = liftMaybe(R.repeat)
+export const replace = liftMaybe(R.replace)
+export const reverse = liftMaybe(R.reverse)
+export const scan = liftMaybe(R.scan)
+export const sequence = liftMaybe(R.sequence)
+export const slice = liftMaybe(R.slice)
+export const sort = liftMaybe(R.sort)
+export const sortBy = liftMaybe(R.sortBy)
+export const sortWith = liftMaybe(R.sortWith)
+export const split = liftMaybe(R.split)
+export const splitAt = liftMaybe(R.splitAt)
+export const splitEvery = liftMaybe(R.splitEvery)
+export const splitWhen = liftMaybe(R.splitWhen)
+export const startsWith = liftMaybe(R.startsWith)
+export const subtract = liftMaybe(R.subtract)
+export const sum = liftMaybe(R.sum)
+export const symmetricDifference = liftMaybe(R.symmetricDifference)
+export const symmetricDifferenceWith = liftMaybe(R.symmetricDifferenceWith)
+export const tail = liftMaybe(R.tail)
+export const take = liftMaybe(R.take)
+export const takeLast = liftMaybe(R.takeLast)
+export const takeLastWhile = liftMaybe(R.takeLastWhile)
+export const takeWhile = liftMaybe(R.takeWhile)
+export const tap = liftMaybe(R.tap)
+export const test = liftMaybe(R.test)
+export const times = liftMaybe(R.times)
+export const toLower = liftMaybe(R.toLower)
+export const toPairs = liftMaybe(R.toPairs)
+export const toPairsIn = liftMaybe(R.toPairsIn)
+export const toString = liftMaybe(R.toString)
+export const toUpper = liftMaybe(R.toUpper)
+export const transduce = liftMaybe(R.transduce)
+export const transpose = liftMaybe(R.transpose)
+export const traverse = liftMaybe(R.traverse)
+export const trim = liftMaybe(R.trim)
+export const tryCatch = liftStagedMaybe(R.tryCatch)
+export const type = liftMaybe(R.type)
+export const unapply = liftStagedMaybe(R.unapply)
+export const unary = liftStagedMaybe(R.unary)
+export const uncurryN = liftStagedMaybe(R.uncurryN)
+export const unfold = liftMaybe(R.unfold)
+export const union = liftMaybe(R.union)
+export const unionWith = liftMaybe(R.unionWith)
+export const uniq = liftMaybe(R.uniq)
+export const uniqBy = liftMaybe(R.uniqBy)
+export const uniqWith = liftMaybe(R.uniqWith)
+export const unless = liftMaybe(R.unless)
+export const unnest = liftMaybe(R.unnest)
+export const until = liftMaybe(R.until)
+export const update = liftMaybe(R.update)
+export const useWith = liftStagedMaybe(R.useWith)
+export const values = lift1Maybe(R.values)
+export const valuesIn = liftMaybe(R.valuesIn)
+export const when = liftMaybe(R.when)
+export const where = liftStagedMaybe(stageLast1Of2Maybe(R.where))
+export const whereEq = liftStagedMaybe(stageLast1Of2Maybe(R.whereEq))
+export const without = liftMaybe(R.without)
+export const xprod = liftMaybe(R.xprod)
+export const zip = liftMaybe(R.zip)
+export const zipObj = liftMaybe(R.zipObj)
+export const zipWith = liftMaybe(R.zipWith)
 
 // Math
 
-export const abs    = /*#__PURE__*/lift1ShallowMaybe(Math.abs)
-export const acos   = /*#__PURE__*/lift1ShallowMaybe(Math.acos)
-export const acosh  = /*#__PURE__*/lift1ShallowMaybe(Math.acosh)
-export const asin   = /*#__PURE__*/lift1ShallowMaybe(Math.asin)
-export const asinh  = /*#__PURE__*/lift1ShallowMaybe(Math.asinh)
-export const atan   = /*#__PURE__*/lift1ShallowMaybe(Math.atan)
-export const atan2  = /*#__PURE__*/liftMaybe(Math.atan2)
-export const atanh  = /*#__PURE__*/lift1ShallowMaybe(Math.atanh)
-export const cbrt   = /*#__PURE__*/lift1ShallowMaybe(Math.cbrt)
-export const ceil   = /*#__PURE__*/lift1ShallowMaybe(Math.ceil)
-export const clz32  = /*#__PURE__*/lift1ShallowMaybe(Math.clz32)
-export const cos    = /*#__PURE__*/lift1ShallowMaybe(Math.cos)
-export const cosh   = /*#__PURE__*/lift1ShallowMaybe(Math.cosh)
-export const exp    = /*#__PURE__*/lift1ShallowMaybe(Math.exp)
-export const expm1  = /*#__PURE__*/lift1ShallowMaybe(Math.expm1)
-export const floor  = /*#__PURE__*/lift1ShallowMaybe(Math.floor)
-export const fround = /*#__PURE__*/lift1ShallowMaybe(Math.fround)
-export const hypot  = /*#__PURE__*/liftMaybe(Math.hypot)
-export const imul   = /*#__PURE__*/liftMaybe(Math.imul)
-export const log    = /*#__PURE__*/lift1ShallowMaybe(Math.log)
-export const log10  = /*#__PURE__*/lift1ShallowMaybe(Math.log10)
-export const log1p  = /*#__PURE__*/lift1ShallowMaybe(Math.log1p)
-export const log2   = /*#__PURE__*/lift1ShallowMaybe(Math.log2)
-export const pow    = /*#__PURE__*/liftMaybe(Math.pow)
-export const round  = /*#__PURE__*/lift1ShallowMaybe(Math.round)
-export const sign   = /*#__PURE__*/lift1ShallowMaybe(Math.sign)
-export const sin    = /*#__PURE__*/lift1ShallowMaybe(Math.sin)
-export const sinh   = /*#__PURE__*/lift1ShallowMaybe(Math.sinh)
-export const sqrt   = /*#__PURE__*/lift1ShallowMaybe(Math.sqrt)
-export const tan    = /*#__PURE__*/lift1ShallowMaybe(Math.tan)
-export const tanh   = /*#__PURE__*/lift1ShallowMaybe(Math.tanh)
-export const trunc  = /*#__PURE__*/lift1ShallowMaybe(Math.trunc)
+export const abs = lift1ShallowMaybe(Math.abs)
+export const acos = lift1ShallowMaybe(Math.acos)
+export const acosh = lift1ShallowMaybe(Math.acosh)
+export const asin = lift1ShallowMaybe(Math.asin)
+export const asinh = lift1ShallowMaybe(Math.asinh)
+export const atan = lift1ShallowMaybe(Math.atan)
+export const atan2 = liftMaybe(Math.atan2)
+export const atanh = lift1ShallowMaybe(Math.atanh)
+export const cbrt = lift1ShallowMaybe(Math.cbrt)
+export const ceil = lift1ShallowMaybe(Math.ceil)
+export const clz32 = lift1ShallowMaybe(Math.clz32)
+export const cos = lift1ShallowMaybe(Math.cos)
+export const cosh = lift1ShallowMaybe(Math.cosh)
+export const exp = lift1ShallowMaybe(Math.exp)
+export const expm1 = lift1ShallowMaybe(Math.expm1)
+export const floor = lift1ShallowMaybe(Math.floor)
+export const fround = lift1ShallowMaybe(Math.fround)
+export const hypot = liftMaybe(Math.hypot)
+export const imul = liftMaybe(Math.imul)
+export const log = lift1ShallowMaybe(Math.log)
+export const log10 = lift1ShallowMaybe(Math.log10)
+export const log1p = lift1ShallowMaybe(Math.log1p)
+export const log2 = lift1ShallowMaybe(Math.log2)
+export const pow = liftMaybe(Math.pow)
+export const round = lift1ShallowMaybe(Math.round)
+export const sign = lift1ShallowMaybe(Math.sign)
+export const sin = lift1ShallowMaybe(Math.sin)
+export const sinh = lift1ShallowMaybe(Math.sinh)
+export const sqrt = lift1ShallowMaybe(Math.sqrt)
+export const tan = lift1ShallowMaybe(Math.tan)
+export const tanh = lift1ShallowMaybe(Math.tanh)
+export const trunc = lift1ShallowMaybe(Math.trunc)
 
 // JSON
 
-export const parse = /*#__PURE__*/lift(JSON.parse)
-export const stringify = /*#__PURE__*/lift(JSON.stringify)
+export const parse = lift(JSON.parse)
+export const stringify = lift(JSON.stringify)
 
 //
 
-export const indices = /*#__PURE__*/pipe2U(length, lift1Shallow(R.range(0)))
+export const indices = pipe2U(length, lift1Shallow(R.range(0)))
 
 //
 
-export const mapElems = /*#__PURE__*/I_curry((xi2y, xs) => {
+export const mapElems = I_curry((xi2y, xs) => {
   const vs = []
   return seq(
     xs,
     foldPast((ysIn, xsIn) => {
       const ysN = ysIn.length
       const xsN = xsIn.length
-      if (xsN === ysN)
-        return ysIn
+      if (xsN === ysN) return ysIn
       const m = Math.min(ysN, xsN)
       const ys = ysIn.slice(0, m)
-      for (let i=xsN; i<ysN; ++i)
-        vs[i]._onDeactivation()
-      for (let i=m; i<xsN; ++i)
-        ys[i] = xi2y(vs[i] = view(i, xs), i)
+      for (let i = xsN; i < ysN; ++i) vs[i]._onDeactivation()
+      for (let i = m; i < xsN; ++i) ys[i] = xi2y((vs[i] = view(i, xs)), i)
       vs.length = xsN
       return ys
     }, []),
-    skipIdenticals)
+    skipIdenticals
+  )
 })
 
 //
 
-export const mapElemsWithIds = /*#__PURE__*/I_curry((idL, xi2y, xs) => {
+export const mapElemsWithIds = I_curry((idL, xi2y, xs) => {
   const id2info = new Map()
   const idOf = L.get(idL)
   const pred = (x, _, info) => idOf(x) === info.id
@@ -648,19 +653,18 @@ export const mapElemsWithIds = /*#__PURE__*/I_curry((idL, xi2y, xs) => {
     foldPast((ysIn, xsIn) => {
       const n = xsIn.length
       let ys = ysIn.length === n ? ysIn : Array(n)
-      for (let i=0; i<n; ++i) {
+      for (let i = 0; i < n; ++i) {
         const id = idOf(xsIn[i])
         let info = id2info.get(id)
         if (void 0 === info) {
-          id2info.set(id, info = {})
+          id2info.set(id, (info = {}))
           info.id = id
           info.hint = i
-          info.elem = xi2y(info.view = view(L.find(pred, info), xs), id)
+          info.elem = xi2y((info.view = view(L.find(pred, info), xs)), id)
         }
         if (ys[i] !== info.elem) {
           info.hint = i
-          if (ys === ysIn)
-            ys = ys.slice(0)
+          if (ys === ysIn) ys = ys.slice(0)
           ys[i] = info.elem
         }
       }
@@ -674,5 +678,6 @@ export const mapElemsWithIds = /*#__PURE__*/I_curry((idL, xi2y, xs) => {
       }
       return ys
     }, []),
-    skipIdenticals)
+    skipIdenticals
+  )
 })
