@@ -9,7 +9,8 @@ import {
   interval as Kefir_interval,
   later as Kefir_later,
   merge as Kefir_merge,
-  never as Kefir_never
+  never as Kefir_never,
+  stream
 } from 'kefir'
 import {
   arityN,
@@ -118,6 +119,14 @@ export const Bus = inherit(
 )
 
 export const bus = () => new Bus()
+
+//
+
+export const onUnmount = effect =>
+  stream(emitter => {
+    emitter.value(undefined)
+    return effect
+  })
 
 //
 
