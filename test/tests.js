@@ -279,6 +279,28 @@ describe('staged', () => {
   testEq(`U.staged(x => y => x + y)(1, 2)`, 3)
 })
 
+describe('tapPartial', () => {
+  testEq(
+    `{ const x = U.atom(0)
+     ; const events = []
+     ; U.seq(x, U.tapPartial(v => events.push(v)), U.on({}))
+     ; x.set(1)
+     ; x.set(undefined)
+     ; x.set(2)
+     ; return events }`,
+    [0, 1, 2]
+  )
+
+  testEq(
+    `{ let events = []
+     ; const x = U.tapPartial(v => events.push(v), 1)
+     ; const y = U.tapPartial(v => events.push(v), undefined)
+     ; const z = U.tapPartial(v => events.push(v), 2)
+     ; return [[x, y, z], events] }`,
+    [[1, undefined, 2], [1, 2]]
+  )
+})
+
 describe('Ramda', () => {
   testEq(`U.add(C(1), C(2))`, 3)
   testEq(`U.addIndex(R.map)((x, i) => [x, i], C([3, 1, 4]))`, [

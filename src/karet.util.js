@@ -121,6 +121,13 @@ export const bus = () => new Bus()
 
 //
 
+export const tapPartial = lift((effect, data) => {
+  if (undefined !== data) effect(data)
+  return data
+})
+
+//
+
 export const refTo = settable => elem => {
   if (null !== elem) settable.set(elem)
 }
