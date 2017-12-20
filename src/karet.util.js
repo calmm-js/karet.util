@@ -143,7 +143,7 @@ export const toPartial = fn =>
     arityN(fn.length, (...xs) => (R.all(isDefined, xs) ? fn(...xs) : undefined))
   )
 
-export const show = x => console.log(x) || x
+export const show = lift(x => console.log(x) || x)
 
 export const staged = fn =>
   R.curryN(fn.length, function() {

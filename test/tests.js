@@ -272,6 +272,7 @@ describe('set', () => {
 
 describe('show', () => {
   testEq(`U.show('any')`, 'any')
+  testEq(`U.show(C('whatever'))`, 'whatever')
 })
 
 describe('staged', () => {
