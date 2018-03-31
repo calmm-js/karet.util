@@ -1,10 +1,14 @@
-import { F, T, __, add, addIndex, adjust, all, allPass, always, and, any, anyPass, ap, aperture, append, apply, applySpec, applyTo, ascend, assoc, assocPath, binary, both, call, chain, clamp, comparator, complement, compose, concat, cond, construct, constructN, contains, converge, countBy, curry, curryN, dec, defaultTo, descend, difference, differenceWith, dissoc, dissocPath, divide, drop, dropLast, dropLastWhile, dropRepeats, dropRepeatsWith, dropWhile, either, empty, endsWith, eqBy, eqProps, equals, evolve, filter, find, findIndex, findLast, findLastIndex, flatten, flip, fromPairs, groupBy, groupWith, gt, gte, has, hasIn, head, identical, identity, ifElse, inc, indexBy, indexOf, init, innerJoin, insert, insertAll, intersection, intersperse, into, invert, invertObj, invoker, is, isEmpty, isNil, join, juxt, keys, keysIn, last, lastIndexOf, length, lt, lte, map, mapAccum, mapAccumRight, mapObjIndexed, match, mathMod, max, maxBy, mean, median, memoizeWith, merge, mergeAll, mergeDeepLeft, mergeDeepRight, mergeDeepWith, mergeDeepWithKey, mergeWith, mergeWithKey, min, minBy, modulo, multiply, nAry, negate, none, not, nth, nthArg, o, objOf, of, omit, or, pair, partial, partialRight, partition, path, pathEq, pathOr, pathSatisfies, pick, pickAll, pickBy, pipe, pluck, prepend, product, project, prop, propEq, propIs, propOr, propSatisfies, props, range, reduce, reduceBy, reduceRight, reduceWhile, reduced, reject, remove, repeat, replace, reverse, scan, sequence, slice, sort, sortBy, sortWith, split, splitAt, splitEvery, splitWhen, startsWith, subtract, sum, symmetricDifference, symmetricDifferenceWith, tail, take, takeLast, takeLastWhile, takeWhile, tap, test, times, toLower, toPairs, toPairsIn, toString, toUpper, transduce, transpose, traverse, trim, tryCatch, type, unapply, unary, uncurryN, unfold, union, unionWith, uniq, uniqBy, uniqWith, unless, unnest, until, update, useWith, values, valuesIn, when, where, whereEq, without, xprod, zip, zipObj, zipWith } from 'ramda';
-import { AbstractMutable, Atom, Join, Molecule, holding } from 'kefir.atom';
-import { Observable, Stream, concat as concat$1, constant, fromEvents, interval, later, merge as merge$1, never } from 'kefir';
+import { map, all, curryN, F, T, __, add, addIndex, adjust, allPass, always, and, any, anyPass, ap, aperture, append, apply, applySpec, applyTo, ascend, assoc, assocPath, binary, both, call, chain, clamp, comparator, complement, compose, concat, cond, construct, constructN, contains, converge, countBy, curry, dec, defaultTo, descend, difference, differenceWith, dissoc, dissocPath, divide, drop, dropLast, dropLastWhile, dropRepeats, dropRepeatsWith, dropWhile, either, empty, endsWith, eqBy, eqProps, equals, evolve, filter, find, findIndex, findLast, findLastIndex, flatten, flip, fromPairs, groupBy, groupWith, gt, gte, has, hasIn, head, identical, identity, ifElse, inc, indexBy, indexOf, init, innerJoin, insert, insertAll, intersection, intersperse, into, invert, invertObj, invoker, is, isEmpty, isNil, join, juxt, keys, keysIn, last, lastIndexOf, length, lt, lte, mapAccum, mapAccumRight, mapObjIndexed, match, mathMod, max, maxBy, mean, median, memoizeWith, merge, mergeAll, mergeDeepLeft, mergeDeepRight, mergeDeepWith, mergeDeepWithKey, mergeWith, mergeWithKey, min, minBy, modulo, multiply, nAry, negate, none, not, nth, nthArg, o, objOf, of, omit, or, pair, partial, partialRight, partition, path, pathEq, pathOr, pathSatisfies, pick, pickAll, pickBy, pipe, pluck, prepend, product, project, prop, propEq, propIs, propOr, propSatisfies, props, range, reduce, reduceBy, reduceRight, reduceWhile, reduced, reject, remove, repeat, replace, reverse, scan, sequence, slice, sort, sortBy, sortWith, split, splitAt, splitEvery, splitWhen, startsWith, subtract, sum, symmetricDifference, symmetricDifferenceWith, tail, take, takeLast, takeLastWhile, takeWhile, tap, test, times, toLower, toPairs, toPairsIn, toString, toUpper, transduce, transpose, traverse, trim, tryCatch, type, unapply, unary, uncurryN, unfold, union, unionWith, uniq, uniqBy, uniqWith, unless, unnest, until, update, useWith, values, valuesIn, when, where, whereEq, without, xprod, zip, zipObj, zipWith } from 'ramda';
+import { AbstractMutable, Atom, Molecule, Join, holding } from 'kefir.atom';
+export { holding } from 'kefir.atom';
+import { Observable, Stream, concat as concat$1, constant, fromEvents, interval, later, merge as merge$1, never, stream } from 'kefir';
 import { arityN, assocPartialU, curry as curry$1, curryN as curryN$1, dissocPartialU, id, identicalU, inherit, isDefined, pipe2U, seq, seqPartial } from 'infestines';
-import { find as find$1, flatten as flatten$1, get, join as join$1, when as when$1 } from 'partial.lenses';
+export { seq, seqPartial } from 'infestines';
+import { iso, join as join$1, flatten as flatten$1, when as when$1, get, find as find$1 } from 'partial.lenses';
 import K, { lift, lift1, lift1Shallow } from 'kefir.combines';
+export { lift, lift1, lift1Shallow } from 'kefir.combines';
 import { fromKefir } from 'karet';
+export { fromKefir } from 'karet';
 import { Component } from 'react';
 import PropTypes from 'prop-types';
 
@@ -42,7 +46,7 @@ var changes = function changes(xs) {
 var serially = function serially(xs) {
   return concat$1(map(toConstant, xs));
 };
-var parallel = /*#__PURE__*/merge$1;
+var parallel = merge$1;
 var delay = /*#__PURE__*/curry$1(function (ms, xs) {
   return toConstant(xs).delay(ms);
 });
@@ -99,7 +103,7 @@ var startWith = /*#__PURE__*/curry$1(function (x, xs) {
     return x;
   });
 });
-var sink = /*#__PURE__*/pipe2U(startWith(undefined), lift(toUndefined));
+var sink = /*#__PURE__*/pipe2U( /*#__PURE__*/startWith(undefined), /*#__PURE__*/lift(toUndefined));
 var takeFirst = /*#__PURE__*/curry$1(function (n, xs) {
   return toConstant(xs).take(n);
 });
@@ -143,6 +147,22 @@ var bus = function bus() {
 
 //
 
+var onUnmount = function onUnmount(effect) {
+  return stream(function (emitter) {
+    emitter.value(undefined);
+    return effect;
+  });
+};
+
+//
+
+var tapPartial = /*#__PURE__*/lift(function (effect, data) {
+  if (undefined !== data) effect(data);
+  return data;
+});
+
+//
+
 var refTo = function refTo(settable) {
   return function (elem) {
     if (null !== elem) settable.set(elem);
@@ -163,9 +183,26 @@ var toPartial = function toPartial(fn) {
   }));
 };
 
-var show = function show(x) {
-  return console.log(x) || x;
+var showIso = function showIso() {
+  for (var _len2 = arguments.length, xs = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+    xs[_key2] = arguments[_key2];
+  }
+
+  return iso(function (x) {
+    return console.log.apply(console, xs.concat([x])) || x;
+  }, function (y) {
+    return console.log.apply(console, xs.concat([y, '(set)'])) || y;
+  });
 };
+
+function show(_) {
+  var n = arguments.length - 1;
+  var xs = Array(n + 1);
+  for (var i = 0; i < n; ++i) {
+    xs[i] = arguments[i];
+  }xs[n] = showIso;
+  return view(K.apply(null, xs), arguments[n]);
+}
 
 var staged = function staged(fn) {
   return curryN(fn.length, function () {
@@ -199,16 +236,16 @@ function setProps(observables) {
     if (e) {
       _callback = function callback(ev) {
         switch (ev.type) {
-          case "value":
+          case 'value':
             {
               var _observables = ev.value;
               for (var k in _observables) {
                 e[k] = _observables[k];
               }break;
             }
-          case "error":
+          case 'error':
             throw ev.value;
-          case "end":
+          case 'end':
             observable = _callback = null;
             break;
         }
@@ -231,23 +268,23 @@ var getProps = function getProps(template) {
 
 var bindProps = function bindProps(templateWithRef) {
   var ref = templateWithRef.ref;
-  var template = dissocPartialU("ref", templateWithRef);
+  var template = dissocPartialU('ref', templateWithRef);
   var r = { ref: setProps(template) };
   r[ref] = getProps(template);
   return r;
 };
 
 var bind = function bind(template) {
-  return assocPartialU("onChange", getProps(template), template);
+  return assocPartialU('onChange', getProps(template), template);
 };
 
 //
 
-var flatJoin = /*#__PURE__*/lift1(join$1(" ", [flatten$1, when$1(id)]));
+var flatJoin = /*#__PURE__*/lift1( /*#__PURE__*/join$1(' ', [flatten$1, /*#__PURE__*/when$1(id)]));
 
 var cns = function cns() {
-  for (var _len2 = arguments.length, xs = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-    xs[_key2] = arguments[_key2];
+  for (var _len3 = arguments.length, xs = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+    xs[_key3] = arguments[_key3];
   }
 
   return flatJoin(xs);
@@ -259,7 +296,7 @@ var classes = function classes() {
 
 //
 
-var mapCachedInit = [new Map(), []];
+var mapCachedInit = [/*#__PURE__*/new Map(), []];
 
 var mapCachedStep = function mapCachedStep(fromId) {
   return function (old, ids) {
@@ -357,8 +394,8 @@ var WithContext = /*#__PURE__*/withContext(function (_ref4, context) {
 //
 
 var actionsImmediate = function actionsImmediate() {
-  for (var _len3 = arguments.length, fns = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
-    fns[_key3] = arguments[_key3];
+  for (var _len4 = arguments.length, fns = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+    fns[_key4] = arguments[_key4];
   }
 
   return function () {
@@ -369,8 +406,8 @@ var actionsImmediate = function actionsImmediate() {
 };
 
 var actions = function actions() {
-  for (var _len4 = arguments.length, fns = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
-    fns[_key4] = arguments[_key4];
+  for (var _len5 = arguments.length, fns = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
+    fns[_key5] = arguments[_key5];
   }
 
   return K.apply(undefined, fns.concat([actionsImmediate]));
@@ -379,13 +416,13 @@ var actions = function actions() {
 //
 
 var string = function string(strings) {
-  for (var _len5 = arguments.length, values$$1 = Array(_len5 > 1 ? _len5 - 1 : 0), _key5 = 1; _key5 < _len5; _key5++) {
-    values$$1[_key5 - 1] = arguments[_key5];
+  for (var _len6 = arguments.length, values$$1 = Array(_len6 > 1 ? _len6 - 1 : 0), _key6 = 1; _key6 < _len6; _key6++) {
+    values$$1[_key6 - 1] = arguments[_key6];
   }
 
   return K.apply(undefined, values$$1.concat([function () {
-    for (var _len6 = arguments.length, values$$1 = Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
-      values$$1[_key6] = arguments[_key6];
+    for (var _len7 = arguments.length, values$$1 = Array(_len7), _key7 = 0; _key7 < _len7; _key7++) {
+      values$$1[_key7] = arguments[_key7];
     }
 
     return String.raw.apply(String, [strings].concat(values$$1));
@@ -430,37 +467,37 @@ var stageLast2Of3Maybe = /*#__PURE__*/maybe(function (fn) {
 var liftMaybe = /*#__PURE__*/maybe(lift);
 var liftStagedMaybe = /*#__PURE__*/maybe(liftStaged);
 var lift1Maybe = /*#__PURE__*/maybe(lift1);
-var lift1ShallowMaybe = /*#__PURE__*/maybe( /*#__PURE__*/lift1Shallow);
+var lift1ShallowMaybe = /*#__PURE__*/maybe(lift1Shallow);
 
-//export const bind = /*#__PURE__*/liftMaybe(R.bind)                             -> conflict, useful?
-//export const clone = /*#__PURE__*/liftMaybe(R.clone)                           -> useful?
-//export const composeK = /*#__PURE__*/liftMaybe(R.composeK)                     -> lift staged, useful?
-//export const composeP = /*#__PURE__*/liftMaybe(R.composeP)                     -> lift staged, useful?
-//export const forEach = /*#__PURE__*/liftMaybe(R.forEach)                       -> useful?
-//export const forEachObjIndexed = = /*#__PURE__*/liftMaybe(R.forEachObjIndexed) -> useful?
-//export const lens = /*#__PURE__*/liftMaybe(R.lens)                             -> partial.lenses
-//export const lensIndex = /*#__PURE__*/liftMaybe(R.lensIndex)                   -> partial.lenses
-//export const lensPath = /*#__PURE__*/liftMaybe(R.lensPath)                     -> partial.lenses
-//export const lensProp = /*#__PURE__*/liftMaybe(R.lensProp)                     -> partial.lenses
-//export const lift = /*#__PURE__*/liftMaybe(R.lift)                             -> conflict
-//export const liftN = /*#__PURE__*/liftMaybe(R.liftN)                           -> conflict
-//export const memoize = /*#__PURE__*/liftStagedMaybe(R.memoize)                 -> deprecated
-//export const once = /*#__PURE__*/liftMaybe(R.once)                             -> lift staged, usually wrong thing to do?
-//export const over = /*#__PURE__*/liftMaybe(R.over)                             -> partial.lenses
-//export const pipeK = /*#__PURE__*/liftMaybe(R.pipeK)                           -> lift staged, useful?
-//export const pipeP = /*#__PURE__*/liftMaybe(R.pipeP)                           -> lift staged, useful?
-//export const set = /*#__PURE__*/liftMaybe(R.set)                               -> partial.lenses, conflict
-//export const view = /*#__PURE__*/liftMaybe(R.view)                             -> partial.lenses, conflict
+//export const bind = liftMaybe(R.bind)                             -> conflict, useful?
+//export const clone = liftMaybe(R.clone)                           -> useful?
+//export const composeK = liftMaybe(R.composeK)                     -> lift staged, useful?
+//export const composeP = liftMaybe(R.composeP)                     -> lift staged, useful?
+//export const forEach = liftMaybe(R.forEach)                       -> useful?
+//export const forEachObjIndexed = = liftMaybe(R.forEachObjIndexed) -> useful?
+//export const lens = liftMaybe(R.lens)                             -> partial.lenses
+//export const lensIndex = liftMaybe(R.lensIndex)                   -> partial.lenses
+//export const lensPath = liftMaybe(R.lensPath)                     -> partial.lenses
+//export const lensProp = liftMaybe(R.lensProp)                     -> partial.lenses
+//export const lift = liftMaybe(R.lift)                             -> conflict
+//export const liftN = liftMaybe(R.liftN)                           -> conflict
+//export const memoize = liftStagedMaybe(R.memoize)                 -> deprecated
+//export const once = liftMaybe(R.once)                             -> lift staged, usually wrong thing to do?
+//export const over = liftMaybe(R.over)                             -> partial.lenses
+//export const pipeK = liftMaybe(R.pipeK)                           -> lift staged, useful?
+//export const pipeP = liftMaybe(R.pipeP)                           -> lift staged, useful?
+//export const set = liftMaybe(R.set)                               -> partial.lenses, conflict
+//export const view = liftMaybe(R.view)                             -> partial.lenses, conflict
 
-var F$1 = /*#__PURE__*/F;
-var T$1 = /*#__PURE__*/T;
-var __$1 = /*#__PURE__*/__;
+var F$1 = F;
+var T$1 = T;
+var __$1 = __;
 var add$1 = /*#__PURE__*/liftMaybe(add);
 var addIndex$1 = /*#__PURE__*/liftStagedMaybe(addIndex);
 var adjust$1 = /*#__PURE__*/liftMaybe(adjust);
 var all$1 = /*#__PURE__*/liftMaybe(all);
 var allPass$1 = /*#__PURE__*/liftStagedMaybe(allPass);
-var always$1 = /*#__PURE__*/always; // lifting won't really work
+var always$1 = always; // lifting won't really work
 var and$1 = /*#__PURE__*/liftMaybe(and);
 var any$1 = /*#__PURE__*/liftMaybe(any);
 var anyPass$1 = /*#__PURE__*/liftStagedMaybe(anyPass);
@@ -470,7 +507,7 @@ var append$1 = /*#__PURE__*/liftMaybe(append);
 var apply$1 = /*#__PURE__*/liftMaybe(apply);
 var applySpec$1 = /*#__PURE__*/liftMaybe(applySpec);
 var applyTo$1 = /*#__PURE__*/liftMaybe(applyTo);
-var ascend$1 = /*#__PURE__*/liftMaybe(stageLast2Of3Maybe(ascend));
+var ascend$1 = /*#__PURE__*/liftMaybe( /*#__PURE__*/stageLast2Of3Maybe(ascend));
 var assoc$1 = /*#__PURE__*/liftMaybe(assoc);
 var assocPath$1 = /*#__PURE__*/liftMaybe(assocPath);
 var binary$1 = /*#__PURE__*/liftStagedMaybe(binary);
@@ -492,7 +529,7 @@ var curry$2 = /*#__PURE__*/liftStagedMaybe(curry);
 var curryN$2 = /*#__PURE__*/liftStagedMaybe(curryN);
 var dec$1 = /*#__PURE__*/liftMaybe(dec);
 var defaultTo$1 = /*#__PURE__*/liftMaybe(defaultTo);
-var descend$1 = /*#__PURE__*/liftMaybe(stageLast2Of3Maybe(descend));
+var descend$1 = /*#__PURE__*/liftMaybe( /*#__PURE__*/stageLast2Of3Maybe(descend));
 var difference$1 = /*#__PURE__*/liftMaybe(difference);
 var differenceWith$1 = /*#__PURE__*/liftMaybe(differenceWith);
 var dissoc$1 = /*#__PURE__*/liftMaybe(dissoc);
@@ -507,8 +544,8 @@ var dropWhile$1 = /*#__PURE__*/liftMaybe(dropWhile);
 var either$1 = /*#__PURE__*/liftStagedMaybe(either);
 var empty$1 = /*#__PURE__*/liftMaybe(empty);
 var endsWith$1 = /*#__PURE__*/liftMaybe(endsWith);
-var eqBy$1 = /*#__PURE__*/liftMaybe(stageLast2Of3Maybe(eqBy));
-var eqProps$1 = /*#__PURE__*/liftMaybe(stageLast2Of3Maybe(eqProps));
+var eqBy$1 = /*#__PURE__*/liftMaybe( /*#__PURE__*/stageLast2Of3Maybe(eqBy));
+var eqProps$1 = /*#__PURE__*/liftMaybe( /*#__PURE__*/stageLast2Of3Maybe(eqProps));
 var equals$1 = /*#__PURE__*/liftMaybe(equals);
 var evolve$1 = /*#__PURE__*/liftMaybe(evolve);
 var filter$1 = /*#__PURE__*/liftMaybe(filter);
@@ -527,7 +564,7 @@ var has$1 = /*#__PURE__*/liftMaybe(has);
 var hasIn$1 = /*#__PURE__*/liftMaybe(hasIn);
 var head$1 = /*#__PURE__*/liftMaybe(head);
 var identical$1 = /*#__PURE__*/liftMaybe(identical);
-var identity$1 = /*#__PURE__*/identity; // lifting won't really work
+var identity$1 = identity; // lifting won't really work
 var ifElse$1 = /*#__PURE__*/liftStagedMaybe(ifElse);
 var inc$1 = /*#__PURE__*/liftMaybe(inc);
 var indexBy$1 = /*#__PURE__*/liftMaybe(indexBy);
@@ -542,7 +579,7 @@ var into$1 = /*#__PURE__*/liftMaybe(into);
 var invert$1 = /*#__PURE__*/liftMaybe(invert);
 var invertObj$1 = /*#__PURE__*/liftMaybe(invertObj);
 var invoker$1 = /*#__PURE__*/liftStagedMaybe(invoker);
-var is$1 = /*#__PURE__*/liftMaybe(stageLast1Of2Maybe(is));
+var is$1 = /*#__PURE__*/liftMaybe( /*#__PURE__*/stageLast1Of2Maybe(is));
 var isEmpty$1 = /*#__PURE__*/liftMaybe(isEmpty);
 var isNil$1 = /*#__PURE__*/liftMaybe(isNil);
 var join$2 = /*#__PURE__*/liftMaybe(join);
@@ -672,8 +709,8 @@ var useWith$1 = /*#__PURE__*/liftStagedMaybe(useWith);
 var values$1 = /*#__PURE__*/lift1Maybe(values);
 var valuesIn$1 = /*#__PURE__*/liftMaybe(valuesIn);
 var when$2 = /*#__PURE__*/liftMaybe(when);
-var where$1 = /*#__PURE__*/liftStagedMaybe(stageLast1Of2Maybe(where));
-var whereEq$1 = /*#__PURE__*/liftStagedMaybe(stageLast1Of2Maybe(whereEq));
+var where$1 = /*#__PURE__*/liftStagedMaybe( /*#__PURE__*/stageLast1Of2Maybe(where));
+var whereEq$1 = /*#__PURE__*/liftStagedMaybe( /*#__PURE__*/stageLast1Of2Maybe(whereEq));
 var without$1 = /*#__PURE__*/liftMaybe(without);
 var xprod$1 = /*#__PURE__*/liftMaybe(xprod);
 var zip$1 = /*#__PURE__*/liftMaybe(zip);
@@ -722,7 +759,7 @@ var stringify = /*#__PURE__*/lift(JSON.stringify);
 
 //
 
-var indices = /*#__PURE__*/pipe2U(length$1, lift1Shallow(range(0)));
+var indices = /*#__PURE__*/pipe2U(length$1, /*#__PURE__*/lift1Shallow( /*#__PURE__*/range(0)));
 
 //
 
@@ -781,5 +818,5 @@ var mapElemsWithIds = /*#__PURE__*/curry$1(function (idL, xi2y, xs) {
   }, []), skipIdenticals);
 });
 
-export { lift, lift1, lift1Shallow, liftStaged, template, fromKefir, debounce, changes, serially, parallel, delay, endWith, mapValue, flatMapParallel, flatMapSerial, flatMapErrors, flatMapLatest, foldPast, interval$1 as interval, later$1 as later, lazy, never$1 as never, on, sampledBy, skipFirst, skipDuplicates, skipIdenticals, skipUnless, skipWhen, startWith, sink, takeFirst, takeUntilBy, toProperty, throttle, fromEvents$1 as fromEvents, set, Bus, bus, refTo, seq, seqPartial, scope, toPartial, show, staged, setProps, getProps, bindProps, bind, cns, classes, mapCached, mapIndexed, ifte, ift, iftes, view, Context, withContext, WithContext, actions, string, atom, variable, molecule, holding, F$1 as F, T$1 as T, __$1 as __, add$1 as add, addIndex$1 as addIndex, adjust$1 as adjust, all$1 as all, allPass$1 as allPass, always$1 as always, and$1 as and, any$1 as any, anyPass$1 as anyPass, ap$1 as ap, aperture$1 as aperture, append$1 as append, apply$1 as apply, applySpec$1 as applySpec, applyTo$1 as applyTo, ascend$1 as ascend, assoc$1 as assoc, assocPath$1 as assocPath, binary$1 as binary, both$1 as both, call$1 as call, chain$1 as chain, clamp$1 as clamp, comparator$1 as comparator, complement$1 as complement, compose$1 as compose, concat$2 as concat, cond$1 as cond, construct$1 as construct, constructN$1 as constructN, contains$1 as contains, converge$1 as converge, countBy$1 as countBy, curry$2 as curry, curryN$2 as curryN, dec$1 as dec, defaultTo$1 as defaultTo, descend$1 as descend, difference$1 as difference, differenceWith$1 as differenceWith, dissoc$1 as dissoc, dissocPath$1 as dissocPath, divide$1 as divide, drop$1 as drop, dropLast$1 as dropLast, dropLastWhile$1 as dropLastWhile, dropRepeats$1 as dropRepeats, dropRepeatsWith$1 as dropRepeatsWith, dropWhile$1 as dropWhile, either$1 as either, empty$1 as empty, endsWith$1 as endsWith, eqBy$1 as eqBy, eqProps$1 as eqProps, equals$1 as equals, evolve$1 as evolve, filter$1 as filter, find$2 as find, findIndex$1 as findIndex, findLast$1 as findLast, findLastIndex$1 as findLastIndex, flatten$2 as flatten, flip$1 as flip, fromPairs$1 as fromPairs, groupBy$1 as groupBy, groupWith$1 as groupWith, gt$1 as gt, gte$1 as gte, has$1 as has, hasIn$1 as hasIn, head$1 as head, identical$1 as identical, identity$1 as identity, ifElse$1 as ifElse, inc$1 as inc, indexBy$1 as indexBy, indexOf$1 as indexOf, init$1 as init, innerJoin$1 as innerJoin, insert$1 as insert, insertAll$1 as insertAll, intersection$1 as intersection, intersperse$1 as intersperse, into$1 as into, invert$1 as invert, invertObj$1 as invertObj, invoker$1 as invoker, is$1 as is, isEmpty$1 as isEmpty, isNil$1 as isNil, join$2 as join, juxt$1 as juxt, keys$1 as keys, keysIn$1 as keysIn, last$1 as last, lastIndexOf$1 as lastIndexOf, length$1 as length, lt$1 as lt, lte$1 as lte, map$1 as map, mapAccum$1 as mapAccum, mapAccumRight$1 as mapAccumRight, mapObjIndexed$1 as mapObjIndexed, match$1 as match, mathMod$1 as mathMod, max$1 as max, maxBy$1 as maxBy, mean$1 as mean, median$1 as median, memoizeWith$1 as memoizeWith, merge$2 as merge, mergeAll$1 as mergeAll, mergeDeepLeft$1 as mergeDeepLeft, mergeDeepRight$1 as mergeDeepRight, mergeDeepWith$1 as mergeDeepWith, mergeDeepWithKey$1 as mergeDeepWithKey, mergeWith$1 as mergeWith, mergeWithKey$1 as mergeWithKey, min$1 as min, minBy$1 as minBy, modulo$1 as modulo, multiply$1 as multiply, nAry$1 as nAry, negate$1 as negate, none$1 as none, not$1 as not, nth$1 as nth, nthArg$1 as nthArg, o$1 as o, objOf$1 as objOf, of$1 as of, omit$1 as omit, or$1 as or, pair$1 as pair, partial$1 as partial, partialRight$1 as partialRight, partition$1 as partition, path$1 as path, pathEq$1 as pathEq, pathOr$1 as pathOr, pathSatisfies$1 as pathSatisfies, pick$1 as pick, pickAll$1 as pickAll, pickBy$1 as pickBy, pipe$1 as pipe, pluck$1 as pluck, prepend$1 as prepend, product$1 as product, project$1 as project, prop$1 as prop, propEq$1 as propEq, propIs$1 as propIs, propOr$1 as propOr, propSatisfies$1 as propSatisfies, props$1 as props, range$1 as range, reduce$1 as reduce, reduceBy$1 as reduceBy, reduceRight$1 as reduceRight, reduceWhile$1 as reduceWhile, reduced$1 as reduced, reject$1 as reject, remove$1 as remove, repeat$1 as repeat, replace$1 as replace, reverse$1 as reverse, scan$1 as scan, sequence$1 as sequence, slice$1 as slice, sort$1 as sort, sortBy$1 as sortBy, sortWith$1 as sortWith, split$1 as split, splitAt$1 as splitAt, splitEvery$1 as splitEvery, splitWhen$1 as splitWhen, startsWith$1 as startsWith, subtract$1 as subtract, sum$1 as sum, symmetricDifference$1 as symmetricDifference, symmetricDifferenceWith$1 as symmetricDifferenceWith, tail$1 as tail, take$1 as take, takeLast$1 as takeLast, takeLastWhile$1 as takeLastWhile, takeWhile$1 as takeWhile, tap$1 as tap, test$1 as test, times$1 as times, toLower$1 as toLower, toPairs$1 as toPairs, toPairsIn$1 as toPairsIn, toString$1 as toString, toUpper$1 as toUpper, transduce$1 as transduce, transpose$1 as transpose, traverse$1 as traverse, trim$1 as trim, tryCatch$1 as tryCatch, type$1 as type, unapply$1 as unapply, unary$1 as unary, uncurryN$1 as uncurryN, unfold$1 as unfold, union$1 as union, unionWith$1 as unionWith, uniq$1 as uniq, uniqBy$1 as uniqBy, uniqWith$1 as uniqWith, unless$1 as unless, unnest$1 as unnest, until$1 as until, update$1 as update, useWith$1 as useWith, values$1 as values, valuesIn$1 as valuesIn, when$2 as when, where$1 as where, whereEq$1 as whereEq, without$1 as without, xprod$1 as xprod, zip$1 as zip, zipObj$1 as zipObj, zipWith$1 as zipWith, abs, acos, acosh, asin, asinh, atan, atan2, atanh, cbrt, ceil, clz32, cos, cosh, exp, expm1, floor, fround, hypot, imul, log, log10, log1p, log2, pow, round, sign, sin, sinh, sqrt, tan, tanh, trunc, parse, stringify, indices, mapElems, mapElemsWithIds };
 export default K;
+export { liftStaged, template, debounce, changes, serially, parallel, delay, endWith, mapValue, flatMapParallel, flatMapSerial, flatMapErrors, flatMapLatest, foldPast, interval$1 as interval, later$1 as later, lazy, never$1 as never, on, sampledBy, skipFirst, skipDuplicates, skipIdenticals, skipUnless, skipWhen, startWith, sink, takeFirst, takeUntilBy, toProperty, throttle, fromEvents$1 as fromEvents, set, Bus, bus, onUnmount, tapPartial, refTo, scope, toPartial, show, staged, setProps, getProps, bindProps, bind, cns, classes, mapCached, mapIndexed, ifte, ift, iftes, view, Context, withContext, WithContext, actions, string, atom, variable, molecule, F$1 as F, T$1 as T, __$1 as __, add$1 as add, addIndex$1 as addIndex, adjust$1 as adjust, all$1 as all, allPass$1 as allPass, always$1 as always, and$1 as and, any$1 as any, anyPass$1 as anyPass, ap$1 as ap, aperture$1 as aperture, append$1 as append, apply$1 as apply, applySpec$1 as applySpec, applyTo$1 as applyTo, ascend$1 as ascend, assoc$1 as assoc, assocPath$1 as assocPath, binary$1 as binary, both$1 as both, call$1 as call, chain$1 as chain, clamp$1 as clamp, comparator$1 as comparator, complement$1 as complement, compose$1 as compose, concat$2 as concat, cond$1 as cond, construct$1 as construct, constructN$1 as constructN, contains$1 as contains, converge$1 as converge, countBy$1 as countBy, curry$2 as curry, curryN$2 as curryN, dec$1 as dec, defaultTo$1 as defaultTo, descend$1 as descend, difference$1 as difference, differenceWith$1 as differenceWith, dissoc$1 as dissoc, dissocPath$1 as dissocPath, divide$1 as divide, drop$1 as drop, dropLast$1 as dropLast, dropLastWhile$1 as dropLastWhile, dropRepeats$1 as dropRepeats, dropRepeatsWith$1 as dropRepeatsWith, dropWhile$1 as dropWhile, either$1 as either, empty$1 as empty, endsWith$1 as endsWith, eqBy$1 as eqBy, eqProps$1 as eqProps, equals$1 as equals, evolve$1 as evolve, filter$1 as filter, find$2 as find, findIndex$1 as findIndex, findLast$1 as findLast, findLastIndex$1 as findLastIndex, flatten$2 as flatten, flip$1 as flip, fromPairs$1 as fromPairs, groupBy$1 as groupBy, groupWith$1 as groupWith, gt$1 as gt, gte$1 as gte, has$1 as has, hasIn$1 as hasIn, head$1 as head, identical$1 as identical, identity$1 as identity, ifElse$1 as ifElse, inc$1 as inc, indexBy$1 as indexBy, indexOf$1 as indexOf, init$1 as init, innerJoin$1 as innerJoin, insert$1 as insert, insertAll$1 as insertAll, intersection$1 as intersection, intersperse$1 as intersperse, into$1 as into, invert$1 as invert, invertObj$1 as invertObj, invoker$1 as invoker, is$1 as is, isEmpty$1 as isEmpty, isNil$1 as isNil, join$2 as join, juxt$1 as juxt, keys$1 as keys, keysIn$1 as keysIn, last$1 as last, lastIndexOf$1 as lastIndexOf, length$1 as length, lt$1 as lt, lte$1 as lte, map$1 as map, mapAccum$1 as mapAccum, mapAccumRight$1 as mapAccumRight, mapObjIndexed$1 as mapObjIndexed, match$1 as match, mathMod$1 as mathMod, max$1 as max, maxBy$1 as maxBy, mean$1 as mean, median$1 as median, memoizeWith$1 as memoizeWith, merge$2 as merge, mergeAll$1 as mergeAll, mergeDeepLeft$1 as mergeDeepLeft, mergeDeepRight$1 as mergeDeepRight, mergeDeepWith$1 as mergeDeepWith, mergeDeepWithKey$1 as mergeDeepWithKey, mergeWith$1 as mergeWith, mergeWithKey$1 as mergeWithKey, min$1 as min, minBy$1 as minBy, modulo$1 as modulo, multiply$1 as multiply, nAry$1 as nAry, negate$1 as negate, none$1 as none, not$1 as not, nth$1 as nth, nthArg$1 as nthArg, o$1 as o, objOf$1 as objOf, of$1 as of, omit$1 as omit, or$1 as or, pair$1 as pair, partial$1 as partial, partialRight$1 as partialRight, partition$1 as partition, path$1 as path, pathEq$1 as pathEq, pathOr$1 as pathOr, pathSatisfies$1 as pathSatisfies, pick$1 as pick, pickAll$1 as pickAll, pickBy$1 as pickBy, pipe$1 as pipe, pluck$1 as pluck, prepend$1 as prepend, product$1 as product, project$1 as project, prop$1 as prop, propEq$1 as propEq, propIs$1 as propIs, propOr$1 as propOr, propSatisfies$1 as propSatisfies, props$1 as props, range$1 as range, reduce$1 as reduce, reduceBy$1 as reduceBy, reduceRight$1 as reduceRight, reduceWhile$1 as reduceWhile, reduced$1 as reduced, reject$1 as reject, remove$1 as remove, repeat$1 as repeat, replace$1 as replace, reverse$1 as reverse, scan$1 as scan, sequence$1 as sequence, slice$1 as slice, sort$1 as sort, sortBy$1 as sortBy, sortWith$1 as sortWith, split$1 as split, splitAt$1 as splitAt, splitEvery$1 as splitEvery, splitWhen$1 as splitWhen, startsWith$1 as startsWith, subtract$1 as subtract, sum$1 as sum, symmetricDifference$1 as symmetricDifference, symmetricDifferenceWith$1 as symmetricDifferenceWith, tail$1 as tail, take$1 as take, takeLast$1 as takeLast, takeLastWhile$1 as takeLastWhile, takeWhile$1 as takeWhile, tap$1 as tap, test$1 as test, times$1 as times, toLower$1 as toLower, toPairs$1 as toPairs, toPairsIn$1 as toPairsIn, toString$1 as toString, toUpper$1 as toUpper, transduce$1 as transduce, transpose$1 as transpose, traverse$1 as traverse, trim$1 as trim, tryCatch$1 as tryCatch, type$1 as type, unapply$1 as unapply, unary$1 as unary, uncurryN$1 as uncurryN, unfold$1 as unfold, union$1 as union, unionWith$1 as unionWith, uniq$1 as uniq, uniqBy$1 as uniqBy, uniqWith$1 as uniqWith, unless$1 as unless, unnest$1 as unnest, until$1 as until, update$1 as update, useWith$1 as useWith, values$1 as values, valuesIn$1 as valuesIn, when$2 as when, where$1 as where, whereEq$1 as whereEq, without$1 as without, xprod$1 as xprod, zip$1 as zip, zipObj$1 as zipObj, zipWith$1 as zipWith, abs, acos, acosh, asin, asinh, atan, atan2, atanh, cbrt, ceil, clz32, cos, cosh, exp, expm1, floor, fround, hypot, imul, log, log10, log1p, log2, pow, round, sign, sin, sinh, sqrt, tan, tanh, trunc, parse, stringify, indices, mapElems, mapElemsWithIds };
