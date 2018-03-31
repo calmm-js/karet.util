@@ -15,16 +15,19 @@ function show(x) {
   }
 }
 
-const testEq = (exprIn, expect) => {
-  const expr = exprIn.replace(/[ \n]+/g, ' ')
-  return it(`${expr} => ${show(expect)}`, done => {
-    const actual = eval(`(K, Kefir, R, U, C) => ${expr}`)(
-      K,
-      Kefir,
-      R,
-      U,
-      Kefir.constant
-    )
+const toExpr = f =>
+  f
+    .toString()
+    .replace(/\s+/g, ' ')
+    .replace(/^\s*function\s*\(\s*\)\s*{\s*(return\s*)?/, '')
+    .replace(/\s*;?\s*}\s*$/, '')
+    .replace(/function\s*(\([a-zA-Z]*\))\s*/g, '$1 => ')
+    .replace(/{\s*return\s*([^{;]+)\s*;\s*}/g, '$1')
+    .replace(/{\s*return\s*([^{;]+)\s*;\s*}/g, '$1')
+
+const testEq = (expect, thunk) =>
+  it(`${toExpr(thunk)} => ${show(expect)}`, done => {
+    const actual = thunk()
     const check = actual => {
       if (!R.equals(actual, expect))
         throw new Error(`Expected: ${show(expect)}, actual: ${show(actual)}`)
@@ -33,319 +36,307 @@ const testEq = (exprIn, expect) => {
     if (actual instanceof Kefir.Observable) actual.take(1).onValue(check)
     else check(actual)
   })
-}
 
-const testRender = (vdom, expect) =>
+const testRender = (expect, vdomThunk) =>
   it(`${expect}`, () => {
-    const actual = ReactDOM.renderToStaticMarkup(vdom)
+    const actual = ReactDOM.renderToStaticMarkup(vdomThunk())
 
     if (actual !== expect)
       throw new Error(`Expected: ${show(expect)}, actual: ${show(actual)}`)
   })
 
+const C = Kefir.constant
+
 describe('actions', () => {
-  testEq(
-    `{ let i = ''
-     ; U.actions(false,
-                 C(x => i += '1' + x),
-                 undefined,
-                 x => i += '2' + x)
-        .onValue(f => f('z'))
-     ; return i }`,
-    '1z2z'
-  )
+  testEq('1z2z', () => {
+    let i = ''
+    U.actions(
+      false,
+      C(x => (i += '1' + x)),
+      undefined,
+      x => (i += '2' + x)
+    ).onValue(f => f('z'))
+    return i
+  })
 })
 
 describe('bind', () => {
-  testEq(
-    `{ const a = U.atom(1)
-     ; const e = {a: 2}
-     ; const x = U.bind({a})
-     ; x.onChange({target: e})
-     ; return a }`,
-    2
-  )
+  testEq(2, () => {
+    const a = U.atom(1)
+    const e = {a: 2}
+    const x = U.bind({a})
+    x.onChange({target: e})
+    return a
+  })
 })
 
 describe('view', () => {
-  testEq(`U.view('x', Kefir.constant({x: 101}))`, 101)
-  testEq(`U.view(Kefir.constant('x'), Kefir.constant({x: 101}))`, 101)
-  testEq(`U.view('x', {x: 101})`, 101)
-  testEq(`U.view('x', U.atom({x: 101}))`, 101)
-  testEq(`U.view(Kefir.constant('x'), U.atom({x: 101}))`, 101)
+  testEq(101, () => U.view('x', Kefir.constant({x: 101})))
+  testEq(101, () => U.view(Kefir.constant('x'), Kefir.constant({x: 101})))
+  testEq(101, () => U.view('x', {x: 101}))
+  testEq(101, () => U.view('x', U.atom({x: 101})))
+  testEq(101, () => U.view(Kefir.constant('x'), U.atom({x: 101})))
 })
 
 describe('bindProps', () => {
-  testEq(
-    `{ const a = U.atom(1)
-     ; const e = {a: 2}
-     ; const x = U.bindProps({ref: 'onChange', a})
-     ; x.ref(e)
-     ; a.set(3)
-     ; return e.a }`,
-    3
-  )
+  testEq(3, () => {
+    const a = U.atom(1)
+    const e = {a: 2}
+    const x = U.bindProps({ref: 'onChange', a})
+    x.ref(e)
+    a.set(3)
+    return e.a
+  })
 
-  testEq(
-    `{ const a = U.atom(1)
-     ; const e = {a: 2}
-     ; const x = U.bindProps({ref: 'onChange', a})
-     ; x.ref(e)
-     ; e.a = 3
-     ; x.onChange({target: e})
-     ; return a }`,
-    3
-  )
+  testEq(3, () => {
+    const a = U.atom(1)
+    const e = {a: 2}
+    const x = U.bindProps({ref: 'onChange', a})
+    x.ref(e)
+    e.a = 3
+    x.onChange({target: e})
+    return a
+  })
 })
 
 describe('classes', () => {
-  testEq('U.classes()', {className: ''})
+  testEq({className: ''}, () => U.classes())
 
-  testEq(`U.classes('a')`, {className: 'a'})
+  testEq({className: 'a'}, () => U.classes('a'))
 
-  testEq(`U.classes('a', undefined, 0, false, '', 'b')`, {className: 'a b'})
+  testEq({className: 'a b'}, () => U.classes('a', undefined, 0, false, '', 'b'))
 
-  testEq(`K(U.classes('a', C('b')), R.identity)`, {className: 'a b'})
+  testEq({className: 'a b'}, () => K(U.classes('a', C('b')), R.identity))
 })
 
 describe('cns', () => {
-  testEq(`U.cns()`, '')
-  testEq(`U.cns(null, ['a', false], undefined, C('b'), 0, '')`, 'a b')
+  testEq('', () => U.cns())
+  testEq('a b', () => U.cns(null, ['a', false], undefined, C('b'), 0, ''))
 })
 
 describe('mapCached', () => {
-  testEq(
-    `U.seq(Kefir.concat([C([2, 1, 1]), C([1, 3, 2])]),
-           U.toProperty,
-           U.mapCached(i => 'item ' + i))`,
-    ['item 1', 'item 3', 'item 2']
+  testEq(['item 1', 'item 3', 'item 2'], () =>
+    U.seq(
+      Kefir.concat([C([2, 1, 1]), C([1, 3, 2])]),
+      U.toProperty,
+      U.mapCached(i => 'item ' + i)
+    )
   )
 })
 
 describe('mapElems', () => {
-  testEq(
-    `{ let uniq = 0
-     ; const xs = U.atom([2, 1, 1])
-     ; const ys =
-         U.seq(xs,
-               U.mapElems((x, i) => [x, i, ++uniq]),
-               U.flatMapLatest(U.template),
-               U.toProperty)
-     ; ys.onValue(() => {})
-     ; xs.set([1, 3, 2])
-     ; return ys }`,
-    [[1, 0, 1], [3, 1, 2], [2, 2, 3]]
-  )
+  testEq([[1, 0, 1], [3, 1, 2], [2, 2, 3]], () => {
+    let uniq = 0
+    const xs = U.atom([2, 1, 1])
+    const ys = U.seq(
+      xs,
+      U.mapElems((x, i) => [x, i, ++uniq]),
+      U.flatMapLatest(U.template),
+      U.toProperty
+    )
+    ys.onValue(() => {})
+    xs.set([1, 3, 2])
+    return ys
+  })
 })
 
 describe('mapElemsWithIds', () => {
   testEq(
-    `{ let uniq = 0
-     ; const xs = U.atom([{id: '2'}, {id: '1'}, {id: '3'}])
-     ; const ys =
-         U.seq(xs,
-               U.mapElemsWithIds('id', (x, i) => [x, i, ++uniq]),
-               U.flatMapLatest(U.template),
-               U.toProperty)
-     ; ys.onValue(() => {})
-     ; xs.set([{id: '1'}, {id: '2'}, {id: '3'}])
-     ; return ys }`,
-    [[{id: '1'}, '1', 2], [{id: '2'}, '2', 1], [{id: '3'}, '3', 3]]
+    [[{id: '1'}, '1', 2], [{id: '2'}, '2', 1], [{id: '3'}, '3', 3]],
+    () => {
+      let uniq = 0
+      const xs = U.atom([{id: '2'}, {id: '1'}, {id: '3'}])
+      const ys = U.seq(
+        xs,
+        U.mapElemsWithIds('id', (x, i) => [x, i, ++uniq]),
+        U.flatMapLatest(U.template),
+        U.toProperty
+      )
+      ys.onValue(() => {})
+      xs.set([{id: '1'}, {id: '2'}, {id: '3'}])
+      return ys
+    }
   )
 })
 
 describe('sink', () => {
-  testEq(`U.sink(C('lol'))`, undefined)
+  testEq(undefined, () => U.sink(C('lol')))
 })
 
 describe('string', () => {
-  testEq('U.string`Hello!`', 'Hello!')
-  testEq("U.string`Hello, ${'constant'}!`", 'Hello, constant!')
-  testEq("U.string`Hello, ${C('World')}!`", 'Hello, World!')
+  testEq('Hello!', () => U.string`Hello!`)
+  testEq('Hello, constant!', () => U.string`Hello, ${'constant'}!`)
+  testEq('Hello, World!', () => U.string`Hello, ${C('World')}!`)
   testEq(
-    "U.string`Hello, ${'constant'} ${C('property')}!`",
-    'Hello, constant property!'
+    'Hello, constant property!',
+    () => U.string`Hello, ${'constant'} ${C('property')}!`
   )
 })
 
 describe('Context', () => {
   const Who = U.withContext((_, {who}) => <div>Hello, {who}!</div>)
 
-  testRender(
+  testRender('<div>Hello, World!</div>', () => (
     <U.Context context={{who: Kefir.constant('World')}}>
       <Who />
-    </U.Context>,
-    '<div>Hello, World!</div>'
-  )
+    </U.Context>
+  ))
 })
 
 describe('bus', () => {
-  testEq(
-    `{ const b = U.bus()
-     ; let result
-     ; U.seq(b,
-             U.flatMapParallel(R.negate),
-             U.on({value: x => result = x}))
-     ; b.push(-101)
-     ; return result }`,
-    101
-  )
-  testEq(
-    `{ const b = U.bus()
-     ; let result
-     ; U.seq(b,
-             U.flatMapErrors(R.negate),
-             U.on({value: x => result = x}))
-     ; b.error(-69)
-     ; return result }`,
-    69
-  )
-  testEq(
-    `{ const b = U.bus()
-     ; b.end()
-     ; return U.parallel([b, C(42)]) }`,
-    42
-  )
+  testEq(101, () => {
+    const b = U.bus()
+    let result
+    U.seq(b, U.flatMapParallel(R.negate), U.on({value: x => (result = x)}))
+    b.push(-101)
+    return result
+  })
+  testEq(69, () => {
+    const b = U.bus()
+    let result
+    U.seq(b, U.flatMapErrors(R.negate), U.on({value: x => (result = x)}))
+    b.error(-69)
+    return result
+  })
+  testEq(42, () => {
+    const b = U.bus()
+    b.end()
+    return U.parallel([b, C(42)])
+  })
 })
 
 describe('ifte', () => {
-  testEq('U.ifte(C(true), C(1), C(2))', 1)
-  testEq('U.ifte(C(false), 1, 2)', 2)
+  testEq(1, () => U.ifte(C(true), C(1), C(2)))
+  testEq(2, () => U.ifte(C(false), 1, 2))
 })
 
 describe('ift', () => {
-  testEq(`U.ift(C(true), C('x'))`, 'x')
-  testEq(`U.ift(C(false), 'x')`, undefined)
+  testEq('x', () => U.ift(C(true), C('x')))
+  testEq(undefined, () => U.ift(C(false), 'x'))
 })
 
 describe('iftes', () => {
-  testEq(`U.iftes()`, undefined)
-  testEq(`U.iftes(C(false), 1, 2)`, 2)
-  testEq(
-    `U.iftes(C(false), 1,
-             C(false), 2,
-             3)`,
-    3
-  )
-  testEq(
-    `U.iftes(C(false), 1,
-             C(false), 2,
-             C(false), 3)`,
-    undefined
-  )
+  testEq(undefined, () => U.iftes())
+  testEq(2, () => U.iftes(C(false), 1, 2))
+  testEq(3, () => U.iftes(C(false), 1, C(false), 2, 3))
+  testEq(undefined, () => U.iftes(C(false), 1, C(false), 2, C(false), 3))
 })
 
 describe('toPartial', () => {
-  testEq(`U.toPartial(R.add)(C(1), undefined)`, undefined)
-  testEq(`U.toPartial(R.add)(C(undefined), 2)`, undefined)
-  testEq(`U.toPartial(R.add)(1, C(2))`, 3)
+  testEq(undefined, () => U.toPartial(R.add)(C(1), undefined))
+  testEq(undefined, () => U.toPartial(R.add)(C(undefined), 2))
+  testEq(3, () => U.toPartial(R.add)(1, C(2)))
 })
 
 describe('mapIndexed', () => {
-  testEq(`U.mapIndexed((x, i) => [x,i], C([3,1,4]))`, [[3, 0], [1, 1], [4, 2]])
+  testEq([[3, 0], [1, 1], [4, 2]], () =>
+    U.mapIndexed((x, i) => [x, i], C([3, 1, 4]))
+  )
 })
 
 describe('scope', () => {
-  testEq(`U.scope(() => 101)`, 101)
+  testEq(101, () => U.scope(() => 101))
 })
 
 describe('refTo', () => {
-  testEq(
-    `{const x = U.variable(); U.refTo(x)(null); return x.get()}`,
-    undefined
-  )
-  testEq(`{const x = U.variable(); U.refTo(x)('y'); return x.get()}`, 'y')
+  testEq(undefined, () => {
+    const x = U.variable()
+    U.refTo(x)(null)
+    return x.get()
+  })
+  testEq('y', () => {
+    const x = U.variable()
+    U.refTo(x)('y')
+    return x.get()
+  })
 })
 
 describe('molecule', () => {
-  testEq(`U.molecule({x: U.atom(1), y: U.atom(2)})`, {x: 1, y: 2})
+  testEq({x: 1, y: 2}, () => U.molecule({x: U.atom(1), y: U.atom(2)}))
 })
 
 describe('template', () => {
-  testEq(`U.template({x: C(1), y: C(2)})`, {x: 1, y: 2})
+  testEq({x: 1, y: 2}, () => U.template({x: C(1), y: C(2)}))
 })
 
 describe('set', () => {
-  testEq(`U.set(U.atom(0), 1)`, undefined)
-  testEq(`U.set(U.atom(0), C(1))`, undefined)
+  testEq(undefined, () => U.set(U.atom(0), 1))
+  testEq(undefined, () => U.set(U.atom(0), C(1)))
 })
 
 describe('show', () => {
-  testEq(`U.show('any')`, 'any')
-  testEq(`U.show(C('whatever'))`, 'whatever')
+  testEq('any', () => U.show('any'))
+  testEq('whatever', () => U.show(C('whatever')))
 })
 
 describe('staged', () => {
-  testEq(`U.staged(x => y => x + y)(1)(2)`, 3)
-  testEq(`U.staged(x => y => x + y)(1, 2)`, 3)
+  testEq(3, () => U.staged(x => y => x + y)(1)(2))
+  testEq(3, () => U.staged(x => y => x + y)(1, 2))
 })
 
 describe('tapPartial', () => {
-  testEq(
-    `{ const x = U.atom(0)
-     ; const events = []
-     ; U.seq(x, U.tapPartial(v => events.push(v)), U.on({}))
-     ; x.set(1)
-     ; x.set(undefined)
-     ; x.set(2)
-     ; return events }`,
-    [0, 1, 2]
-  )
+  testEq([0, 1, 2], () => {
+    const x = U.atom(0)
+    const events = []
+    U.seq(x, U.tapPartial(v => events.push(v)), U.on({}))
+    x.set(1)
+    x.set(undefined)
+    x.set(2)
+    return events
+  })
 
-  testEq(
-    `{ let events = []
-     ; const x = U.tapPartial(v => events.push(v), 1)
-     ; const y = U.tapPartial(v => events.push(v), undefined)
-     ; const z = U.tapPartial(v => events.push(v), 2)
-     ; return [[x, y, z], events] }`,
-    [[1, undefined, 2], [1, 2]]
-  )
+  testEq([[1, undefined, 2], [1, 2]], () => {
+    const events = []
+    const x = U.tapPartial(v => events.push(v), 1)
+    const y = U.tapPartial(v => events.push(v), undefined)
+    const z = U.tapPartial(v => events.push(v), 2)
+    return [[x, y, z], events]
+  })
 })
 
 describe('Ramda', () => {
-  testEq(`U.add(C(1), C(2))`, 3)
-  testEq(`U.addIndex(R.map)((x, i) => [x, i], C([3, 1, 4]))`, [
-    [3, 0],
-    [1, 1],
-    [4, 2]
-  ])
-  testEq(`U.adjust(R.inc, C(1), C([1,2,3]))`, [1, 3, 3])
-  testEq(`U.all(R.equals(1), C([1,2,3]))`, false)
-  testEq(`U.allPass([x => x > 1, x => x < 3])(C(2))`, true)
-  testEq(`U.filter(U.allPass([C(x => x > 1), C(x => x < 3)]), C([1,2,3]))`, [2])
-  testEq(`U.and(C('a'), C('b'))`, 'b')
-  testEq(`U.any(R.equals(1), C([1,2,3]))`, true)
-  testEq(`U.anyPass([x => x > 1, x => x < 3])(C(1))`, true)
-  testEq(`U.filter(U.anyPass([C(x => x > 1), C(x => x < 3)]), C([1,2,3]))`, [
-    1,
-    2,
-    3
-  ])
-  testEq(`U.ap([U.multiply(2), C(U.add(3))], C([1,2,3]))`, [2, 4, 6, 4, 5, 6])
-  testEq(
-    `U.ifElse(U.equals('x'), () => 'was x!', x => 'was ' + x)(C('y'))`,
-    'was y'
+  testEq(3, () => U.add(C(1), C(2)))
+  testEq([[3, 0], [1, 1], [4, 2]], () =>
+    U.addIndex(R.map)((x, i) => [x, i], C([3, 1, 4]))
   )
-  testEq('U.pipe(U.add(1), U.add(2))(C(3))', 6)
-  testEq(`U.always(C(42))(0)`, 42)
-  testEq(
-    `U.cond([[R.equals(1), R.always('one')],
-                  [R.equals(2), R.always('two')]])(2)`,
-    'two'
+  testEq([1, 3, 3], () => U.adjust(R.inc, C(1), C([1, 2, 3])))
+  testEq(false, () => U.all(R.equals(1), C([1, 2, 3])))
+  testEq(true, () => U.allPass([x => x > 1, x => x < 3])(C(2)))
+  testEq([2], () =>
+    U.filter(U.allPass([C(x => x > 1), C(x => x < 3)]), C([1, 2, 3]))
   )
-  testEq(
-    `U.cond([[R.equals(1), R.always('one')],
-             [R.equals(2), R.always('two')]])(C(2))`,
-    'two'
+  testEq('b', () => U.and(C('a'), C('b')))
+  testEq(true, () => U.any(R.equals(1), C([1, 2, 3])))
+  testEq(true, () => U.anyPass([x => x > 1, x => x < 3])(C(1)))
+  testEq([1, 2, 3], () =>
+    U.filter(U.anyPass([C(x => x > 1), C(x => x < 3)]), C([1, 2, 3]))
   )
-  testEq(`U.identity(C(42))`, 42)
-  testEq(
-    `U.filter(U.where({id: U.has(U.__, C({x: 1, y: 1}))}),
-              [{id: 'y'}, {id: 'z'}, {id: 'x'}])`,
-    [{id: 'y'}, {id: 'x'}]
+  testEq([2, 4, 6, 4, 5, 6], () =>
+    U.ap([U.multiply(2), C(U.add(3))], C([1, 2, 3]))
+  )
+  testEq('was y', () =>
+    U.ifElse(U.equals('x'), () => 'was x!', x => 'was ' + x)(C('y'))
+  )
+  testEq(6, () => U.pipe(U.add(1), U.add(2))(C(3)))
+  testEq(42, () => U.always(C(42))(0))
+  testEq('two', () =>
+    U.cond([[R.equals(1), R.always('one')], [R.equals(2), R.always('two')]])(2)
+  )
+  testEq('two', () =>
+    U.cond([[R.equals(1), R.always('one')], [R.equals(2), R.always('two')]])(
+      C(2)
+    )
+  )
+  testEq(42, () => U.identity(C(42)))
+  testEq([{id: 'y'}, {id: 'x'}], () =>
+    U.filter(U.where({id: U.has(U.__, C({x: 1, y: 1}))}), [
+      {id: 'y'},
+      {id: 'z'},
+      {id: 'x'}
+    ])
   )
 })
 
 describe('Kefir', () => {
-  testEq('U.mapValue((v) => v * 2, C(2))', 4)
+  testEq(4, () => U.mapValue(v => v * 2, C(2)))
 })
