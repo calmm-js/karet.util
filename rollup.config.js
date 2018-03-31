@@ -38,7 +38,14 @@ export default {
       }
     }),
     babel(),
-    process.env.NODE_ENV === "production" &&
-      uglify()
+    process.env.NODE_ENV === 'production' &&
+      uglify({
+        compress: {
+          hoist_funs: true,
+          passes: 3,
+          pure_getters: true,
+          pure_funcs: ['require']
+        }
+      })
   ].filter(x => x)
 }
