@@ -152,7 +152,19 @@ export const toPartial = fn =>
     arityN(fn.length, (...xs) => (R.all(isDefined, xs) ? fn(...xs) : undefined))
   )
 
-export const show = lift(x => console.log(x) || x)
+const showIso = (...xs) =>
+  L.iso(
+    x => console.log.apply(console, xs.concat([x])) || x,
+    y => console.log.apply(console, xs.concat([y, '(set)'])) || y
+  )
+
+export function show(_) {
+  const n = arguments.length - 1
+  const xs = Array(n + 1)
+  for (let i = 0; i < n; ++i) xs[i] = arguments[i]
+  xs[n] = showIso
+  return view(K.apply(null, xs), arguments[n])
+}
 
 export const staged = fn =>
   R.curryN(fn.length, function() {

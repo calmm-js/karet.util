@@ -3,6 +3,7 @@ import * as R from 'ramda'
 import * as React from 'karet'
 import ReactDOM from 'react-dom/server'
 
+import {AbstractMutable} from 'kefir.atom'
 import K, * as U from '../dist/karet.util.cjs'
 
 function show(x) {
@@ -266,7 +267,11 @@ describe('set', () => {
 
 describe('show', () => {
   testEq('any', () => U.show('any'))
+  testEq('string', () => typeof U.show('any'))
   testEq('whatever', () => U.show(C('whatever')))
+  testEq(true, () => U.show(C('whatever')) instanceof Kefir.Observable)
+  testEq('whatever', () => U.show(U.atom('whatever')))
+  testEq(true, () => U.show(U.atom('whatever')) instanceof AbstractMutable)
 })
 
 describe('staged', () => {
