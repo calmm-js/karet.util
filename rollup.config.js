@@ -1,42 +1,40 @@
-import babel       from "rollup-plugin-babel"
-import commonjs    from "rollup-plugin-commonjs"
-import nodeResolve from "rollup-plugin-node-resolve"
-import replace     from "rollup-plugin-replace"
-import uglify      from "rollup-plugin-uglify"
+import babel from 'rollup-plugin-babel'
+import commonjs from 'rollup-plugin-commonjs'
+import nodeResolve from 'rollup-plugin-node-resolve'
+import replace from 'rollup-plugin-replace'
+import uglify from 'rollup-plugin-uglify'
 
 export default {
-  external: ["infestines",
-             "karet",
-             "kefir",
-             "kefir.atom",
-             "kefir.combines",
-             "partial.lenses",
-             "prop-types",
-             "ramda",
-             "react"],
+  external: [
+    'infestines',
+    'karet',
+    'kefir',
+    'kefir.atom',
+    'kefir.combines',
+    'partial.lenses',
+    'prop-types',
+    'ramda',
+    'react'
+  ],
   globals: {
-    "infestines": "I",
-    "karet": "karet",
-    "kefir": "Kefir",
-    "kefir.atom": "kefir.atom",
-    "kefir.combines": "kefir.combines",
-    "partial.lenses": "L",
-    "prop-types": "PropTypes",
-    "ramda": "R",
-    "react": "React"
+    infestines: 'I',
+    karet: 'karet',
+    kefir: 'Kefir',
+    'kefir.atom': 'kefir.atom',
+    'kefir.combines': 'kefir.combines',
+    'partial.lenses': 'L',
+    'prop-types': 'PropTypes',
+    ramda: 'R',
+    react: 'React'
   },
   plugins: [
-    process.env.NODE_ENV && replace({
-      "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV)
-    }),
+    process.env.NODE_ENV &&
+      replace({'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)}),
     nodeResolve(),
     commonjs({
-      include: "node_modules/**",
+      include: 'node_modules/**',
       namedExports: {
-        "node_modules/react/index.js": [
-          "Component",
-          "createElement"
-        ]
+        'node_modules/react/index.js': ['Component', 'createElement']
       }
     }),
     babel(),

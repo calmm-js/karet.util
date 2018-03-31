@@ -99,13 +99,13 @@ describe('bindProps', () => {
 })
 
 describe('classes', () => {
-  testEq('U.classes()', { className: '' })
+  testEq('U.classes()', {className: ''})
 
-  testEq(`U.classes('a')`, { className: 'a' })
+  testEq(`U.classes('a')`, {className: 'a'})
 
-  testEq(`U.classes('a', undefined, 0, false, '', 'b')`, { className: 'a b' })
+  testEq(`U.classes('a', undefined, 0, false, '', 'b')`, {className: 'a b'})
 
-  testEq(`K(U.classes('a', C('b')), R.identity)`, { className: 'a b' })
+  testEq(`K(U.classes('a', C('b')), R.identity)`, {className: 'a b'})
 })
 
 describe('cns', () => {
@@ -150,7 +150,7 @@ describe('mapElemsWithIds', () => {
      ; ys.onValue(() => {})
      ; xs.set([{id: '1'}, {id: '2'}, {id: '3'}])
      ; return ys }`,
-    [[{ id: '1' }, '1', 2], [{ id: '2' }, '2', 1], [{ id: '3' }, '3', 3]]
+    [[{id: '1'}, '1', 2], [{id: '2'}, '2', 1], [{id: '3'}, '3', 3]]
   )
 })
 
@@ -169,10 +169,10 @@ describe('string', () => {
 })
 
 describe('Context', () => {
-  const Who = U.withContext((_, { who }) => <div>Hello, {who}!</div>)
+  const Who = U.withContext((_, {who}) => <div>Hello, {who}!</div>)
 
   testRender(
-    <U.Context context={{ who: Kefir.constant('World') }}>
+    <U.Context context={{who: Kefir.constant('World')}}>
       <Who />
     </U.Context>,
     '<div>Hello, World!</div>'
@@ -258,11 +258,11 @@ describe('refTo', () => {
 })
 
 describe('molecule', () => {
-  testEq(`U.molecule({x: U.atom(1), y: U.atom(2)})`, { x: 1, y: 2 })
+  testEq(`U.molecule({x: U.atom(1), y: U.atom(2)})`, {x: 1, y: 2})
 })
 
 describe('template', () => {
-  testEq(`U.template({x: C(1), y: C(2)})`, { x: 1, y: 2 })
+  testEq(`U.template({x: C(1), y: C(2)})`, {x: 1, y: 2})
 })
 
 describe('set', () => {
@@ -342,7 +342,7 @@ describe('Ramda', () => {
   testEq(
     `U.filter(U.where({id: U.has(U.__, C({x: 1, y: 1}))}),
               [{id: 'y'}, {id: 'z'}, {id: 'x'}])`,
-    [{ id: 'y' }, { id: 'x' }]
+    [{id: 'y'}, {id: 'x'}]
   )
 })
 

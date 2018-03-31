@@ -1,5 +1,5 @@
 import * as R from 'ramda'
-import { AbstractMutable, Atom, Molecule, Join, holding } from 'kefir.atom'
+import {AbstractMutable, Atom, Molecule, Join, holding} from 'kefir.atom'
 import {
   Observable,
   Stream,
@@ -28,21 +28,21 @@ import {
 } from 'infestines'
 
 import * as L from 'partial.lenses'
-import K, { lift, lift1, lift1Shallow } from 'kefir.combines'
-import { fromKefir } from 'karet'
-import { Component } from 'react'
+import K, {lift, lift1, lift1Shallow} from 'kefir.combines'
+import {fromKefir} from 'karet'
+import {Component} from 'react'
 import PropTypes from 'prop-types'
 
 //
 
 export default K
-export { lift, lift1, lift1Shallow }
+export {lift, lift1, lift1Shallow}
 export const liftStaged = fn => lift(pipe2U(fn, lift))
 export const template = observables => K(observables, id)
 
 //
 
-export { fromKefir }
+export {fromKefir}
 
 // Kefir
 
@@ -50,7 +50,7 @@ const toUndefined = _ => {}
 const toConstant = x => (x instanceof Observable ? x : Kefir_constant(x))
 
 const invokeIf = (fn, x) => fn && fn(x)
-const toHandler = fns => ({ type, value }) => invokeIf(fns[type], value)
+const toHandler = fns => ({type, value}) => invokeIf(fns[type], value)
 
 export const debounce = I_curry((ms, xs) => toConstant(xs).debounce(ms))
 export const changes = xs => toConstant(xs).changes()
@@ -143,7 +143,7 @@ export const refTo = settable => elem => {
 
 //
 
-export { seq, seqPartial }
+export {seq, seqPartial}
 
 export const scope = fn => fn()
 
@@ -203,14 +203,14 @@ export function setProps(observables) {
   }
 }
 
-export const getProps = template => ({ target }) => {
+export const getProps = template => ({target}) => {
   for (const k in template) template[k].set(target[k])
 }
 
 export const bindProps = templateWithRef => {
   const ref = templateWithRef.ref
   const template = dissocPartialU('ref', templateWithRef)
-  const r = { ref: setProps(template) }
+  const r = {ref: setProps(template)}
   r[ref] = getProps(template)
   return r
 }
@@ -224,7 +224,7 @@ const flatJoin = lift1(L.join(' ', [L.flatten, L.when(id)]))
 
 export const cns = (...xs) => flatJoin(xs)
 
-export const classes = (...xs) => ({ className: cns(...xs) })
+export const classes = (...xs) => ({className: cns(...xs)})
 
 //
 
@@ -283,7 +283,7 @@ export const view = I_curry(
 
 //
 
-const types = { context: PropTypes.any }
+const types = {context: PropTypes.any}
 
 export const Context = inherit(
   function Context(props) {
@@ -292,7 +292,7 @@ export const Context = inherit(
   Component,
   {
     getChildContext() {
-      return { context: this.props.context }
+      return {context: this.props.context}
     },
     render() {
       return this.props.children
@@ -304,12 +304,12 @@ export const Context = inherit(
 )
 
 export function withContext(originalFn) {
-  const fn = (props, { context }) => originalFn(props, context)
+  const fn = (props, {context}) => originalFn(props, context)
   fn.contextTypes = types
   return fn
 }
 
-export const WithContext = withContext(({ Do }, context) => <Do {...context} />)
+export const WithContext = withContext(({Do}, context) => <Do {...context} />)
 
 //
 
@@ -331,7 +331,7 @@ export const atom = value => new Atom(value)
 export const variable = () => new Atom()
 export const molecule = template => new Molecule(template)
 
-export { holding }
+export {holding}
 
 // Ramda
 
