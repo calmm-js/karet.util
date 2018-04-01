@@ -16,16 +16,18 @@ export default {
     'ramda',
     'react'
   ],
-  globals: {
-    infestines: 'I',
-    karet: 'karet',
-    kefir: 'Kefir',
-    'kefir.atom': 'kefir.atom',
-    'kefir.combines': 'kefir.combines',
-    'partial.lenses': 'L',
-    'prop-types': 'PropTypes',
-    ramda: 'R',
-    react: 'React'
+  output: {
+    globals: {
+      infestines: 'I',
+      karet: 'karet',
+      kefir: 'Kefir',
+      'kefir.atom': 'kefir.atom',
+      'kefir.combines': 'kefir.combines',
+      'partial.lenses': 'L',
+      'prop-types': 'PropTypes',
+      ramda: 'R',
+      react: 'React'
+    }
   },
   plugins: [
     process.env.NODE_ENV &&
