@@ -4,7 +4,7 @@ import * as React from 'karet'
 import ReactDOM from 'react-dom/server'
 
 import {AbstractMutable} from 'kefir.atom'
-import K, * as U from '../dist/karet.util.cjs'
+import * as U from '../dist/karet.util.cjs'
 
 function show(x) {
   switch (typeof x) {
@@ -107,7 +107,9 @@ describe('classes', () => {
 
   testEq({className: 'a b'}, () => U.classes('a', undefined, 0, false, '', 'b'))
 
-  testEq({className: 'a b'}, () => K(U.classes('a', C('b')), R.identity))
+  testEq({className: 'a b'}, () =>
+    U.combines(U.classes('a', C('b')), R.identity)
+  )
 })
 
 describe('cns', () => {

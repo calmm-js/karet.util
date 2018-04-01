@@ -58,7 +58,7 @@
     "infestines": "^0.4.5",
     "karet": "^2.0.0",
     "kefir.atom": "^5.3.0",
-    "kefir.combines": "^4.0.0",
+    "kefir.combines": "^4.2.0",
     "partial.lenses": "^13.0.0",
     "prop-types": "^15.5.6",
     "ramda": "^0.25.0",

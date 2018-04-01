@@ -28,21 +28,20 @@ import {
 } from 'infestines'
 
 import * as L from 'partial.lenses'
-import K, {lift, lift1, lift1Shallow} from 'kefir.combines'
-import {fromKefir} from 'karet'
+import {combines, lift, lift1, lift1Shallow} from 'kefir.combines'
 import {Component} from 'react'
 import PropTypes from 'prop-types'
 
 //
 
-export default K
-export {lift, lift1, lift1Shallow}
+export default combines
+export {combines, lift, lift1, lift1Shallow} from 'kefir.combines'
 export const liftStaged = fn => lift(pipe2U(fn, lift))
-export const template = observables => K(observables, id)
+export const template = observables => combines(observables, id)
 
 //
 
-export {fromKefir}
+export {fromKefir} from 'karet'
 
 // Kefir
 
@@ -94,7 +93,7 @@ export const throttle = I_curry((ms, xs) => toConstant(xs).throttle(ms))
 export const fromEvents = I_curry(Kefir_fromEvents)
 
 export const set = I_curry((settable, xs) => {
-  const ss = K(xs, xs => settable.set(xs))
+  const ss = combines(xs, xs => settable.set(xs))
   if (ss instanceof Observable) return ss.toProperty(toUndefined)
 })
 
@@ -163,7 +162,7 @@ export function show(_) {
   const xs = Array(n + 1)
   for (let i = 0; i < n; ++i) xs[i] = arguments[i]
   xs[n] = showIso
-  return view(K.apply(null, xs), arguments[n])
+  return view(combines.apply(null, xs), arguments[n])
 }
 
 export const staged = fn =>
@@ -289,8 +288,10 @@ export function iftes(_c, _t) {
 export const view = I_curry(
   (l, xs) =>
     xs instanceof AbstractMutable
-      ? l instanceof Observable ? new Join(K(l, l => xs.view(l))) : xs.view(l)
-      : K(l, xs, L.get)
+      ? l instanceof Observable
+        ? new Join(combines(l, l => xs.view(l)))
+        : xs.view(l)
+      : combines(l, xs, L.get)
 )
 
 //
@@ -330,12 +331,12 @@ const actionsImmediate = (...fns) => (...args) => {
     if (fns[i] instanceof Function) fns[i](...args)
 }
 
-export const actions = (...fns) => K(...fns, actionsImmediate)
+export const actions = (...fns) => combines(...fns, actionsImmediate)
 
 //
 
 export const string = (strings, ...values) =>
-  K(...values, (...values) => String.raw(strings, ...values))
+  combines(...values, (...values) => String.raw(strings, ...values))
 
 //
 
