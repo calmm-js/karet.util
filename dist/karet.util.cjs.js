@@ -14,6 +14,7 @@ var react = require('react');
 var PropTypes = _interopDefault(require('prop-types'));
 var karet = require('karet');
 
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 var liftStaged = function liftStaged(fn) {
   return kefir_combines.lift(infestines.pipe2U(fn, kefir_combines.lift));
 };
@@ -172,30 +173,24 @@ var refTo = function refTo(settable) {
 };
 
 var thru = function thru(x) {
-  for (var _len = arguments.length, xs = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-    xs[_key - 1] = arguments[_key];
+  for (var _len = arguments.length, fs = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+    fs[_key - 1] = arguments[_key];
   }
 
-  return kefir_combines.combines.apply(undefined, xs.concat([function () {
-    for (var _len2 = arguments.length, xs = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-      xs[_key2] = arguments[_key2];
-    }
-
-    return infestines.seq.apply(undefined, [x].concat(xs));
-  }]));
+  fs = template(fs);
+  return fs instanceof kefir.Observable ? flatMapLatest(function (fs) {
+    return infestines.seq.apply(undefined, [x].concat(_toConsumableArray(fs)));
+  }, fs) : infestines.seq.apply(undefined, [x].concat(_toConsumableArray(fs)));
 };
 var thruPartial = function thruPartial(x) {
-  for (var _len3 = arguments.length, xs = Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
-    xs[_key3 - 1] = arguments[_key3];
+  for (var _len2 = arguments.length, fs = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+    fs[_key2 - 1] = arguments[_key2];
   }
 
-  return kefir_combines.combines.apply(undefined, xs.concat([function () {
-    for (var _len4 = arguments.length, xs = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
-      xs[_key4] = arguments[_key4];
-    }
-
-    return infestines.seqPartial.apply(undefined, [x].concat(xs));
-  }]));
+  fs = template(fs);
+  return fs instanceof kefir.Observable ? flatMapLatest(function (fs) {
+    return infestines.seqPartial.apply(undefined, [x].concat(_toConsumableArray(fs)));
+  }, fs) : infestines.seq.apply(undefined, [x].concat(_toConsumableArray(fs)));
 };
 
 var scope = function scope(fn) {
@@ -204,8 +199,8 @@ var scope = function scope(fn) {
 
 var toPartial = function toPartial(fn) {
   return kefir_combines.lift(infestines.arityN(fn.length, function () {
-    for (var _len5 = arguments.length, xs = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
-      xs[_key5] = arguments[_key5];
+    for (var _len3 = arguments.length, xs = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+      xs[_key3] = arguments[_key3];
     }
 
     return R.all(infestines.isDefined, xs) ? fn.apply(undefined, xs) : undefined;
@@ -213,8 +208,8 @@ var toPartial = function toPartial(fn) {
 };
 
 var showIso = function showIso() {
-  for (var _len6 = arguments.length, xs = Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
-    xs[_key6] = arguments[_key6];
+  for (var _len4 = arguments.length, xs = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+    xs[_key4] = arguments[_key4];
   }
 
   return L.iso(function (x) {
@@ -312,8 +307,8 @@ var bind = function bind(template) {
 var flatJoin = /*#__PURE__*/kefir_combines.lift1( /*#__PURE__*/L.join(' ', [L.flatten, /*#__PURE__*/L.when(infestines.id)]));
 
 var cns = function cns() {
-  for (var _len7 = arguments.length, xs = Array(_len7), _key7 = 0; _key7 < _len7; _key7++) {
-    xs[_key7] = arguments[_key7];
+  for (var _len5 = arguments.length, xs = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
+    xs[_key5] = arguments[_key5];
   }
 
   return flatJoin(xs);
@@ -427,8 +422,8 @@ var WithContext = /*#__PURE__*/withContext(function (_ref4, context) {
 //
 
 var actionsImmediate = function actionsImmediate() {
-  for (var _len8 = arguments.length, fns = Array(_len8), _key8 = 0; _key8 < _len8; _key8++) {
-    fns[_key8] = arguments[_key8];
+  for (var _len6 = arguments.length, fns = Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
+    fns[_key6] = arguments[_key6];
   }
 
   return function () {
@@ -439,8 +434,8 @@ var actionsImmediate = function actionsImmediate() {
 };
 
 var actions = function actions() {
-  for (var _len9 = arguments.length, fns = Array(_len9), _key9 = 0; _key9 < _len9; _key9++) {
-    fns[_key9] = arguments[_key9];
+  for (var _len7 = arguments.length, fns = Array(_len7), _key7 = 0; _key7 < _len7; _key7++) {
+    fns[_key7] = arguments[_key7];
   }
 
   return kefir_combines.combines.apply(undefined, fns.concat([actionsImmediate]));
@@ -449,13 +444,13 @@ var actions = function actions() {
 //
 
 var string = function string(strings) {
-  for (var _len10 = arguments.length, values = Array(_len10 > 1 ? _len10 - 1 : 0), _key10 = 1; _key10 < _len10; _key10++) {
-    values[_key10 - 1] = arguments[_key10];
+  for (var _len8 = arguments.length, values = Array(_len8 > 1 ? _len8 - 1 : 0), _key8 = 1; _key8 < _len8; _key8++) {
+    values[_key8 - 1] = arguments[_key8];
   }
 
   return kefir_combines.combines.apply(undefined, values.concat([function () {
-    for (var _len11 = arguments.length, values = Array(_len11), _key11 = 0; _key11 < _len11; _key11++) {
-      values[_key11] = arguments[_key11];
+    for (var _len9 = arguments.length, values = Array(_len9), _key9 = 0; _key9 < _len9; _key9++) {
+      values[_key9] = arguments[_key9];
     }
 
     return String.raw.apply(String, [strings].concat(values));
