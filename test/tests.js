@@ -1,5 +1,5 @@
-import * as Kefir from 'kefir'
-import * as R from 'ramda'
+import * as L from 'kefir.partial.lenses'
+import * as R from 'kefir.ramda'
 import * as React from 'karet'
 import ReactDOM from 'react-dom/server'
 import {Observable, concat, constant as C} from 'kefir'
@@ -299,6 +299,17 @@ describe('tapPartial', () => {
     const z = U.tapPartial(v => events.push(v), 2)
     return [[x, y, z], events]
   })
+})
+
+describe('thru', () => {
+  testEq(3, () => U.thru(1, R.add(2)))
+  testEq(3, () => U.thru(C(1), R.add(C(2))))
+  testEq(3, () => U.thru(C({x: 1}), L.get(C('x')), R.add(C(2))))
+})
+
+describe('thruPartial', () => {
+  testEq(3, () => U.thruPartial(C(1), R.add(C(2))))
+  testEq(undefined, () => U.thruPartial(C({x: 1}), L.get(C('y')), R.add(C(2))))
 })
 
 describe('Ramda', () => {

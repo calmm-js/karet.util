@@ -144,6 +144,10 @@ export const refTo = settable => elem => {
 
 export {seq, seqPartial}
 
+export const thru = (x, ...xs) => combines(...xs, (...xs) => seq(x, ...xs))
+export const thruPartial = (x, ...xs) =>
+  combines(...xs, (...xs) => seqPartial(x, ...xs))
+
 export const scope = fn => fn()
 
 export const toPartial = fn =>
