@@ -1,17 +1,16 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('ramda'), require('kefir.atom'), require('kefir'), require('infestines'), require('partial.lenses'), require('kefir.combines'), require('karet'), require('react'), require('prop-types')) :
-  typeof define === 'function' && define.amd ? define(['exports', 'ramda', 'kefir.atom', 'kefir', 'infestines', 'partial.lenses', 'kefir.combines', 'karet', 'react', 'prop-types'], factory) :
-  (factory((global.karet = global.karet || {}, global.karet.util = {}),global.R,global.kefir.atom,global.Kefir,global.I,global.L,global.kefir.combines,global.karet,global.React,global.PropTypes));
-}(this, (function (exports,R,kefir_atom,kefir,infestines,L,K,karet,react,PropTypes) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('ramda'), require('kefir.atom'), require('kefir'), require('infestines'), require('partial.lenses'), require('kefir.combines'), require('react'), require('prop-types'), require('karet')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'ramda', 'kefir.atom', 'kefir', 'infestines', 'partial.lenses', 'kefir.combines', 'react', 'prop-types', 'karet'], factory) :
+  (factory((global.karet = global.karet || {}, global.karet.util = {}),global.R,global.kefir.atom,global.Kefir,global.I,global.L,global.kefir.combines,global.React,global.PropTypes,global.karet));
+}(this, (function (exports,R,kefir_atom,kefir,infestines,L,kefir_combines,react,PropTypes,karet) { 'use strict';
 
-  var K__default = 'default' in K ? K['default'] : K;
   PropTypes = PropTypes && PropTypes.hasOwnProperty('default') ? PropTypes['default'] : PropTypes;
 
   var liftStaged = function liftStaged(fn) {
-    return K.lift(infestines.pipe2U(fn, K.lift));
+    return kefir_combines.lift(infestines.pipe2U(fn, kefir_combines.lift));
   };
   var template = function template(observables) {
-    return K__default(observables, infestines.id);
+    return kefir_combines.combines(observables, infestines.id);
   };
 
   // Kefir
@@ -98,7 +97,7 @@
       return x;
     });
   });
-  var sink = /*#__PURE__*/infestines.pipe2U( /*#__PURE__*/startWith(undefined), /*#__PURE__*/K.lift(toUndefined));
+  var sink = /*#__PURE__*/infestines.pipe2U( /*#__PURE__*/startWith(undefined), /*#__PURE__*/kefir_combines.lift(toUndefined));
   var takeFirst = /*#__PURE__*/infestines.curry(function (n, xs) {
     return toConstant(xs).take(n);
   });
@@ -114,7 +113,7 @@
   var fromEvents = /*#__PURE__*/infestines.curry(kefir.fromEvents);
 
   var set = /*#__PURE__*/infestines.curry(function (settable, xs) {
-    var ss = K__default(xs, function (xs) {
+    var ss = kefir_combines.combines(xs, function (xs) {
       return settable.set(xs);
     });
     if (ss instanceof kefir.Observable) return ss.toProperty(toUndefined);
@@ -151,7 +150,7 @@
 
   //
 
-  var tapPartial = /*#__PURE__*/K.lift(function (effect, data) {
+  var tapPartial = /*#__PURE__*/kefir_combines.lift(function (effect, data) {
     if (undefined !== data) effect(data);
     return data;
   });
@@ -164,14 +163,41 @@
     };
   };
 
+  var thru = function thru(x) {
+    for (var _len = arguments.length, xs = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      xs[_key - 1] = arguments[_key];
+    }
+
+    return kefir_combines.combines.apply(undefined, xs.concat([function () {
+      for (var _len2 = arguments.length, xs = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+        xs[_key2] = arguments[_key2];
+      }
+
+      return infestines.seq.apply(undefined, [x].concat(xs));
+    }]));
+  };
+  var thruPartial = function thruPartial(x) {
+    for (var _len3 = arguments.length, xs = Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
+      xs[_key3 - 1] = arguments[_key3];
+    }
+
+    return kefir_combines.combines.apply(undefined, xs.concat([function () {
+      for (var _len4 = arguments.length, xs = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+        xs[_key4] = arguments[_key4];
+      }
+
+      return infestines.seqPartial.apply(undefined, [x].concat(xs));
+    }]));
+  };
+
   var scope = function scope(fn) {
     return fn();
   };
 
   var toPartial = function toPartial(fn) {
-    return K.lift(infestines.arityN(fn.length, function () {
-      for (var _len = arguments.length, xs = Array(_len), _key = 0; _key < _len; _key++) {
-        xs[_key] = arguments[_key];
+    return kefir_combines.lift(infestines.arityN(fn.length, function () {
+      for (var _len5 = arguments.length, xs = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
+        xs[_key5] = arguments[_key5];
       }
 
       return R.all(infestines.isDefined, xs) ? fn.apply(undefined, xs) : undefined;
@@ -179,8 +205,8 @@
   };
 
   var showIso = function showIso() {
-    for (var _len2 = arguments.length, xs = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-      xs[_key2] = arguments[_key2];
+    for (var _len6 = arguments.length, xs = Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
+      xs[_key6] = arguments[_key6];
     }
 
     return L.iso(function (x) {
@@ -196,7 +222,7 @@
     for (var i = 0; i < n; ++i) {
       xs[i] = arguments[i];
     }xs[n] = showIso;
-    return view(K__default.apply(null, xs), arguments[n]);
+    return view(kefir_combines.combines.apply(null, xs), arguments[n]);
   }
 
   var staged = function staged(fn) {
@@ -275,11 +301,11 @@
 
   //
 
-  var flatJoin = /*#__PURE__*/K.lift1( /*#__PURE__*/L.join(' ', [L.flatten, /*#__PURE__*/L.when(infestines.id)]));
+  var flatJoin = /*#__PURE__*/kefir_combines.lift1( /*#__PURE__*/L.join(' ', [L.flatten, /*#__PURE__*/L.when(infestines.id)]));
 
   var cns = function cns() {
-    for (var _len3 = arguments.length, xs = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
-      xs[_key3] = arguments[_key3];
+    for (var _len7 = arguments.length, xs = Array(_len7), _key7 = 0; _key7 < _len7; _key7++) {
+      xs[_key7] = arguments[_key7];
     }
 
     return flatJoin(xs);
@@ -312,7 +338,7 @@
     };
   };
 
-  var mapCachedMap = /*#__PURE__*/K.lift1Shallow(function (x) {
+  var mapCachedMap = /*#__PURE__*/kefir_combines.lift1Shallow(function (x) {
     return x[1];
   });
 
@@ -323,7 +349,7 @@
   //
 
   var mapIndexed = /*#__PURE__*/infestines.curryN(2, function (xi2y) {
-    return K.lift1(function (xs) {
+    return kefir_combines.lift1(function (xs) {
       return xs.map(function (x, i) {
         return xi2y(x, i);
       });
@@ -350,9 +376,9 @@
   //
 
   var view = /*#__PURE__*/infestines.curry(function (l, xs) {
-    return xs instanceof kefir_atom.AbstractMutable ? l instanceof kefir.Observable ? new kefir_atom.Join(K__default(l, function (l) {
+    return xs instanceof kefir_atom.AbstractMutable ? l instanceof kefir.Observable ? new kefir_atom.Join(kefir_combines.combines(l, function (l) {
       return xs.view(l);
-    })) : xs.view(l) : K__default(l, xs, L.get);
+    })) : xs.view(l) : kefir_combines.combines(l, xs, L.get);
   });
 
   //
@@ -389,8 +415,8 @@
   //
 
   var actionsImmediate = function actionsImmediate() {
-    for (var _len4 = arguments.length, fns = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
-      fns[_key4] = arguments[_key4];
+    for (var _len8 = arguments.length, fns = Array(_len8), _key8 = 0; _key8 < _len8; _key8++) {
+      fns[_key8] = arguments[_key8];
     }
 
     return function () {
@@ -401,23 +427,23 @@
   };
 
   var actions = function actions() {
-    for (var _len5 = arguments.length, fns = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
-      fns[_key5] = arguments[_key5];
+    for (var _len9 = arguments.length, fns = Array(_len9), _key9 = 0; _key9 < _len9; _key9++) {
+      fns[_key9] = arguments[_key9];
     }
 
-    return K__default.apply(undefined, fns.concat([actionsImmediate]));
+    return kefir_combines.combines.apply(undefined, fns.concat([actionsImmediate]));
   };
 
   //
 
   var string = function string(strings) {
-    for (var _len6 = arguments.length, values = Array(_len6 > 1 ? _len6 - 1 : 0), _key6 = 1; _key6 < _len6; _key6++) {
-      values[_key6 - 1] = arguments[_key6];
+    for (var _len10 = arguments.length, values = Array(_len10 > 1 ? _len10 - 1 : 0), _key10 = 1; _key10 < _len10; _key10++) {
+      values[_key10 - 1] = arguments[_key10];
     }
 
-    return K__default.apply(undefined, values.concat([function () {
-      for (var _len7 = arguments.length, values = Array(_len7), _key7 = 0; _key7 < _len7; _key7++) {
-        values[_key7] = arguments[_key7];
+    return kefir_combines.combines.apply(undefined, values.concat([function () {
+      for (var _len11 = arguments.length, values = Array(_len11), _key11 = 0; _key11 < _len11; _key11++) {
+        values[_key11] = arguments[_key11];
       }
 
       return String.raw.apply(String, [strings].concat(values));
@@ -459,10 +485,10 @@
     };
   });
 
-  var liftMaybe = /*#__PURE__*/maybe(K.lift);
+  var liftMaybe = /*#__PURE__*/maybe(kefir_combines.lift);
   var liftStagedMaybe = /*#__PURE__*/maybe(liftStaged);
-  var lift1Maybe = /*#__PURE__*/maybe(K.lift1);
-  var lift1ShallowMaybe = /*#__PURE__*/maybe(K.lift1Shallow);
+  var lift1Maybe = /*#__PURE__*/maybe(kefir_combines.lift1);
+  var lift1ShallowMaybe = /*#__PURE__*/maybe(kefir_combines.lift1Shallow);
 
   //export const bind = liftMaybe(R.bind)                             -> conflict, useful?
   //export const clone = liftMaybe(R.clone)                           -> useful?
@@ -749,12 +775,12 @@
 
   // JSON
 
-  var parse = /*#__PURE__*/K.lift(JSON.parse);
-  var stringify = /*#__PURE__*/K.lift(JSON.stringify);
+  var parse = /*#__PURE__*/kefir_combines.lift(JSON.parse);
+  var stringify = /*#__PURE__*/kefir_combines.lift(JSON.stringify);
 
   //
 
-  var indices = /*#__PURE__*/infestines.pipe2U(length, /*#__PURE__*/K.lift1Shallow( /*#__PURE__*/R.range(0)));
+  var indices = /*#__PURE__*/infestines.pipe2U(length, /*#__PURE__*/kefir_combines.lift1Shallow( /*#__PURE__*/R.range(0)));
 
   //
 
@@ -816,11 +842,12 @@
   exports.holding = kefir_atom.holding;
   exports.seq = infestines.seq;
   exports.seqPartial = infestines.seqPartial;
-  exports.lift = K.lift;
-  exports.lift1 = K.lift1;
-  exports.lift1Shallow = K.lift1Shallow;
+  exports.combines = kefir_combines.combines;
+  exports.lift = kefir_combines.lift;
+  exports.lift1 = kefir_combines.lift1;
+  exports.lift1Shallow = kefir_combines.lift1Shallow;
   exports.fromKefir = karet.fromKefir;
-  exports.default = K__default;
+  exports.default = kefir_combines.combines;
   exports.liftStaged = liftStaged;
   exports.template = template;
   exports.debounce = debounce;
@@ -859,6 +886,8 @@
   exports.onUnmount = onUnmount;
   exports.tapPartial = tapPartial;
   exports.refTo = refTo;
+  exports.thru = thru;
+  exports.thruPartial = thruPartial;
   exports.scope = scope;
   exports.toPartial = toPartial;
   exports.show = show;
