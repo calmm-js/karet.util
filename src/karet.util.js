@@ -289,14 +289,15 @@ export function iftes(_c, _t) {
 
 //
 
-export const view = I_curry(
-  (l, xs) =>
-    xs instanceof AbstractMutable
-      ? l instanceof Observable
-        ? new Join(combines(l, l => xs.view(l)))
-        : xs.view(l)
-      : combines(l, xs, L.get)
-)
+export const view = I_curry((l, xs) => {
+  if (xs instanceof AbstractMutable) {
+    return template(l) instanceof Observable
+      ? new Join(combines(l, l => xs.view(l)))
+      : xs.view(l)
+  } else {
+    return combines(l, xs, L.get)
+  }
+})
 
 //
 

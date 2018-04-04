@@ -74,9 +74,11 @@ describe('bind', () => {
 describe('view', () => {
   testEq(101, () => U.view('x', C({x: 101})))
   testEq(101, () => U.view(C('x'), C({x: 101})))
+  testEq(101, () => U.view([C('x')], C({x: 101})))
   testEq(101, () => U.view('x', {x: 101}))
   testEq(101, () => U.view('x', U.atom({x: 101})))
   testEq(101, () => U.view(C('x'), U.atom({x: 101})))
+  testEq(101, () => U.view([C('x')], U.atom({x: 101})))
 })
 
 describe('bindProps', () => {
