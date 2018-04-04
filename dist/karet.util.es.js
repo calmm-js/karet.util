@@ -381,9 +381,13 @@ function iftes(_c, _t) {
 //
 
 var view = /*#__PURE__*/curry$1(function (l, xs) {
-  return xs instanceof AbstractMutable ? l instanceof Observable ? new Join(combines(l, function (l) {
-    return xs.view(l);
-  })) : xs.view(l) : combines(l, xs, get);
+  if (xs instanceof AbstractMutable) {
+    return template(l) instanceof Observable ? new Join(combines(l, function (l) {
+      return xs.view(l);
+    })) : xs.view(l);
+  } else {
+    return combines(l, xs, get);
+  }
 });
 
 //

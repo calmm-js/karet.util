@@ -376,9 +376,13 @@
   //
 
   var view = /*#__PURE__*/infestines.curry(function (l, xs) {
-    return xs instanceof kefir_atom.AbstractMutable ? l instanceof kefir.Observable ? new kefir_atom.Join(kefir_combines.combines(l, function (l) {
-      return xs.view(l);
-    })) : xs.view(l) : kefir_combines.combines(l, xs, L.get);
+    if (xs instanceof kefir_atom.AbstractMutable) {
+      return template(l) instanceof kefir.Observable ? new kefir_atom.Join(kefir_combines.combines(l, function (l) {
+        return xs.view(l);
+      })) : xs.view(l);
+    } else {
+      return kefir_combines.combines(l, xs, L.get);
+    }
   });
 
   //

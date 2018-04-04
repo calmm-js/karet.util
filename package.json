@@ -1,6 +1,6 @@
 {
   "name": "karet.util",
-  "version": "0.17.4",
+  "version": "0.17.5",
   "description": "Utilities for working with Karet",
   "module": "dist/karet.util.es.js",
   "main": "dist/karet.util.cjs.js",
