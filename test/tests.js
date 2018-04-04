@@ -2,6 +2,7 @@ import * as Kefir from 'kefir'
 import * as R from 'ramda'
 import * as React from 'karet'
 import ReactDOM from 'react-dom/server'
+import {Observable, concat, constant as C} from 'kefir'
 
 import {AbstractMutable} from 'kefir.atom'
 import * as U from '../dist/karet.util.cjs'
@@ -24,7 +25,8 @@ const toExpr = f =>
     .replace(/\s*;?\s*}\s*$/, '')
     .replace(/function\s*(\([a-zA-Z]*\))\s*/g, '$1 => ')
     .replace(/{\s*return\s*([^{;]+)\s*;\s*}/g, '$1')
-    .replace(/{\s*return\s*([^{;]+)\s*;\s*}/g, '$1')
+    .replace(/\(([a-zA-Z0-9_]+)\) =>/g, '$1 =>')
+    .replace(/\(0, _kefir[^.]*.constant\)/g, 'C')
 
 const testEq = (expect, thunk) =>
   it(`${toExpr(thunk)} => ${show(expect)}`, done => {
@@ -34,7 +36,7 @@ const testEq = (expect, thunk) =>
         throw new Error(`Expected: ${show(expect)}, actual: ${show(actual)}`)
       done()
     }
-    if (actual instanceof Kefir.Observable) actual.take(1).onValue(check)
+    if (actual instanceof Observable) actual.take(1).onValue(check)
     else check(actual)
   })
 
@@ -45,8 +47,6 @@ const testRender = (expect, vdomThunk) =>
     if (actual !== expect)
       throw new Error(`Expected: ${show(expect)}, actual: ${show(actual)}`)
   })
-
-const C = Kefir.constant
 
 describe('actions', () => {
   testEq('1z2z', () => {
@@ -72,11 +72,11 @@ describe('bind', () => {
 })
 
 describe('view', () => {
-  testEq(101, () => U.view('x', Kefir.constant({x: 101})))
-  testEq(101, () => U.view(Kefir.constant('x'), Kefir.constant({x: 101})))
+  testEq(101, () => U.view('x', C({x: 101})))
+  testEq(101, () => U.view(C('x'), C({x: 101})))
   testEq(101, () => U.view('x', {x: 101}))
   testEq(101, () => U.view('x', U.atom({x: 101})))
-  testEq(101, () => U.view(Kefir.constant('x'), U.atom({x: 101})))
+  testEq(101, () => U.view(C('x'), U.atom({x: 101})))
 })
 
 describe('bindProps', () => {
@@ -120,7 +120,7 @@ describe('cns', () => {
 describe('mapCached', () => {
   testEq(['item 1', 'item 3', 'item 2'], () =>
     U.seq(
-      Kefir.concat([C([2, 1, 1]), C([1, 3, 2])]),
+      concat([C([2, 1, 1]), C([1, 3, 2])]),
       U.toProperty,
       U.mapCached(i => 'item ' + i)
     )
@@ -180,7 +180,7 @@ describe('Context', () => {
   const Who = U.withContext((_, {who}) => <div>Hello, {who}!</div>)
 
   testRender('<div>Hello, World!</div>', () => (
-    <U.Context context={{who: Kefir.constant('World')}}>
+    <U.Context context={{who: C('World')}}>
       <Who />
     </U.Context>
   ))
@@ -271,7 +271,7 @@ describe('show', () => {
   testEq('any', () => U.show('any'))
   testEq('string', () => typeof U.show('any'))
   testEq('whatever', () => U.show(C('whatever')))
-  testEq(true, () => U.show(C('whatever')) instanceof Kefir.Observable)
+  testEq(true, () => U.show(C('whatever')) instanceof Observable)
   testEq('whatever', () => U.show(U.atom('whatever')))
   testEq(true, () => U.show(U.atom('whatever')) instanceof AbstractMutable)
 })
