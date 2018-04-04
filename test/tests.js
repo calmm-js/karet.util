@@ -32,12 +32,16 @@ const testEq = (expect, thunk) =>
   it(`${toExpr(thunk)} => ${show(expect)}`, done => {
     const actual = thunk()
     const check = actual => {
-      if (!R.equals(actual, expect))
+      const eq = R.equals(actual, expect)
+      if (eq instanceof Observable || !eq)
         throw new Error(`Expected: ${show(expect)}, actual: ${show(actual)}`)
       done()
     }
-    if (actual instanceof Observable) actual.take(1).onValue(check)
-    else check(actual)
+    if (actual instanceof Observable) {
+      actual.take(1).onValue(check)
+    } else {
+      check(actual)
+    }
   })
 
 const testRender = (expect, vdomThunk) =>
@@ -307,11 +311,19 @@ describe('thru', () => {
   testEq(3, () => U.thru(1, R.add(2)))
   testEq(3, () => U.thru(C(1), R.add(C(2))))
   testEq(3, () => U.thru(C({x: 1}), L.get(C('x')), R.add(C(2))))
+
+  testEq([[true, 0], [true, 1]], () =>
+    U.thru(
+      U.atom({xs: ['a', 'b']}),
+      U.view(C('xs')),
+      U.mapElems((x, i) => [x instanceof AbstractMutable, i])
+    )
+  )
 })
 
 describe('thruPartial', () => {
   testEq(3, () => U.thruPartial(C(1), R.add(C(2))))
-  testEq(undefined, () => U.thruPartial(C({x: 1}), L.get(C('y')), R.add(C(2))))
+  testEq(undefined, () => U.thruPartial({x: 1}, L.get(C('y')), R.add(C(2))))
 })
 
 describe('Ramda', () => {
