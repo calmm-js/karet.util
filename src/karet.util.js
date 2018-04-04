@@ -144,9 +144,18 @@ export const refTo = settable => elem => {
 
 export {seq, seqPartial}
 
-export const thru = (x, ...xs) => combines(...xs, (...xs) => seq(x, ...xs))
-export const thruPartial = (x, ...xs) =>
-  combines(...xs, (...xs) => seqPartial(x, ...xs))
+export const thru = (x, ...fs) => {
+  fs = template(fs)
+  return fs instanceof Observable
+    ? flatMapLatest(fs => seq(x, ...fs), fs)
+    : seq(x, ...fs)
+}
+export const thruPartial = (x, ...fs) => {
+  fs = template(fs)
+  return fs instanceof Observable
+    ? flatMapLatest(fs => seqPartial(x, ...fs), fs)
+    : seq(x, ...fs)
+}
 
 export const scope = fn => fn()
 
