@@ -35,7 +35,7 @@ import PropTypes from 'prop-types'
 //
 
 export default combines
-export {combines, lift, lift1, lift1Shallow} from 'kefir.combines'
+export {combines, lift, lift1, lift1Shallow, liftRec} from 'kefir.combines'
 export const liftStaged = fn => lift(pipe2U(fn, lift))
 export const template = observables => combines(observables, id)
 

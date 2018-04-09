@@ -6,7 +6,7 @@ import { arityN, assocPartialU, curry as curry$1, curryN as curryN$1, dissocPart
 export { seq, seqPartial } from 'infestines';
 import { iso, join as join$1, flatten as flatten$1, when as when$1, get, find as find$1 } from 'partial.lenses';
 import { combines, lift, lift1, lift1Shallow } from 'kefir.combines';
-export { combines, lift, lift1, lift1Shallow } from 'kefir.combines';
+export { combines, lift, lift1, lift1Shallow, liftRec } from 'kefir.combines';
 import { Component } from 'react';
 import PropTypes from 'prop-types';
 export { fromKefir } from 'karet';

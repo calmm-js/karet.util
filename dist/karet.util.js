@@ -845,6 +845,7 @@
   exports.lift = kefir_combines.lift;
   exports.lift1 = kefir_combines.lift1;
   exports.lift1Shallow = kefir_combines.lift1Shallow;
+  exports.liftRec = kefir_combines.liftRec;
   exports.fromKefir = karet.fromKefir;
   exports.default = kefir_combines.combines;
   exports.liftStaged = liftStaged;
