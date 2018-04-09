@@ -376,6 +376,16 @@ function iftes(_c, _t) {
   }return r;
 }
 
+function cases(_) {
+  var n = arguments.length;
+  var op = undefined;
+  while (n--) {
+    var c = arguments[n];
+    op = c.length !== 1 ? ifteU(c[0], c[1], op) : c[0];
+  }
+  return op;
+}
+
 //
 
 var view = /*#__PURE__*/infestines.curry(function (l, xs) {
@@ -911,6 +921,7 @@ exports.mapIndexed = mapIndexed;
 exports.ifte = ifte;
 exports.ift = ift;
 exports.iftes = iftes;
+exports.cases = cases;
 exports.view = view;
 exports.Context = Context;
 exports.withContext = withContext;

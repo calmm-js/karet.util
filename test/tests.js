@@ -231,6 +231,13 @@ describe('iftes', () => {
   testEq(undefined, () => U.iftes(C(false), 1, C(false), 2, C(false), 3))
 })
 
+describe('cases', () => {
+  testEq(undefined, () => U.cases())
+  testEq(2, () => U.cases([C(false), 1], [2]))
+  testEq(3, () => U.cases([C(false), 1], [C(false), 2], [3]))
+  testEq(undefined, () => U.cases([C(false), 1], [C(false), 2], [C(false), 3]))
+})
+
 describe('toPartial', () => {
   testEq(undefined, () => U.toPartial(R.add)(C(1), undefined))
   testEq(undefined, () => U.toPartial(R.add)(C(undefined), 2))

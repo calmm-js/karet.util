@@ -296,6 +296,16 @@ export function iftes(_c, _t) {
   return r
 }
 
+export function cases(_) {
+  let n = arguments.length
+  let op = undefined
+  while (n--) {
+    const c = arguments[n]
+    op = c.length !== 1 ? ifteU(c[0], c[1], op) : c[0]
+  }
+  return op
+}
+
 //
 
 export const view = I_curry((l, xs) => {
