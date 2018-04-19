@@ -1,4 +1,4 @@
-# <a id="karet-util"></a> [≡](#contents) Karet Util &middot; [![Gitter](https://img.shields.io/gitter/room/calmm-js/chat.js.svg)](https://gitter.im/calmm-js/chat) [![GitHub stars](https://img.shields.io/github/stars/calmm-js/karet.util.svg?style=social)](https://github.com/calmm-js/karet.util)
+# <a id="karet-util"></a> [≡](#contents) Karet Util &middot; [![Gitter](https://img.shields.io/gitter/room/calmm-js/chat.js.svg)](https://gitter.im/calmm-js/chat) [![GitHub stars](https://img.shields.io/github/stars/calmm-js/karet.util.svg?style=social)](https://github.com/calmm-js/karet.util) [![npm](https://img.shields.io/npm/dm/karet.util.svg)](https://www.npmjs.com/package/karet.util)
 
 A collection of utilities for working with
 [Karet](https://github.com/calmm-js/karet).
