@@ -1,6 +1,98 @@
 # Changelog
 
-## x.y.z
+## 0.18.0
+
+Major reorganization of the library on the road towards v1.0.0.
+
+Removed all lifted Ramda combinators from Karet Util.  Use the [Kefir
+Ramda](https://github.com/calmm-js/kefir.ramda) library instead.
+
+Removed
+
+* the default export `K`,
+* `U.lift`,
+* `U.lift1`,
+* `U.lift1Shallow`, and
+* `U.staged`.
+
+with the (experimental) idea that all lifting is done via `U.combines` and the
+new `U.liftRec`.  The idea here is to make lifting easier especially for
+newcomers and to avoid using default exports.
+
+Removed `U.iftes` and renamed `U.cases` to `U.cond`:
+
+```diff
+-U.iftes(c1, t1,  ...,  e1)
++U.cond([c1, t1], ..., [e1]])
+```
+
+Also renamed `U.ifte` to `U.ifElse`:
+
+```diff
+-U.ifte(c, t, e)
++U.ifElse(c, t, e)
+```
+
+and `U.ift` to `U.when`:
+
+```diff
+-U.ift(c, t)
++U.when(c, t)
+```
+
+and added `U.unless`:
+
+```diff
+-U.ift(U.not(c), e)
++U.unless(c, e)
+```
+
+These renamings became possible due to the removal of lifted Ramda.  The
+previous names were compromises to avoid name clashes with Ramda.
+
+Removed broken `U.skipFirstErrors` (Kefir currently doesn't have such a method)
+and `U.thruPartial` (the implementation was broken and it would require a much
+more complex implementation).
+
+Removed `U.bind`:
+
+```diff
+-<input {...U.bind({value}) />
++<input value={value} onChange={U.getProps({value})} />
+```
+
+and `U.bindProps`:
+
+```diff
+-<div {...U.bindProps({ref: 'onScroll', scrollTop}) />
++<div ref={U.setProps({scrollTop})}
++     onScroll={U.getProps({scrollTop})} />
+```
+
+and `U.classes`:
+
+```diff
+-<div {...U.classes(...)} />
++<div className={U.cns(...)} />
+```
+
+The reason behind these is to avoid "attribute templates" that make it harder to
+see which attributes are being defined.
+
+Removed `U.mapCached`, `U.mapIndexed`, and `U.indices`.  The (experimental) idea
+is to try and do the same things using lenses with `U.mapElems` and
+`U.mapElemsWithIds`, and also using e.g. lifted `R.map` and lifted
+`L.collectAs`.
+
+The Standard `Math`, `JSON`, and `String` functions are now lifted using
+`U.liftRec`.  This means that the functions are no longer curried and behave
+more like their unlifted versions.  For example, `U.stringify(json)` returns the
+stringified result and `U.hypot` can be called with any number of arguments.
+Also added `U.max` and `U.min` (previously they came from Ramda).
+
+Removed the (rarely used) `U.WithContext` component.  Just use `U.withContext`.
+
+## 0.11.3
 
 This library now explicitly depends only on
 the [stable subset](https://github.com/calmm-js/partial.lenses/#stable-subset)
