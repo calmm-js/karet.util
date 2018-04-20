@@ -301,7 +301,7 @@ example.
 
 ##### <a id="U-mapElemsWithIds"></a> [≡](#contents) [`U.mapElemsWithIds(idLens, (elemAtom, id) => any, arrayAtom)`](#U-mapElemsWithIds)
 
-`U.mapElemsWithIds` perform a cached incremental map over state containing an
+`U.mapElemsWithIds` performs a cached incremental map over state containing an
 array of values with unique ids.  On changes, the mapping function is only
 called for elements that were not in the state previously.  `U.mapElemsWithIds`
 is particularly designed for rendering a list of potentially *stateful
@@ -669,7 +669,7 @@ const Component = ({className}) => (
 ##### <a id="U-cond"></a> [≡](#contents) [`U.cond(...[condition, consequent][, [alternative]])`](#U-cond)
 
 `U.cond` allows one to express a sequence of conditionals.  `U.cond` translates
-to a nested expressions of [`U.ifElse`](#U-ifElse)s.
+to a nested expression of [`U.ifElse`](#U-ifElse)s.
 
 ```js
 U.cond( [ condition, consequent ]
@@ -872,8 +872,8 @@ specified in the template.
 **Note** that explicitly subscribing to an observable should be done *very
 rarely* in a Calmm application!  Full Calmm applications can be written with
 zero uses of explicit observable subscriptions, because the Reactive VDOM of
-[Karet](https://github.com/calmm-js/karet/) automatically subscribes and
-unsubscribes to observables.  Nevertheless, it can sometimes be convenient to
+[Karet](https://github.com/calmm-js/karet/) automatically subscribes to and
+unsubscribes from observables.  Nevertheless, it can sometimes be convenient to
 subscribe explicitly to observables to perform side-effects.
 
 For example:
