@@ -4,31 +4,23 @@ import nodeResolve from 'rollup-plugin-node-resolve'
 import replace from 'rollup-plugin-replace'
 import uglify from 'rollup-plugin-uglify'
 
+const globals = {
+  infestines: 'I',
+  karet: 'karet',
+  kefir: 'Kefir',
+  'kefir.atom': 'kefir.atom',
+  'kefir.combines': 'kefir.combines',
+  'partial.lenses': 'L',
+  'prop-types': 'PropTypes',
+  ramda: 'R',
+  react: 'React'
+}
+
 const build = ({NODE_ENV, format, suffix}) => ({
-  external: [
-    'infestines',
-    'karet',
-    'kefir',
-    'kefir.atom',
-    'kefir.combines',
-    'partial.lenses',
-    'prop-types',
-    'ramda',
-    'react'
-  ],
+  external: Object.keys(globals),
   input: 'src/karet.util.js',
   output: {
-    globals: {
-      infestines: 'I',
-      karet: 'karet',
-      kefir: 'Kefir',
-      'kefir.atom': 'kefir.atom',
-      'kefir.combines': 'kefir.combines',
-      'partial.lenses': 'L',
-      'prop-types': 'PropTypes',
-      ramda: 'R',
-      react: 'React'
-    },
+    globals,
     name: 'karet.util',
     format,
     file: `dist/karet.util.${suffix}`
