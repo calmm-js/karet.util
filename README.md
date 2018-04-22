@@ -47,6 +47,8 @@ A collection of utilities for working with
       * [`U.setProps({...propName: observable})`](#U-setProps)
     * [Refs](#refs)
       * [`U.refTo(variable)`](#U-refTo)
+    * [Lifecycle](#lifcycle)
+      * [`U.onUnmount(action)`](#U-onUnmount)
     * [Events](#events)
       * [`U.actions(...actions)`](#U-actions)
     * [Class names](#class-names)
@@ -623,6 +625,25 @@ However, `U.refTo` does not write `null` to the variable.  The upside of
 skipping `null` and using an initially empty [variable](#U-variable) rather than
 an [atom](#U-atom) is that once the variable emits a value, you can be sure that
 it refers to a DOM element.
+
+#### <a id="lifecycle"></a> [≡](#contents) [Lifecycle](#lifcycle)
+
+##### <a id="U-onUnmount"></a> [≡](#contents) [`U.onUnmount(action)`](#U-onUnmount)
+
+`U.onUnmount` allows you to perform an action when a component is unmounted.
+
+For example:
+
+```jsx
+const Component = () => {
+  console.log('Mounted!')
+  return (
+    <div>
+      {U.onUnmount(() => console.log('Unmounted!'))}
+    </div>
+  )
+}
+```
 
 #### <a id="events"></a> [≡](#contents) [Events](#events)
 
