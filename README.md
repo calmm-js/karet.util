@@ -51,6 +51,8 @@ A collection of utilities for working with
       * [`U.onUnmount(action)`](#U-onUnmount)
     * [Events](#events)
       * [`U.actions(...actions)`](#U-actions)
+      * [`U.preventDefault(event)`](#U-preventDefault)
+      * [`U.stopPropagation(event)`](#U-stopPropagation)
     * [Class names](#class-names)
       * [`U.cns(...classNames)`](#U-cns)
   * [Kefir](#kefir)
@@ -683,6 +685,14 @@ it causes no problem as `U.actions` does not attempt to call `undefined`.
 
 Note that `U.actions` can also be used with actions given to the React `ref`
 property.
+
+##### <a id="U-preventDefault"></a> [≡](#contents) [`U.preventDefault(event)`](#U-preventDefault)
+
+`U.preventDefault` invokes the `preventDefault` method on the given object.
+
+##### <a id="U-stopPropagation"></a> [≡](#contents) [`U.stopPropagation(event)`](#U-stopPropagation)
+
+`U.stopPropagation` invokes the `stopPropagation` method on the given object.
 
 #### <a id="class-names"></a> [≡](#contents) [Class names](#class-names)
 
