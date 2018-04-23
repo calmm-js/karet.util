@@ -2,15 +2,21 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
-
 var A = require('kefir.atom');
 var K = require('kefir');
 var I = require('infestines');
 var L = require('partial.lenses');
 var C = require('kefir.combines');
-var react = require('react');
-var PropTypes = _interopDefault(require('prop-types'));
+var React = require('react');
+
+var header = 'karet.util: ';
+
+function warn(f, m) {
+  if (!f.warned) {
+    f.warned = 1;
+    console.warn(header + m);
+  }
+}
 
 // Kefir ///////////////////////////////////////////////////////////////////////
 
@@ -244,29 +250,41 @@ var onUnmount = function onUnmount(effect) {
 
 // Context ---------------------------------------------------------------------
 
-var types = { context: PropTypes.any };
+var _React$createContext = /*#__PURE__*/React.createContext(I.object0),
+    Provider = _React$createContext.Provider,
+    Consumer = _React$createContext.Consumer;
 
-var Context = /*#__PURE__*/I.inherit(function Context(props) {
-  react.Component.call(this, props);
-}, react.Component, {
-  getChildContext: function getChildContext() {
-    return { context: this.props.context };
-  },
-  render: function render() {
-    return this.props.children;
-  }
-}, {
-  childContextTypes: types
+var Context = /*#__PURE__*/(process.env.NODE_ENV === 'production' ? I.id : function (fn) {
+  return function (props) {
+    warn(Context, '`Context` has been obsoleted.  Just use the new React context API.');
+    return fn(props);
+  };
+})(function (_ref2) {
+  var context = _ref2.context,
+      children = _ref2.children;
+  return React.createElement(
+    Provider,
+    { value: context },
+    children
+  );
 });
 
-function withContext(originalFn) {
-  var fn = function fn(props, _ref2) {
-    var context = _ref2.context;
-    return originalFn(props, context);
+var withContext = /*#__PURE__*/(process.env.NODE_ENV === 'production' ? I.id : function (fn) {
+  return function (props) {
+    warn(withContext, '`withContext` has been obsoleted.  Just use the new React context API.');
+    return fn(props);
   };
-  fn.contextTypes = types;
-  return fn;
-}
+})(function (toElem) {
+  return function (props) {
+    return React.createElement(
+      Consumer,
+      null,
+      function (context) {
+        return toElem(props, context);
+      }
+    );
+  };
+});
 
 // DOM Binding -----------------------------------------------------------------
 

@@ -1,13 +1,21 @@
 import { Atom, Molecule, AbstractMutable, Join } from 'kefir.atom';
 export { holding } from 'kefir.atom';
 import { Observable, constant, concat, merge, interval, later, never, fromEvents, Stream, stream } from 'kefir';
-import { curry, pipe2U, seq, identicalU, arityN, inherit, id, isDefined, always, isFunction } from 'infestines';
+import { curry, pipe2U, seq, identicalU, arityN, inherit, id, isDefined, always, object0, isFunction } from 'infestines';
 export { seq, seqPartial } from 'infestines';
 import { iso, join, flatten, when, get, find } from 'partial.lenses';
 import { lift1, combines, liftRec } from 'kefir.combines';
 export { combines, liftRec } from 'kefir.combines';
-import { Component } from 'react';
-import PropTypes from 'prop-types';
+import { createContext, createElement } from 'react';
+
+var header = 'karet.util: ';
+
+function warn(f, m) {
+  if (!f.warned) {
+    f.warned = 1;
+    console.warn(header + m);
+  }
+}
 
 // Kefir ///////////////////////////////////////////////////////////////////////
 
@@ -241,29 +249,41 @@ var onUnmount = function onUnmount(effect) {
 
 // Context ---------------------------------------------------------------------
 
-var types = { context: PropTypes.any };
+var _React$createContext = /*#__PURE__*/createContext(object0),
+    Provider = _React$createContext.Provider,
+    Consumer = _React$createContext.Consumer;
 
-var Context = /*#__PURE__*/inherit(function Context(props) {
-  Component.call(this, props);
-}, Component, {
-  getChildContext: function getChildContext() {
-    return { context: this.props.context };
-  },
-  render: function render() {
-    return this.props.children;
-  }
-}, {
-  childContextTypes: types
+var Context = /*#__PURE__*/(process.env.NODE_ENV === 'production' ? id : function (fn) {
+  return function (props) {
+    warn(Context, '`Context` has been obsoleted.  Just use the new React context API.');
+    return fn(props);
+  };
+})(function (_ref2) {
+  var context = _ref2.context,
+      children = _ref2.children;
+  return createElement(
+    Provider,
+    { value: context },
+    children
+  );
 });
 
-function withContext(originalFn) {
-  var fn = function fn(props, _ref2) {
-    var context = _ref2.context;
-    return originalFn(props, context);
+var withContext = /*#__PURE__*/(process.env.NODE_ENV === 'production' ? id : function (fn) {
+  return function (props) {
+    warn(withContext, '`withContext` has been obsoleted.  Just use the new React context API.');
+    return fn(props);
   };
-  fn.contextTypes = types;
-  return fn;
-}
+})(function (toElem) {
+  return function (props) {
+    return createElement(
+      Consumer,
+      null,
+      function (context) {
+        return toElem(props, context);
+      }
+    );
+  };
+});
 
 // DOM Binding -----------------------------------------------------------------
 

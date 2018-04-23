@@ -1,10 +1,17 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('kefir.atom'), require('kefir'), require('infestines'), require('partial.lenses'), require('kefir.combines'), require('react'), require('prop-types')) :
-  typeof define === 'function' && define.amd ? define(['exports', 'kefir.atom', 'kefir', 'infestines', 'partial.lenses', 'kefir.combines', 'react', 'prop-types'], factory) :
-  (factory((global.karet = global.karet || {}, global.karet.util = {}),global.kefir.atom,global.Kefir,global.I,global.L,global.kefir.combines,global.React,global.PropTypes));
-}(this, (function (exports,A,K,I,L,C,react,PropTypes) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('kefir.atom'), require('kefir'), require('infestines'), require('partial.lenses'), require('kefir.combines'), require('react')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'kefir.atom', 'kefir', 'infestines', 'partial.lenses', 'kefir.combines', 'react'], factory) :
+  (factory((global.karet = global.karet || {}, global.karet.util = {}),global.kefir.atom,global.Kefir,global.I,global.L,global.kefir.combines,global.React));
+}(this, (function (exports,A,K,I,L,C,React) { 'use strict';
 
-  PropTypes = PropTypes && PropTypes.hasOwnProperty('default') ? PropTypes['default'] : PropTypes;
+  var header = 'karet.util: ';
+
+  function warn(f, m) {
+    if (!f.warned) {
+      f.warned = 1;
+      console.warn(header + m);
+    }
+  }
 
   // Kefir ///////////////////////////////////////////////////////////////////////
 
@@ -238,29 +245,41 @@
 
   // Context ---------------------------------------------------------------------
 
-  var types = { context: PropTypes.any };
+  var _React$createContext = /*#__PURE__*/React.createContext(I.object0),
+      Provider = _React$createContext.Provider,
+      Consumer = _React$createContext.Consumer;
 
-  var Context = /*#__PURE__*/I.inherit(function Context(props) {
-    react.Component.call(this, props);
-  }, react.Component, {
-    getChildContext: function getChildContext() {
-      return { context: this.props.context };
-    },
-    render: function render() {
-      return this.props.children;
-    }
-  }, {
-    childContextTypes: types
+  var Context = /*#__PURE__*/(function (fn) {
+    return function (props) {
+      warn(Context, '`Context` has been obsoleted.  Just use the new React context API.');
+      return fn(props);
+    };
+  })(function (_ref2) {
+    var context = _ref2.context,
+        children = _ref2.children;
+    return React.createElement(
+      Provider,
+      { value: context },
+      children
+    );
   });
 
-  function withContext(originalFn) {
-    var fn = function fn(props, _ref2) {
-      var context = _ref2.context;
-      return originalFn(props, context);
+  var withContext = /*#__PURE__*/(function (fn) {
+    return function (props) {
+      warn(withContext, '`withContext` has been obsoleted.  Just use the new React context API.');
+      return fn(props);
     };
-    fn.contextTypes = types;
-    return fn;
-  }
+  })(function (toElem) {
+    return function (props) {
+      return React.createElement(
+        Consumer,
+        null,
+        function (context) {
+          return toElem(props, context);
+        }
+      );
+    };
+  });
 
   // DOM Binding -----------------------------------------------------------------
 
