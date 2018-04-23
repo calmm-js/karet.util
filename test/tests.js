@@ -355,6 +355,19 @@ describe('U.setProps', () => {
   })
 })
 
+describe('actions helpers', () => {
+  testEq(101, () => {
+    let result = 0
+    U.stopPropagation({stopPropagation: () => (result = 101)})
+    return result
+  })
+  testEq(101, () => {
+    let result = 0
+    U.preventDefault({preventDefault: () => (result = 101)})
+    return result
+  })
+})
+
 describe('Kefir', () => {
   testEq(4, () => U.mapValue(v => v * 2, C(2)))
 })

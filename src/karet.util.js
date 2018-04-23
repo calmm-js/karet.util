@@ -252,6 +252,11 @@ export const actions = C.liftRec((...fns) => (...args) => {
     if (I.isFunction(fns[i])) fns[i](...args)
 })
 
+const invoke = name => e => e[name]()
+
+export const preventDefault = invoke('preventDefault')
+export const stopPropagation = invoke('stopPropagation')
+
 // classNames ------------------------------------------------------------------
 
 const cnsImmediate = L.join(' ', [L.flatten, L.when(I.id)])
