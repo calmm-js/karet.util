@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.18.1
+
+Migrated the context implementation to use the React Context API and also marked
+it obsolete.  Just use the React Context API.
+
 ## 0.18.0
 
 Major reorganization of the library on the road towards v1.0.0.
