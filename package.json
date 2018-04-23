@@ -44,7 +44,7 @@
     "eslint": "^4.19.1",
     "eslint-plugin-react": "^7.7.0",
     "kefir": "^3.8.3",
-    "kefir.partial.lenses": "^13.9.0",
+    "kefir.partial.lenses": "^13.10.0",
     "kefir.ramda": "^0.25.0",
     "mocha": "^5.1.1",
     "nyc": "^11.7.1",
@@ -64,8 +64,7 @@
     "karet": "^3.1.0",
     "kefir.atom": "^5.3.0",
     "kefir.combines": "^4.3.0",
-    "partial.lenses": "^13.0.0",
-    "prop-types": "^15.5.6"
+    "partial.lenses": "^13.0.0"
   },
   "peerDependencies": {
     "kefir": "^3.7.0"

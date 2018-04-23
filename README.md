@@ -39,9 +39,9 @@ A collection of utilities for working with
     * [`U.thru(any, ...fns)`](#U-thru)
     * [`U.toPartial(fn)`](#U-toPartial)
   * [React helpers](#react-helpers)
-    * [Context](#context)
-      * [`<U.Context context={context} />`](#U-Context)
-      * [`U.withContext((props, context) => element)`](#U-withContext)
+    * ~~[Context](#context)~~
+      * ~~[`<U.Context context={context} />`](#U-Context)~~
+      * ~~[`U.withContext((props, context) => element)`](#U-withContext)~~
     * [Binding](#binding)
       * [`U.getProps({...propName: atom})`](#U-getProps)
       * [`U.setProps({...propName: observable})`](#U-setProps)
@@ -538,9 +538,12 @@ U.toPartial((x, y) => x + y)(1, 2)
 
 ### <a id="react-helpers"></a> [≡](#contents) [React helpers](#react-helpers)
 
-#### <a id="context"></a> [≡](#contents) [Context](#context)
+#### <a id="context"></a> [≡](#contents) ~~[Context](#context)~~
 
-##### <a id="U-Context"></a> [≡](#contents) [`<U.Context context={context} />`](#U-Context)
+##### <a id="U-Context"></a> [≡](#contents) ~~[`<U.Context context={context} />`](#U-Context)~~
+
+**WARNING: `U.Context` has been obsoleted. Just use the new [React context
+API](https://reactjs.org/docs/context.html).**
 
 `U.Context` is a component that allows one to set the context for child
 components.  See also [`U.withContext`](#U-withContext).
@@ -556,7 +559,10 @@ For example:
 <U.Context/>
 ```
 
-##### <a id="U-withContext"></a> [≡](#contents) [`U.withContext((props, context) => element)`](#U-withContext)
+##### <a id="U-withContext"></a> [≡](#contents) ~~[`U.withContext((props, context) => element)`](#U-withContext)~~
+
+**WARNING: `U.withContext` has been obsoleted. Just use the new [React context
+API](https://reactjs.org/docs/context.html).**
 
 `U.withContext` creates a component that takes both the props and the context as
 parameters.  See also [`U.Context`](#U-Context).

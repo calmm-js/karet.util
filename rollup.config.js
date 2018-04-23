@@ -11,7 +11,6 @@ const globals = {
   'kefir.atom': 'kefir.atom',
   'kefir.combines': 'kefir.combines',
   'partial.lenses': 'L',
-  'prop-types': 'PropTypes',
   ramda: 'R',
   react: 'React'
 }
@@ -34,6 +33,7 @@ const build = ({NODE_ENV, format, suffix}) => ({
         'node_modules/react/index.js': [
           'Component',
           'Fragment',
+          'createContext',
           'createElement',
           'forwardRef'
         ]

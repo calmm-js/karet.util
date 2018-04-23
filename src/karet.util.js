@@ -4,8 +4,16 @@ import * as I from 'infestines'
 
 import * as L from 'partial.lenses'
 import * as C from 'kefir.combines'
-import {Component} from 'react'
-import PropTypes from 'prop-types'
+import * as React from 'react'
+
+const header = 'karet.util: '
+
+function warn(f, m) {
+  if (!f.warned) {
+    f.warned = 1
+    console.warn(header + m)
+  }
+}
 
 // Kefir ///////////////////////////////////////////////////////////////////////
 
@@ -172,31 +180,29 @@ export const onUnmount = effect =>
 
 // Context ---------------------------------------------------------------------
 
-const types = {context: PropTypes.any}
+const {Provider, Consumer} = React.createContext(I.object0)
 
-export const Context = I.inherit(
-  function Context(props) {
-    Component.call(this, props)
-  },
-  Component,
-  {
-    getChildContext() {
-      return {context: this.props.context}
-    },
-    render() {
-      return this.props.children
-    }
-  },
-  {
-    childContextTypes: types
-  }
-)
+export const Context = (process.env.NODE_ENV === 'production'
+  ? I.id
+  : fn => props => {
+      warn(
+        Context,
+        '`Context` has been obsoleted.  Just use the new React context API.'
+      )
+      return fn(props)
+    })(({context, ...props}) => <Provider value={context} {...props} />)
 
-export function withContext(originalFn) {
-  const fn = (props, {context}) => originalFn(props, context)
-  fn.contextTypes = types
-  return fn
-}
+export const withContext = (process.env.NODE_ENV === 'production'
+  ? I.id
+  : fn => props => {
+      warn(
+        withContext,
+        '`withContext` has been obsoleted.  Just use the new React context API.'
+      )
+      return fn(props)
+    })(toElem => props => (
+  <Consumer>{context => toElem(props, context)}</Consumer>
+))
 
 // DOM Binding -----------------------------------------------------------------
 
