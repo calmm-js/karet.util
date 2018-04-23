@@ -33,10 +33,11 @@ A collection of utilities for working with
       * [`U.bus()`](#U-bus)
   * [Convenience](#convenience)
     * [`U.scope((...) => ...)`](#U-scope)
-    * [`U.seq(any, ...fns)`](#U-seq)
-    * [`U.seqPartial(any, ...fns)`](#U-seqPartial)
+    * ~~[`U.seq(any, ...fns)`](#U-seq)~~
+    * ~~[`U.seqPartial(any, ...fns)`](#U-seqPartial)~~
     * [`U.tapPartial(action, any)`](#U-tapPartial)
     * [`U.thru(any, ...fns)`](#U-thru)
+    * [`U.through(...fns)`](#U-through)
     * [`U.toPartial(fn)`](#U-toPartial)
   * [React helpers](#react-helpers)
     * ~~[Context](#context)~~
@@ -410,7 +411,7 @@ const Component = ({parameters}) => {
   // ...
   return (
     <div>
-      {U.seq(state, httpRequestAsObservable(parameters))}
+      {U.thru(state, httpRequestAsObservable(parameters))}
       {U.ifElse(
         R.isNil(state),
         <Spinner />,
@@ -459,7 +460,9 @@ U.scope((x = 1, y = 2) => x + y)
 // 3
 ```
 
-#### <a id="U-seq"></a> [≡](#contents) [`U.seq(any, ...fns)`](#U-seq)
+#### <a id="U-seq"></a> [≡](#contents) ~~[`U.seq(any, ...fns)`](#U-seq)~~
+
+**WARNING: `U.seq` has been obsoleted.  Use [`U.thru`](#U-thru) instead.**
 
 `U.seq` allows one to pipe a value through a sequence of functions.  In other
 words, `U.seq(x, fn_1, ..., fn_N)` is roughly equivalent to `fn_N( ... fn_1(x)
@@ -491,7 +494,9 @@ patch](https://en.wikipedia.org/wiki/Monkey_patch#Pitfalls) such methods.
 href="https://en.wikipedia.org/wiki/Object_(grammar)">object</a> as their last
 argument and can be seen as providing a flexible alternative to method chaining.
 
-#### <a id="U-seqPartial"></a> [≡](#contents) [`U.seqPartial(any, ...fns)`](#U-seqPartial)
+#### <a id="U-seqPartial"></a> [≡](#contents) ~~[`U.seqPartial(any, ...fns)`](#U-seqPartial)~~
+
+**WARNING: `seqPartial` has been deprecated.  There is no replacement for it.**
 
 `U.seqPartial` allows one to pipe a value through a sequence of function in such
 a way that if the value becomes `undefined` the process is stopped and
@@ -516,9 +521,53 @@ U.thru(
 
 #### <a id="U-thru"></a> [≡](#contents) [`U.thru(any, ...fns)`](#U-thru)
 
-`U.thru` is a version of [`U.seq`](#U-seq) that allows the functions to be
-observables producing functions.  You generally need to use `U.thru` when the
-sequence of functions includes partially applied [lifted](#U-liftRec) functions.
+`U.thru` allows one to pipe a value through a sequence of functions.  In other
+words, `U.thru(x, fn_1, ..., fn_N)` is roughly equivalent to `fn_N( ... fn_1(x)
+... )`.  It serves a similar purpose as the
+[`->>`](https://clojuredocs.org/clojure.core/-%3E%3E) macro of Clojure or the
+`|>` operator of
+[F#](https://blogs.msdn.microsoft.com/dsyme/2011/05/17/archeological-semiotics-the-birth-of-the-pipeline-symbol-1994/)
+and [Elm](http://package.elm-lang.org/packages/elm-lang/core/latest/Basics#|>),
+for example, or the
+[`>|`](http://comp.lang.functional.narkive.com/zZJZg20r/a-family-of-function-application-operators-for-standard-ml)
+operator defined in a Usenet post by some rando.  See also
+[`U.through`](#U-through).
+
+For example:
+
+```js
+U.thru(1, x => x + 1, x => -x)
+// -2
+```
+
+A common technique in JavaScript is to use method chaining: `x.fn_1().fn_2()`.
+A problem with method chaining is that it requires having objects with methods.
+Sometimes you may need to manipulate values that are not objects, like `null`
+and `undefined`, and other times you may want to use functions that are not
+directly provided as methods and it may not be desirable to [monkey
+patch](https://en.wikipedia.org/wiki/Monkey_patch#Pitfalls) such methods.
+
+`U.thru` is designed to work with partially applied
+[curried](https://en.wikipedia.org/wiki/Currying) and [lifted](#lifting)
+functions that take the <a
+href="https://en.wikipedia.org/wiki/Object_(grammar)">object</a> as their last
+argument and can be seen as providing a flexible alternative to method chaining.
+
+#### <a id="U-through"></a> [≡](#contents) [`U.through(...fns)`](#U-through)
+
+`U.through` allows one to compose a function that passes its single argument
+through all of the given functions from left to right.  In other words,
+`U.through(fn_1, ..., fn_N)(x)` is roughly equivalent to `fn_N( ... fn_1(x)
+... )`.  It serves a similar purpose as
+[`R.pipe`](http://ramdajs.com/docs/#pipe), but has been crafted to work with
+[lifted](#lifting) functions.  See also [`U.thru`](#U-thru).
+
+For example:
+
+```js
+U.through(x => x + 1, x => -x)(1)
+// -2
+```
 
 #### <a id="U-toPartial"></a> [≡](#contents) [`U.toPartial(fn)`](#U-toPartial)
 
@@ -927,7 +976,7 @@ subscribe explicitly to observables to perform side-effects.
 For example:
 
 ```js
-U.seq(
+U.thru(
   observable,
   ...,
   U.on({

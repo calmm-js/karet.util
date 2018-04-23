@@ -17,6 +17,8 @@ function warn(f, m) {
 
 // Kefir ///////////////////////////////////////////////////////////////////////
 
+const isMutable = x => x instanceof A.AbstractMutable
+const isProperty = x => x instanceof K.Property
 const isObservable = x => x instanceof K.Observable
 
 const toUndefined = _ => {}
@@ -49,7 +51,7 @@ export const flatMapLatest = I.curry((fn, xs) =>
 export const foldPast = I.curry((fn, s, xs) => toConstant(xs).scan(fn, s))
 export const interval = I.curry(K.interval)
 export const later = I.curry(K.later)
-export const lazy = th => I.seq(toProperty(), flatMapLatest(th), toProperty)
+export const lazy = th => toProperty(flatMapLatest(th, toProperty()))
 export const never = K.never()
 export const on = I.curry((efs, xs) => toConstant(xs).onAny(toHandler(efs)))
 export const sampledBy = I.curry((es, xs) => toConstant(xs).sampledBy(es))
@@ -113,7 +115,24 @@ export const bus = () => new Bus()
 
 // Convenience /////////////////////////////////////////////////////////////////
 
-export {seq, seqPartial} from 'infestines'
+export const seq =
+  process.env.NODE_ENV === 'production'
+    ? I.seq
+    : function(_) {
+        warn(seq, '`seq` has been obsoleted.  Use `thru` instead.')
+        return I.seq.apply(null, arguments)
+      }
+
+export const seqPartial =
+  process.env.NODE_ENV === 'production'
+    ? I.seqPartial
+    : function(_) {
+        warn(
+          seqPartial,
+          '`seqPartial` has been deprecated.  There is no replacement for it.'
+        )
+        return I.seqPartial.apply(null, arguments)
+      }
 
 export const scope = fn => fn()
 
@@ -134,10 +153,13 @@ export const toPartial = fn =>
     )
   )
 
-function thruImmediate(x, fs) {
+function thruPlain(x, fs) {
   for (let i = 0, n = fs.length; i < n; ++i) x = fs[i](x)
   return x
 }
+
+const thruProperty = (x, fs) =>
+  toProperty(flatMapLatest(fs => thruPlain(x, fs), fs))
 
 export function thru(x) {
   const n = arguments.length
@@ -146,15 +168,33 @@ export function thru(x) {
     const f = arguments[i]
     if (fs) {
       fs.push(f)
-    } else if (isObservable(f)) {
+    } else if (isProperty(f)) {
       fs = [f]
     } else {
       x = f(x)
     }
   }
-  return fs
-    ? toProperty(flatMapLatest(fs => thruImmediate(x, fs), template(fs)))
-    : x
+  if (fs) {
+    return thruProperty(x, template(fs))
+  } else {
+    return x
+  }
+}
+
+export function through() {
+  const n = arguments.length
+  let fs = Array(n)
+  let plain = true
+  for (let i = 0; i < n; ++i) {
+    const f = (fs[i] = arguments[i])
+    if (plain) plain = !isProperty(f)
+  }
+  if (plain) {
+    return x => thruPlain(x, fs)
+  } else {
+    fs = template(fs)
+    return x => thruProperty(x, fs)
+  }
 }
 
 // Debugging ///////////////////////////////////////////////////////////////////
@@ -327,14 +367,14 @@ export {holding} from 'kefir.atom'
 
 export const set = I.curry((settable, xs) => {
   const ss = C.combines(xs, xs => settable.set(xs))
-  if (isObservable(ss)) return ss.toProperty(toUndefined)
+  if (isProperty(ss)) return ss.toProperty(toUndefined)
 })
 
 // Decomposing -----------------------------------------------------------------
 
 export const view = I.curry((l, xs) => {
-  if (xs instanceof A.AbstractMutable) {
-    return isObservable(template(l))
+  if (isMutable(xs)) {
+    return isProperty(template(l))
       ? new A.Join(C.combines(l, l => xs.view(l)))
       : xs.view(l)
   } else {
@@ -344,7 +384,7 @@ export const view = I.curry((l, xs) => {
 
 export const mapElems = I.curry((xi2y, xs) => {
   const vs = []
-  return I.seq(
+  return thru(
     xs,
     foldPast((ysIn, xsIn) => {
       const ysN = ysIn.length
@@ -365,7 +405,7 @@ export const mapElemsWithIds = I.curry((idL, xi2y, xs) => {
   const id2info = new Map()
   const idOf = L.get(idL)
   const pred = (x, _, info) => idOf(x) === info.id
-  return I.seq(
+  return thru(
     xs,
     foldPast((ysIn, xsIn) => {
       const n = xsIn.length
