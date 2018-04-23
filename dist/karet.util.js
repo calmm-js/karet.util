@@ -346,6 +346,15 @@
     };
   });
 
+  var invoke = function invoke(name) {
+    return function (e) {
+      return e[name]();
+    };
+  };
+
+  var preventDefault = /*#__PURE__*/invoke('preventDefault');
+  var stopPropagation = /*#__PURE__*/invoke('stopPropagation');
+
   // classNames ------------------------------------------------------------------
 
   var cnsImmediate = /*#__PURE__*/L.join(' ', [L.flatten, /*#__PURE__*/L.when(I.id)]);
@@ -551,6 +560,8 @@
   exports.setProps = setProps;
   exports.refTo = refTo;
   exports.actions = actions;
+  exports.preventDefault = preventDefault;
+  exports.stopPropagation = stopPropagation;
   exports.cns = cns;
   exports.parse = parse;
   exports.stringify = stringify;
