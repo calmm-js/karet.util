@@ -190,7 +190,7 @@ export const Context = (process.env.NODE_ENV === 'production'
         '`Context` has been obsoleted.  Just use the new React context API.'
       )
       return fn(props)
-    })(({context, ...props}) => <Provider value={context} {...props} />)
+    })(({context, children}) => <Provider value={context}>{children}</Provider>)
 
 export const withContext = (process.env.NODE_ENV === 'production'
   ? I.id
