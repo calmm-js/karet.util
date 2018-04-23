@@ -15,6 +15,12 @@
 
   // Kefir ///////////////////////////////////////////////////////////////////////
 
+  var isMutable = function isMutable(x) {
+    return x instanceof A.AbstractMutable;
+  };
+  var isProperty = function isProperty(x) {
+    return x instanceof K.Property;
+  };
   var isObservable = function isObservable(x) {
     return x instanceof K.Observable;
   };
@@ -74,7 +80,7 @@
   var interval = /*#__PURE__*/I.curry(K.interval);
   var later = /*#__PURE__*/I.curry(K.later);
   var lazy = function lazy(th) {
-    return I.seq(toProperty(), flatMapLatest(th), toProperty);
+    return toProperty(flatMapLatest(th, toProperty()));
   };
   var never = /*#__PURE__*/K.never();
   var on = /*#__PURE__*/I.curry(function (efs, xs) {
@@ -167,6 +173,18 @@
     return new Bus();
   };
 
+  // Convenience /////////////////////////////////////////////////////////////////
+
+  var seq = function (_) {
+    warn(seq, '`seq` has been obsoleted.  Use `thru` instead.');
+    return I.seq.apply(null, arguments);
+  };
+
+  var seqPartial = function (_) {
+    warn(seqPartial, '`seqPartial` has been deprecated.  There is no replacement for it.');
+    return I.seqPartial.apply(null, arguments);
+  };
+
   var scope = function scope(fn) {
     return fn();
   };
@@ -190,11 +208,17 @@
     }));
   };
 
-  function thruImmediate(x, fs) {
+  function thruPlain(x, fs) {
     for (var i = 0, n = fs.length; i < n; ++i) {
       x = fs[i](x);
     }return x;
   }
+
+  var thruProperty = function thruProperty(x, fs) {
+    return toProperty(flatMapLatest(function (fs) {
+      return thruPlain(x, fs);
+    }, fs));
+  };
 
   function thru(x) {
     var n = arguments.length;
@@ -203,15 +227,37 @@
       var f = arguments[i];
       if (fs) {
         fs.push(f);
-      } else if (isObservable(f)) {
+      } else if (isProperty(f)) {
         fs = [f];
       } else {
         x = f(x);
       }
     }
-    return fs ? toProperty(flatMapLatest(function (fs) {
-      return thruImmediate(x, fs);
-    }, template(fs))) : x;
+    if (fs) {
+      return thruProperty(x, template(fs));
+    } else {
+      return x;
+    }
+  }
+
+  function through() {
+    var n = arguments.length;
+    var fs = Array(n);
+    var plain = true;
+    for (var i = 0; i < n; ++i) {
+      var f = fs[i] = arguments[i];
+      if (plain) plain = !isProperty(f);
+    }
+    if (plain) {
+      return function (x) {
+        return thruPlain(x, fs);
+      };
+    } else {
+      fs = template(fs);
+      return function (x) {
+        return thruProperty(x, fs);
+      };
+    }
   }
 
   // Debugging ///////////////////////////////////////////////////////////////////
@@ -435,14 +481,14 @@
     var ss = C.combines(xs, function (xs) {
       return settable.set(xs);
     });
-    if (isObservable(ss)) return ss.toProperty(toUndefined);
+    if (isProperty(ss)) return ss.toProperty(toUndefined);
   });
 
   // Decomposing -----------------------------------------------------------------
 
   var view = /*#__PURE__*/I.curry(function (l, xs) {
-    if (xs instanceof A.AbstractMutable) {
-      return isObservable(template(l)) ? new A.Join(C.combines(l, function (l) {
+    if (isMutable(xs)) {
+      return isProperty(template(l)) ? new A.Join(C.combines(l, function (l) {
         return xs.view(l);
       })) : xs.view(l);
     } else {
@@ -452,7 +498,7 @@
 
   var mapElems = /*#__PURE__*/I.curry(function (xi2y, xs) {
     var vs = [];
-    return I.seq(xs, foldPast(function (ysIn, xsIn) {
+    return thru(xs, foldPast(function (ysIn, xsIn) {
       var ysN = ysIn.length;
       var xsN = xsIn.length;
       if (xsN === ysN) return ysIn;
@@ -473,7 +519,7 @@
     var pred = function pred(x, _, info) {
       return idOf(x) === info.id;
     };
-    return I.seq(xs, foldPast(function (ysIn, xsIn) {
+    return thru(xs, foldPast(function (ysIn, xsIn) {
       var n = xsIn.length;
       var ys = ysIn.length === n ? ysIn : Array(n);
       for (var i = 0; i < n; ++i) {
@@ -504,8 +550,6 @@
   });
 
   exports.holding = A.holding;
-  exports.seq = I.seq;
-  exports.seqPartial = I.seqPartial;
   exports.combines = C.combines;
   exports.liftRec = C.liftRec;
   exports.debounce = debounce;
@@ -547,11 +591,14 @@
   exports.cond = cond;
   exports.Bus = Bus;
   exports.bus = bus;
+  exports.seq = seq;
+  exports.seqPartial = seqPartial;
   exports.scope = scope;
   exports.template = template;
   exports.tapPartial = tapPartial;
   exports.toPartial = toPartial;
   exports.thru = thru;
+  exports.through = through;
   exports.show = show;
   exports.onUnmount = onUnmount;
   exports.Context = Context;

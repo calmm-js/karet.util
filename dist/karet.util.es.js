@@ -1,8 +1,7 @@
-import { Atom, Molecule, AbstractMutable, Join } from 'kefir.atom';
+import { AbstractMutable, Atom, Molecule, Join } from 'kefir.atom';
 export { holding } from 'kefir.atom';
-import { Observable, constant, concat, merge, interval, later, never, fromEvents, Stream, stream } from 'kefir';
-import { curry, pipe2U, seq, identicalU, arityN, inherit, id, isDefined, always, object0, isFunction } from 'infestines';
-export { seq, seqPartial } from 'infestines';
+import { Property, Observable, constant, concat, merge, interval, later, never, fromEvents, Stream, stream } from 'kefir';
+import { curry, pipe2U, identicalU, arityN, inherit, seq, seqPartial, id, isDefined, always, object0, isFunction } from 'infestines';
 import { iso, join, flatten, when, get, find } from 'partial.lenses';
 import { lift1, combines, liftRec } from 'kefir.combines';
 export { combines, liftRec } from 'kefir.combines';
@@ -19,6 +18,12 @@ function warn(f, m) {
 
 // Kefir ///////////////////////////////////////////////////////////////////////
 
+var isMutable = function isMutable(x) {
+  return x instanceof AbstractMutable;
+};
+var isProperty = function isProperty(x) {
+  return x instanceof Property;
+};
 var isObservable = function isObservable(x) {
   return x instanceof Observable;
 };
@@ -78,7 +83,7 @@ var foldPast = /*#__PURE__*/curry(function (fn, s, xs) {
 var interval$1 = /*#__PURE__*/curry(interval);
 var later$1 = /*#__PURE__*/curry(later);
 var lazy = function lazy(th) {
-  return seq(toProperty(), flatMapLatest(th), toProperty);
+  return toProperty(flatMapLatest(th, toProperty()));
 };
 var never$1 = /*#__PURE__*/never();
 var on = /*#__PURE__*/curry(function (efs, xs) {
@@ -171,6 +176,18 @@ var bus = function bus() {
   return new Bus();
 };
 
+// Convenience /////////////////////////////////////////////////////////////////
+
+var seq$1 = process.env.NODE_ENV === 'production' ? seq : function (_) {
+  warn(seq$1, '`seq` has been obsoleted.  Use `thru` instead.');
+  return seq.apply(null, arguments);
+};
+
+var seqPartial$1 = process.env.NODE_ENV === 'production' ? seqPartial : function (_) {
+  warn(seqPartial$1, '`seqPartial` has been deprecated.  There is no replacement for it.');
+  return seqPartial.apply(null, arguments);
+};
+
 var scope = function scope(fn) {
   return fn();
 };
@@ -194,11 +211,17 @@ var toPartial = function toPartial(fn) {
   }));
 };
 
-function thruImmediate(x, fs) {
+function thruPlain(x, fs) {
   for (var i = 0, n = fs.length; i < n; ++i) {
     x = fs[i](x);
   }return x;
 }
+
+var thruProperty = function thruProperty(x, fs) {
+  return toProperty(flatMapLatest(function (fs) {
+    return thruPlain(x, fs);
+  }, fs));
+};
 
 function thru(x) {
   var n = arguments.length;
@@ -207,15 +230,37 @@ function thru(x) {
     var f = arguments[i];
     if (fs) {
       fs.push(f);
-    } else if (isObservable(f)) {
+    } else if (isProperty(f)) {
       fs = [f];
     } else {
       x = f(x);
     }
   }
-  return fs ? toProperty(flatMapLatest(function (fs) {
-    return thruImmediate(x, fs);
-  }, template(fs))) : x;
+  if (fs) {
+    return thruProperty(x, template(fs));
+  } else {
+    return x;
+  }
+}
+
+function through() {
+  var n = arguments.length;
+  var fs = Array(n);
+  var plain = true;
+  for (var i = 0; i < n; ++i) {
+    var f = fs[i] = arguments[i];
+    if (plain) plain = !isProperty(f);
+  }
+  if (plain) {
+    return function (x) {
+      return thruPlain(x, fs);
+    };
+  } else {
+    fs = template(fs);
+    return function (x) {
+      return thruProperty(x, fs);
+    };
+  }
 }
 
 // Debugging ///////////////////////////////////////////////////////////////////
@@ -439,14 +484,14 @@ var set = /*#__PURE__*/curry(function (settable, xs) {
   var ss = combines(xs, function (xs) {
     return settable.set(xs);
   });
-  if (isObservable(ss)) return ss.toProperty(toUndefined);
+  if (isProperty(ss)) return ss.toProperty(toUndefined);
 });
 
 // Decomposing -----------------------------------------------------------------
 
 var view = /*#__PURE__*/curry(function (l, xs) {
-  if (xs instanceof AbstractMutable) {
-    return isObservable(template(l)) ? new Join(combines(l, function (l) {
+  if (isMutable(xs)) {
+    return isProperty(template(l)) ? new Join(combines(l, function (l) {
       return xs.view(l);
     })) : xs.view(l);
   } else {
@@ -456,7 +501,7 @@ var view = /*#__PURE__*/curry(function (l, xs) {
 
 var mapElems = /*#__PURE__*/curry(function (xi2y, xs) {
   var vs = [];
-  return seq(xs, foldPast(function (ysIn, xsIn) {
+  return thru(xs, foldPast(function (ysIn, xsIn) {
     var ysN = ysIn.length;
     var xsN = xsIn.length;
     if (xsN === ysN) return ysIn;
@@ -477,7 +522,7 @@ var mapElemsWithIds = /*#__PURE__*/curry(function (idL, xi2y, xs) {
   var pred = function pred(x, _, info) {
     return idOf(x) === info.id;
   };
-  return seq(xs, foldPast(function (ysIn, xsIn) {
+  return thru(xs, foldPast(function (ysIn, xsIn) {
     var n = xsIn.length;
     var ys = ysIn.length === n ? ysIn : Array(n);
     for (var i = 0; i < n; ++i) {
@@ -507,4 +552,4 @@ var mapElemsWithIds = /*#__PURE__*/curry(function (idL, xi2y, xs) {
   }, []), skipIdenticals);
 });
 
-export { debounce, changes, serially, parallel, delay, endWith, mapValue, flatMapParallel, flatMapSerial, flatMapErrors, flatMapLatest, foldPast, interval$1 as interval, later$1 as later, lazy, never$1 as never, on, sampledBy, skipFirst, skipDuplicates, skipIdenticals, skipUnless, skipWhen, startWith, sink, takeFirst, takeFirstErrors, takeUntilBy, toProperty, throttle, fromEvents$1 as fromEvents, ignoreValues, ignoreErrors, ifElse, unless, when$1 as when, cond, Bus, bus, scope, template, tapPartial, toPartial, thru, show, onUnmount, Context, withContext, getProps, setProps, refTo, actions, preventDefault, stopPropagation, cns, parse, stringify, abs, acos, acosh, asin, asinh, atan, atan2, atanh, cbrt, ceil, clz32, cos, cosh, exp, expm1, floor, fround, hypot, imul, log, log10, log1p, log2, max, min, pow, round, sign, sin, sinh, sqrt, tan, tanh, trunc, string, atom, variable, molecule, set, view, mapElems, mapElemsWithIds };
+export { debounce, changes, serially, parallel, delay, endWith, mapValue, flatMapParallel, flatMapSerial, flatMapErrors, flatMapLatest, foldPast, interval$1 as interval, later$1 as later, lazy, never$1 as never, on, sampledBy, skipFirst, skipDuplicates, skipIdenticals, skipUnless, skipWhen, startWith, sink, takeFirst, takeFirstErrors, takeUntilBy, toProperty, throttle, fromEvents$1 as fromEvents, ignoreValues, ignoreErrors, ifElse, unless, when$1 as when, cond, Bus, bus, seq$1 as seq, seqPartial$1 as seqPartial, scope, template, tapPartial, toPartial, thru, through, show, onUnmount, Context, withContext, getProps, setProps, refTo, actions, preventDefault, stopPropagation, cns, parse, stringify, abs, acos, acosh, asin, asinh, atan, atan2, atanh, cbrt, ceil, clz32, cos, cosh, exp, expm1, floor, fround, hypot, imul, log, log10, log1p, log2, max, min, pow, round, sign, sin, sinh, sqrt, tan, tanh, trunc, string, atom, variable, molecule, set, view, mapElems, mapElemsWithIds };
