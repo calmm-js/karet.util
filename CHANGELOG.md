@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.18.3
+
+Obsoleted `seq` and `seqPartial`.  The motivation here is to reduce the library
+API surface.  `thru` can basically always replace `seq` and `seqPartial` is
+fairly rarely needed.
+
 ## 0.18.1
 
 Migrated the context implementation to use the React Context API and also marked

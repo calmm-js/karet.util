@@ -38,7 +38,7 @@ const testEq = (expect, thunk) =>
       done()
     }
     if (actual instanceof Observable) {
-      U.seq(actual, U.takeFirst(1), U.on({value: check}))
+      U.thru(actual, U.takeFirst(1), U.on({value: check}))
     } else {
       check(actual)
     }
@@ -70,17 +70,17 @@ describe('U.view', () => {
   testEq(101, () => U.view(U.serially(['x']), C({x: 101})))
   testEq(101, () =>
     U.view(
-      [U.seq(U.serially([0, 'x']), U.skipUnless(R.is(String)))],
+      [U.thru(U.serially([0, 'x']), U.skipUnless(R.is(String)))],
       C({x: 101})
     )
   )
   testEq(101, () => U.view('x', {x: 101}))
   testEq(101, () => U.view('x', U.atom({x: 101})))
   testEq(101, () =>
-    U.view(U.seq(C('x'), U.skipWhen(R.is(Number))), U.atom({x: 101}))
+    U.view(U.thru(C('x'), U.skipWhen(R.is(Number))), U.atom({x: 101}))
   )
   testEq(101, () =>
-    U.view([U.seq(C('x'), U.flatMapSerial(x => x))], U.atom({x: 101}))
+    U.view([U.thru(C('x'), U.flatMapSerial(x => x))], U.atom({x: 101}))
   )
 })
 
@@ -93,7 +93,7 @@ describe('U.mapElems', () => {
   testEq([[1, 0, 1], [3, 1, 2], [4, 2, 4]], () => {
     let uniq = 0
     const xs = U.atom([2, 1, 1])
-    const ys = U.seq(
+    const ys = U.thru(
       U.skipFirst(1, xs),
       U.mapElems((x, i) => [x, i, ++uniq]),
       U.flatMapLatest(U.template),
@@ -114,7 +114,7 @@ describe('U.mapElemsWithIds', () => {
     () => {
       let uniq = 0
       const xs = U.atom([{id: '2'}, {id: '1'}, {id: '3'}])
-      const ys = U.seq(
+      const ys = U.thru(
         U.lazy(() => xs),
         U.mapElemsWithIds('id', (x, i) => [x, i, ++uniq]),
         U.flatMapLatest(U.template),
@@ -158,14 +158,14 @@ describe('U.bus', () => {
   testEq(101, () => {
     const b = U.bus()
     let result
-    U.seq(b, U.flatMapParallel(R.negate), U.on({value: x => (result = x)}))
+    U.thru(b, U.flatMapParallel(R.negate), U.on({value: x => (result = x)}))
     b.push(-101)
     return result
   })
   testEq(69, () => {
     const b = U.bus()
     let result
-    U.seq(b, U.flatMapErrors(R.negate), U.on({value: x => (result = x)}))
+    U.thru(b, U.flatMapErrors(R.negate), U.on({value: x => (result = x)}))
     b.error(-69)
     return result
   })
@@ -252,7 +252,7 @@ describe('U.tapPartial', () => {
   testEq([1, 2], () => {
     const x = U.atom(0)
     const events = []
-    U.seq(x, U.changes, U.tapPartial(v => events.push(v)), U.on({}))
+    U.thru(x, U.changes, U.tapPartial(v => events.push(v)), U.on({}))
     x.set(1)
     x.set(undefined)
     x.set(2)
@@ -279,6 +279,19 @@ describe('U.thru', () => {
       U.view(C('xs')),
       U.mapElems((x, i) => [x instanceof AbstractMutable, i])
     )
+  )
+})
+
+describe('U.through', () => {
+  testEq(3, () => U.through(R.add(2))(1))
+  testEq(3, () => U.through(R.add(C(2)))(C(1)))
+  testEq(3, () => U.through(L.get(C('x')), R.add(C(2)))(C({x: 1})))
+
+  testEq([[true, 0], [true, 1]], () =>
+    U.through(
+      U.view(C('xs')),
+      U.mapElems((x, i) => [x instanceof AbstractMutable, i])
+    )(U.atom({xs: ['a', 'b']}))
   )
 })
 
@@ -311,7 +324,7 @@ describe('U.sampledBy', () => {
     const src = U.atom(0)
     const tap = U.bus()
     const seq = []
-    U.seq(U.sampledBy(tap, src), U.on({value: x => seq.push(x)}))
+    U.thru(U.sampledBy(tap, src), U.on({value: x => seq.push(x)}))
     src.set(1)
     tap.push()
     src.set(2)
@@ -370,4 +383,9 @@ describe('actions helpers', () => {
 
 describe('Kefir', () => {
   testEq(4, () => U.mapValue(v => v * 2, C(2)))
+})
+
+describe('obsoleted', () => {
+  testEq(2, () => U.seq(1, R.inc))
+  testEq(2, () => U.seqPartial(1, R.inc))
 })
