@@ -26,11 +26,19 @@ A collection of utilities for working with
       * [`U.mapElems((elemAtom, index) => any, arrayAtom)`](#U-mapElems)
       * [`U.mapElemsWithIds(lensAtom, (elemAtom, id) => any, arrayAtom)`](#U-mapElemsWithIds)
       * [`U.view(lens, atom)`](#U-view)
-    * [Side-effects](#side-effects)
+    * [Side-effects on atoms](#side-effects-on-atoms)
       * [`U.set(atom, value)`](#U-set)
+    * [Actions on atoms](#actions-on-atoms)
+      * [`U.doModify(atom, mapper)`](#U-doModify)
+      * [`U.doRemove(atom)`](#U-doRemove)
+      * [`U.doSet(atom, value)`](#U-doSet)
   * [Bus](#bus)
     * [Creating buses](#creating-buses)
       * [`U.bus()`](#U-bus)
+    * [Actions on buses](#actions-on-buses)
+      * [`U.doEnd(bus)`](#U-doEnd)
+      * [`U.doError(bus, error)`](#U-doError)
+      * [`U.doPush(bus, value)`](#U-doPush)
   * [Convenience](#convenience)
     * [`U.scope((...) => ...)`](#U-scope)
     * ~~[`U.seq(any, ...fns)`](#U-seq)~~
@@ -395,7 +403,7 @@ const Contact = ({contact}) => (
 See the live [Contacts](https://codesandbox.io/s/zk7bx827r) CodeSandbox for an
 example.
 
-#### <a id="side-effects"></a> [≡](#contents) [Side-effects](#side-effects)
+#### <a id="side-effects-on-atoms"></a> [≡](#contents) [Side-effects on atoms](#side-effects-on-atoms)
 
 ##### <a id="U-set"></a> [≡](#contents) [`U.set(atom, value)`](#U-set)
 
@@ -425,6 +433,23 @@ const Component = ({parameters}) => {
 Note that the above kind of arrangement to fetch data and set it into an atom is
 not needed when the data is only displayed in a read-only fashion in the UI.
 
+#### <a id="actions-on-atoms"></a> [≡](#contents) [Actions on atoms](#actions-on-atoms)
+
+##### <a id="U-doModify"></a> [≡](#contents) [`U.doModify(atom, mapper)`](#U-doModify)
+
+`U.doModify` creates an action that invokes the `modify` method on the given
+atom with the given mapping function.
+
+##### <a id="U-doRemove"></a> [≡](#contents) [`U.doRemove(atom)`](#U-doRemove)
+
+`U.doRemove` creates an action that invokes the `remove` method on the given
+atom.
+
+##### <a id="U-doSet"></a> [≡](#contents) [`U.doSet(atom, value)`](#U-doSet)
+
+`U.doSet` creates an action that invokes the `set` method on the given atom with
+the given value.
+
 ### <a id="bus"></a> [≡](#contents) [Bus](#bus)
 
 #### <a id="creating-buses"></a> [≡](#contents) [Creating buses](#creating-buses)
@@ -435,7 +460,7 @@ not needed when the data is only displayed in a read-only fashion in the UI.
 following methods:
 
 * `bus.push(value)` to explicitly emit value `value`,
-* `bus.error(value)` to explicitly emit error `error`, and
+* `bus.error(error)` to explicitly emit error `error`, and
 * `bus.end()` to explicitly end the stream after which all the methods do
   nothing.
 
@@ -445,6 +470,22 @@ controls need to be throttled or combined.
 
 See the live [Counter using Event Streams](https://codesandbox.io/s/1840p9xo9l)
 CodeSandbox for an example.
+
+#### <a id="actions-on-buses"></a> [≡](#contents) [Actions on buses](#actions-on-buses)
+
+##### <a id="U-doEnd"></a> [≡](#contents) [`U.doEnd(bus)`](#U-doEnd)
+
+`U.doEnd` creates an action that invokes the `end` method on the given bus.
+
+##### <a id="U-doError"></a> [≡](#contents) [`U.doError(bus, error)`](#U-doError)
+
+`U.doError` creates an action that invokes the `error` method on the given bus
+with the given value.
+
+##### <a id="U-doPush"></a> [≡](#contents) [`U.doPush(bus, value)`](#U-doPush)
+
+`U.doPush` creates an action that invokes the `push` method on the given bus
+with the given value.
 
 ### <a id="convenience"></a> [≡](#contents) [Convenience](#convenience)
 
