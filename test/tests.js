@@ -381,6 +381,14 @@ describe('actions helpers', () => {
   })
 })
 
+describe('actions', () => {
+  testEq(42, () => {
+    const x = U.atom(0)
+    U.doSet(x, 42)()
+    return x
+  })
+})
+
 describe('Kefir', () => {
   testEq(4, () => U.mapValue(v => v * 2, C(2)))
 })

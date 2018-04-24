@@ -15,6 +15,13 @@ function warn(f, m) {
   }
 }
 
+// Actions /////////////////////////////////////////////////////////////////////
+
+const doN = (n, method) =>
+  I.arityN(n + 1, (target, ...params) =>
+    C.combines(params, params => () => target[method].apply(target, params))
+  )
+
 // Kefir ///////////////////////////////////////////////////////////////////////
 
 const isMutable = x => x instanceof A.AbstractMutable
@@ -112,6 +119,12 @@ export const Bus = I.inherit(
 )
 
 export const bus = () => new Bus()
+
+// Actions on buses ------------------------------------------------------------
+
+export const doPush = doN(1, 'push')
+export const doError = doN(1, 'error')
+export const doEnd = doN(0, 'end')
 
 // Convenience /////////////////////////////////////////////////////////////////
 
@@ -369,6 +382,12 @@ export const set = I.curry((settable, xs) => {
   const ss = C.combines(xs, xs => settable.set(xs))
   if (isProperty(ss)) return ss.toProperty(toUndefined)
 })
+
+// Actions on atoms ------------------------------------------------------------
+
+export const doModify = doN(1, 'modify')
+export const doSet = doN(1, 'set')
+export const doRemove = doN(0, 'remove')
 
 // Decomposing -----------------------------------------------------------------
 
