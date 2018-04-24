@@ -18,6 +18,22 @@ function warn(f, m) {
   }
 }
 
+// Actions /////////////////////////////////////////////////////////////////////
+
+var doN = function doN(n, method) {
+  return I.arityN(n + 1, function (target) {
+    for (var _len = arguments.length, params = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      params[_key - 1] = arguments[_key];
+    }
+
+    return C.combines(params, function (params) {
+      return function () {
+        return target[method].apply(target, params);
+      };
+    });
+  });
+};
+
 // Kefir ///////////////////////////////////////////////////////////////////////
 
 var isMutable = function isMutable(x) {
@@ -178,6 +194,12 @@ var bus = function bus() {
   return new Bus();
 };
 
+// Actions on buses ------------------------------------------------------------
+
+var doPush = /*#__PURE__*/doN(1, 'push');
+var doError = /*#__PURE__*/doN(1, 'error');
+var doEnd = /*#__PURE__*/doN(0, 'end');
+
 // Convenience /////////////////////////////////////////////////////////////////
 
 var seq = process.env.NODE_ENV === 'production' ? I.seq : function (_) {
@@ -205,8 +227,8 @@ var tapPartial = /*#__PURE__*/C.liftRec( /*#__PURE__*/I.curry(function (effect, 
 
 var toPartial = function toPartial(fn) {
   return C.liftRec(I.arityN(fn.length, function () {
-    for (var _len = arguments.length, xs = Array(_len), _key = 0; _key < _len; _key++) {
-      xs[_key] = arguments[_key];
+    for (var _len2 = arguments.length, xs = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+      xs[_key2] = arguments[_key2];
     }
 
     return xs.every(I.isDefined) ? fn.apply(undefined, xs) : undefined;
@@ -268,8 +290,8 @@ function through() {
 // Debugging ///////////////////////////////////////////////////////////////////
 
 var showIso = function showIso() {
-  for (var _len2 = arguments.length, xs = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-    xs[_key2] = arguments[_key2];
+  for (var _len3 = arguments.length, xs = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+    xs[_key3] = arguments[_key3];
   }
 
   return L.iso(function (x) {
@@ -386,8 +408,8 @@ var refTo = function refTo(settable) {
 // Events ----------------------------------------------------------------------
 
 var actions = /*#__PURE__*/C.liftRec(function () {
-  for (var _len3 = arguments.length, fns = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
-    fns[_key3] = arguments[_key3];
+  for (var _len4 = arguments.length, fns = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+    fns[_key4] = arguments[_key4];
   }
 
   return function () {
@@ -411,8 +433,8 @@ var stopPropagation = /*#__PURE__*/invoke('stopPropagation');
 var cnsImmediate = /*#__PURE__*/L.join(' ', [L.flatten, /*#__PURE__*/L.when(I.id)]);
 
 var cns = /*#__PURE__*/C.liftRec(function () {
-  for (var _len4 = arguments.length, xs = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
-    xs[_key4] = arguments[_key4];
+  for (var _len5 = arguments.length, xs = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
+    xs[_key5] = arguments[_key5];
   }
 
   return cnsImmediate(xs) || undefined;
@@ -488,6 +510,12 @@ var set = /*#__PURE__*/I.curry(function (settable, xs) {
   });
   if (isProperty(ss)) return ss.toProperty(toUndefined);
 });
+
+// Actions on atoms ------------------------------------------------------------
+
+var doModify = /*#__PURE__*/doN(1, 'modify');
+var doSet = /*#__PURE__*/doN(1, 'set');
+var doRemove = /*#__PURE__*/doN(0, 'remove');
 
 // Decomposing -----------------------------------------------------------------
 
@@ -596,6 +624,9 @@ exports.when = when;
 exports.cond = cond;
 exports.Bus = Bus;
 exports.bus = bus;
+exports.doPush = doPush;
+exports.doError = doError;
+exports.doEnd = doEnd;
 exports.seq = seq;
 exports.seqPartial = seqPartial;
 exports.scope = scope;
@@ -656,6 +687,9 @@ exports.atom = atom;
 exports.variable = variable;
 exports.molecule = molecule;
 exports.set = set;
+exports.doModify = doModify;
+exports.doSet = doSet;
+exports.doRemove = doRemove;
 exports.view = view;
 exports.mapElems = mapElems;
 exports.mapElemsWithIds = mapElemsWithIds;

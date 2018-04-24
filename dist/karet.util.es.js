@@ -1,9 +1,9 @@
 import { AbstractMutable, Atom, Molecule, Join } from 'kefir.atom';
 export { holding } from 'kefir.atom';
 import { Property, Observable, constant, concat, merge, interval, later, never, fromEvents, Stream, stream } from 'kefir';
-import { curry, pipe2U, identicalU, arityN, inherit, seq, seqPartial, id, isDefined, always, object0, isFunction } from 'infestines';
+import { arityN, curry, pipe2U, identicalU, inherit, seq, seqPartial, id, isDefined, always, object0, isFunction } from 'infestines';
 import { iso, join, flatten, when, get, find } from 'partial.lenses';
-import { lift1, combines, liftRec } from 'kefir.combines';
+import { combines, lift1, liftRec } from 'kefir.combines';
 export { combines, liftRec } from 'kefir.combines';
 import { createContext, createElement } from 'react';
 
@@ -15,6 +15,22 @@ function warn(f, m) {
     console.warn(header + m);
   }
 }
+
+// Actions /////////////////////////////////////////////////////////////////////
+
+var doN = function doN(n, method) {
+  return arityN(n + 1, function (target) {
+    for (var _len = arguments.length, params = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      params[_key - 1] = arguments[_key];
+    }
+
+    return combines(params, function (params) {
+      return function () {
+        return target[method].apply(target, params);
+      };
+    });
+  });
+};
 
 // Kefir ///////////////////////////////////////////////////////////////////////
 
@@ -176,6 +192,12 @@ var bus = function bus() {
   return new Bus();
 };
 
+// Actions on buses ------------------------------------------------------------
+
+var doPush = /*#__PURE__*/doN(1, 'push');
+var doError = /*#__PURE__*/doN(1, 'error');
+var doEnd = /*#__PURE__*/doN(0, 'end');
+
 // Convenience /////////////////////////////////////////////////////////////////
 
 var seq$1 = process.env.NODE_ENV === 'production' ? seq : function (_) {
@@ -203,8 +225,8 @@ var tapPartial = /*#__PURE__*/liftRec( /*#__PURE__*/curry(function (effect, data
 
 var toPartial = function toPartial(fn) {
   return liftRec(arityN(fn.length, function () {
-    for (var _len = arguments.length, xs = Array(_len), _key = 0; _key < _len; _key++) {
-      xs[_key] = arguments[_key];
+    for (var _len2 = arguments.length, xs = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+      xs[_key2] = arguments[_key2];
     }
 
     return xs.every(isDefined) ? fn.apply(undefined, xs) : undefined;
@@ -266,8 +288,8 @@ function through() {
 // Debugging ///////////////////////////////////////////////////////////////////
 
 var showIso = function showIso() {
-  for (var _len2 = arguments.length, xs = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-    xs[_key2] = arguments[_key2];
+  for (var _len3 = arguments.length, xs = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+    xs[_key3] = arguments[_key3];
   }
 
   return iso(function (x) {
@@ -384,8 +406,8 @@ var refTo = function refTo(settable) {
 // Events ----------------------------------------------------------------------
 
 var actions = /*#__PURE__*/liftRec(function () {
-  for (var _len3 = arguments.length, fns = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
-    fns[_key3] = arguments[_key3];
+  for (var _len4 = arguments.length, fns = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+    fns[_key4] = arguments[_key4];
   }
 
   return function () {
@@ -409,8 +431,8 @@ var stopPropagation = /*#__PURE__*/invoke('stopPropagation');
 var cnsImmediate = /*#__PURE__*/join(' ', [flatten, /*#__PURE__*/when(id)]);
 
 var cns = /*#__PURE__*/liftRec(function () {
-  for (var _len4 = arguments.length, xs = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
-    xs[_key4] = arguments[_key4];
+  for (var _len5 = arguments.length, xs = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
+    xs[_key5] = arguments[_key5];
   }
 
   return cnsImmediate(xs) || undefined;
@@ -487,6 +509,12 @@ var set = /*#__PURE__*/curry(function (settable, xs) {
   if (isProperty(ss)) return ss.toProperty(toUndefined);
 });
 
+// Actions on atoms ------------------------------------------------------------
+
+var doModify = /*#__PURE__*/doN(1, 'modify');
+var doSet = /*#__PURE__*/doN(1, 'set');
+var doRemove = /*#__PURE__*/doN(0, 'remove');
+
 // Decomposing -----------------------------------------------------------------
 
 var view = /*#__PURE__*/curry(function (l, xs) {
@@ -552,4 +580,4 @@ var mapElemsWithIds = /*#__PURE__*/curry(function (idL, xi2y, xs) {
   }, []), skipIdenticals);
 });
 
-export { debounce, changes, serially, parallel, delay, endWith, mapValue, flatMapParallel, flatMapSerial, flatMapErrors, flatMapLatest, foldPast, interval$1 as interval, later$1 as later, lazy, never$1 as never, on, sampledBy, skipFirst, skipDuplicates, skipIdenticals, skipUnless, skipWhen, startWith, sink, takeFirst, takeFirstErrors, takeUntilBy, toProperty, throttle, fromEvents$1 as fromEvents, ignoreValues, ignoreErrors, ifElse, unless, when$1 as when, cond, Bus, bus, seq$1 as seq, seqPartial$1 as seqPartial, scope, template, tapPartial, toPartial, thru, through, show, onUnmount, Context, withContext, getProps, setProps, refTo, actions, preventDefault, stopPropagation, cns, parse, stringify, abs, acos, acosh, asin, asinh, atan, atan2, atanh, cbrt, ceil, clz32, cos, cosh, exp, expm1, floor, fround, hypot, imul, log, log10, log1p, log2, max, min, pow, round, sign, sin, sinh, sqrt, tan, tanh, trunc, string, atom, variable, molecule, set, view, mapElems, mapElemsWithIds };
+export { debounce, changes, serially, parallel, delay, endWith, mapValue, flatMapParallel, flatMapSerial, flatMapErrors, flatMapLatest, foldPast, interval$1 as interval, later$1 as later, lazy, never$1 as never, on, sampledBy, skipFirst, skipDuplicates, skipIdenticals, skipUnless, skipWhen, startWith, sink, takeFirst, takeFirstErrors, takeUntilBy, toProperty, throttle, fromEvents$1 as fromEvents, ignoreValues, ignoreErrors, ifElse, unless, when$1 as when, cond, Bus, bus, doPush, doError, doEnd, seq$1 as seq, seqPartial$1 as seqPartial, scope, template, tapPartial, toPartial, thru, through, show, onUnmount, Context, withContext, getProps, setProps, refTo, actions, preventDefault, stopPropagation, cns, parse, stringify, abs, acos, acosh, asin, asinh, atan, atan2, atanh, cbrt, ceil, clz32, cos, cosh, exp, expm1, floor, fround, hypot, imul, log, log10, log1p, log2, max, min, pow, round, sign, sin, sinh, sqrt, tan, tanh, trunc, string, atom, variable, molecule, set, doModify, doSet, doRemove, view, mapElems, mapElemsWithIds };
