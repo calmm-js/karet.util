@@ -33,9 +33,11 @@ const testEq = (expect, thunk) =>
     const actual = thunk()
     const check = actual => {
       const eq = R.equals(actual, expect)
-      if (eq instanceof Observable || !eq)
-        throw new Error(`Expected: ${show(expect)}, actual: ${show(actual)}`)
-      done()
+      if (eq instanceof Observable || !eq) {
+        done(Error(`Expected: ${show(expect)}, actual: ${show(actual)}`))
+      } else {
+        done()
+      }
     }
     if (actual instanceof Observable) {
       U.thru(actual, U.takeFirst(1), U.on({value: check}))
@@ -391,6 +393,63 @@ describe('actions', () => {
 
 describe('Kefir', () => {
   testEq(4, () => U.mapValue(v => v * 2, C(2)))
+})
+
+const laterPromise = (ms, value) =>
+  new Promise(fulfill => setTimeout(() => fulfill(value), ms))
+
+describe('fromPromise', () => {
+  testEq(1, () => U.fromPromise(() => laterPromise(25, 1)))
+
+  testEq(3, () =>
+    U.parallel([
+      U.fromPromise(() => laterPromise(50, 2)),
+      U.fromPromise(() => laterPromise(25, 3))
+    ])
+  )
+
+  testEq(4, () => {
+    const slow = U.fromPromise(() => laterPromise(50, 4))
+    const fast = U.fromPromise(() => laterPromise(25, 5))
+    return U.serially([
+      U.thru(
+        U.takeFirst(1, U.parallel([slow, fast])),
+        U.flatMapLatest(() => U.later(0, 0)),
+        U.flatMapLatest(() => slow)
+      ),
+      6
+    ])
+  })
+
+  testEq(9, () => {
+    const slow = U.fromPromise(() => ({
+      ready: laterPromise(50, 7),
+      abort: () => {}
+    }))
+    const fast = U.fromPromise(() => ({
+      ready: laterPromise(25, 8),
+      abort: () => {}
+    }))
+    return U.serially([
+      U.thru(
+        U.takeFirst(1, U.parallel([slow, fast])),
+        U.flatMapLatest(() => U.later(0, 0)),
+        U.flatMapLatest(() => slow)
+      ),
+      9
+    ])
+  })
+
+  testEq(101, () =>
+    U.thru(
+      U.fromPromise(() =>
+        laterPromise(25).then(() => {
+          throw 42
+        })
+      ),
+      U.flatMapErrors(error => error + 59)
+    )
+  )
 })
 
 describe('obsoleted', () => {
