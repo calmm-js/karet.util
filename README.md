@@ -103,6 +103,7 @@ A collection of utilities for working with
       * [`U.toProperty(observable)`](https://kefirjs.github.io/kefir/#to-property)
     * [Additional combinators](#additional-combinators)
       * [`U.endWith(value, observable)`](#U-endWith)
+      * [`U.fromPromise(() => promise | {ready, abort})`](#U-fromPromise)
       * [`U.lazy(() => observable)`](#U-lazy)
       * [`U.sink(observable)`](#U-sink)
       * [`U.skipIdenticals(observable)`](#U-skipIdenticals)
@@ -965,6 +966,36 @@ const loop = () =>
 
 See the live [Login](https://codesandbox.io/s/2wov8r44r0) CodeSandbox for an
 example.
+
+##### <a id="U-fromPromise"></a> [≡](#contents) [`U.fromPromise(() => promise | {ready, abort})`](#U-fromPromise)
+
+`U.fromPromise` converts a thunk that returns a promise or an object of the
+shape `{ready, abort}` where `ready` is a promise and `abort` is an action that
+aborts the promise into a Kefir property.  The thunk is invoked once when the
+property is subscribed to for the first time.  If an `abort` action is defined
+and all subscriptions of the property are closed before the promise resolves,
+the property is ended and the `abort` action is called once.
+
+For example:
+
+```js
+const fetchAsProperty = (input, init = {}) =>
+  U.fromPromise(() => fetch(input, init))
+```
+
+```js
+const abortableFetchAsProperty = (input, init = {}) =>
+  U.fromPromise(() => {
+    const controller = new AbortController()
+    return {
+      ready: fetch(input, {...init, signal: controller.signal}),
+      abort: () => controller.abort()
+    }
+  })
+```
+
+Note that `U.fromPromise` is not the same as Kefir's
+[`fromPromise`](https://kefirjs.github.io/kefir/#from-promise).
 
 ##### <a id="U-sink"></a> [≡](#contents) [`U.sink(observable)`](#U-sink)
 

@@ -80,6 +80,59 @@ export const fromEvents = I.curry(K.fromEvents)
 export const ignoreValues = s => s.ignoreValues()
 export const ignoreErrors = s => s.ignoreErrors()
 
+// Promises --------------------------------------------------------------------
+
+const FromPromise = I.inherit(
+  function FromPromise(makePromise) {
+    K.Property.call(this)
+    this.m = makePromise
+    this.a = undefined
+  },
+  K.Property,
+  {
+    _onActivation() {
+      const self = this
+      const m = self.m
+      if (m) {
+        self.m = null
+        const handle = m()
+        const {abort} = handle
+        const ready = handle.ready || handle
+        self.a = abort
+        ready.then(
+          result => {
+            const a = self.a
+            if (a !== null) {
+              self.a = null
+              self._emitValue(result)
+              self._emitEnd()
+            }
+          },
+          error => {
+            const a = self.a
+            if (a !== null) {
+              self.a = null
+              self._emitError(error)
+              self._emitEnd()
+            }
+          }
+        )
+      }
+    },
+    _onDeactivation() {
+      const self = this
+      const a = self.a
+      if (a) {
+        self.a = null
+        self._emitEnd()
+        a()
+      }
+    }
+  }
+)
+
+export const fromPromise = makePromise => new FromPromise(makePromise)
+
 // Conditionals ----------------------------------------------------------------
 
 const ifteU = (b, t, e) => toProperty(flatMapLatest(b => (b ? t : e), b))
