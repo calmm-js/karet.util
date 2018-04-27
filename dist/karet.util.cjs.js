@@ -154,6 +154,55 @@ var ignoreErrors = function ignoreErrors(s) {
   return s.ignoreErrors();
 };
 
+// Promises --------------------------------------------------------------------
+
+var FromPromise = /*#__PURE__*/I.inherit(function FromPromise(makePromise) {
+  K.Property.call(this);
+  this.m = makePromise;
+  this.a = undefined;
+}, K.Property, {
+  _onActivation: function _onActivation() {
+    var self = this;
+    var m = self.m;
+    if (m) {
+      self.m = null;
+      var handle = m();
+      var abort = handle.abort;
+
+      var ready = handle.ready || handle;
+      self.a = abort;
+      ready.then(function (result) {
+        var a = self.a;
+        if (a !== null) {
+          self.a = null;
+          self._emitValue(result);
+          self._emitEnd();
+        }
+      }, function (error) {
+        var a = self.a;
+        if (a !== null) {
+          self.a = null;
+          self._emitError(error);
+          self._emitEnd();
+        }
+      });
+    }
+  },
+  _onDeactivation: function _onDeactivation() {
+    var self = this;
+    var a = self.a;
+    if (a) {
+      self.a = null;
+      self._emitEnd();
+      a();
+    }
+  }
+});
+
+var fromPromise = function fromPromise(makePromise) {
+  return new FromPromise(makePromise);
+};
+
 // Conditionals ----------------------------------------------------------------
 
 var ifteU = function ifteU(b, t, e) {
@@ -618,6 +667,7 @@ exports.throttle = throttle;
 exports.fromEvents = fromEvents;
 exports.ignoreValues = ignoreValues;
 exports.ignoreErrors = ignoreErrors;
+exports.fromPromise = fromPromise;
 exports.ifElse = ifElse;
 exports.unless = unless;
 exports.when = when;

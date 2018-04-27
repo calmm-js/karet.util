@@ -152,6 +152,55 @@ var ignoreErrors = function ignoreErrors(s) {
   return s.ignoreErrors();
 };
 
+// Promises --------------------------------------------------------------------
+
+var FromPromise = /*#__PURE__*/inherit(function FromPromise(makePromise) {
+  Property.call(this);
+  this.m = makePromise;
+  this.a = undefined;
+}, Property, {
+  _onActivation: function _onActivation() {
+    var self = this;
+    var m = self.m;
+    if (m) {
+      self.m = null;
+      var handle = m();
+      var abort = handle.abort;
+
+      var ready = handle.ready || handle;
+      self.a = abort;
+      ready.then(function (result) {
+        var a = self.a;
+        if (a !== null) {
+          self.a = null;
+          self._emitValue(result);
+          self._emitEnd();
+        }
+      }, function (error) {
+        var a = self.a;
+        if (a !== null) {
+          self.a = null;
+          self._emitError(error);
+          self._emitEnd();
+        }
+      });
+    }
+  },
+  _onDeactivation: function _onDeactivation() {
+    var self = this;
+    var a = self.a;
+    if (a) {
+      self.a = null;
+      self._emitEnd();
+      a();
+    }
+  }
+});
+
+var fromPromise = function fromPromise(makePromise) {
+  return new FromPromise(makePromise);
+};
+
 // Conditionals ----------------------------------------------------------------
 
 var ifteU = function ifteU(b, t, e) {
@@ -580,4 +629,4 @@ var mapElemsWithIds = /*#__PURE__*/curry(function (idL, xi2y, xs) {
   }, []), skipIdenticals);
 });
 
-export { debounce, changes, serially, parallel, delay, endWith, mapValue, flatMapParallel, flatMapSerial, flatMapErrors, flatMapLatest, foldPast, interval$1 as interval, later$1 as later, lazy, never$1 as never, on, sampledBy, skipFirst, skipDuplicates, skipIdenticals, skipUnless, skipWhen, startWith, sink, takeFirst, takeFirstErrors, takeUntilBy, toProperty, throttle, fromEvents$1 as fromEvents, ignoreValues, ignoreErrors, ifElse, unless, when$1 as when, cond, Bus, bus, doPush, doError, doEnd, seq$1 as seq, seqPartial$1 as seqPartial, scope, template, tapPartial, toPartial, thru, through, show, onUnmount, Context, withContext, getProps, setProps, refTo, actions, preventDefault, stopPropagation, cns, parse, stringify, abs, acos, acosh, asin, asinh, atan, atan2, atanh, cbrt, ceil, clz32, cos, cosh, exp, expm1, floor, fround, hypot, imul, log, log10, log1p, log2, max, min, pow, round, sign, sin, sinh, sqrt, tan, tanh, trunc, string, atom, variable, molecule, set, doModify, doSet, doRemove, view, mapElems, mapElemsWithIds };
+export { debounce, changes, serially, parallel, delay, endWith, mapValue, flatMapParallel, flatMapSerial, flatMapErrors, flatMapLatest, foldPast, interval$1 as interval, later$1 as later, lazy, never$1 as never, on, sampledBy, skipFirst, skipDuplicates, skipIdenticals, skipUnless, skipWhen, startWith, sink, takeFirst, takeFirstErrors, takeUntilBy, toProperty, throttle, fromEvents$1 as fromEvents, ignoreValues, ignoreErrors, fromPromise, ifElse, unless, when$1 as when, cond, Bus, bus, doPush, doError, doEnd, seq$1 as seq, seqPartial$1 as seqPartial, scope, template, tapPartial, toPartial, thru, through, show, onUnmount, Context, withContext, getProps, setProps, refTo, actions, preventDefault, stopPropagation, cns, parse, stringify, abs, acos, acosh, asin, asinh, atan, atan2, atanh, cbrt, ceil, clz32, cos, cosh, exp, expm1, floor, fround, hypot, imul, log, log10, log1p, log2, max, min, pow, round, sign, sin, sinh, sqrt, tan, tanh, trunc, string, atom, variable, molecule, set, doModify, doSet, doRemove, view, mapElems, mapElemsWithIds };
