@@ -997,6 +997,9 @@ const abortableFetchAsProperty = (input, init = {}) =>
 Note that `U.fromPromise` is not the same as Kefir's
 [`fromPromise`](https://kefirjs.github.io/kefir/#from-promise).
 
+See the live [GitHub search](https://codesandbox.io/s/wk51qz3kjl) CodeSandbox
+for an example.
+
 ##### <a id="U-sink"></a> [≡](#contents) [`U.sink(observable)`](#U-sink)
 
 `U.sink` creates a property that simply immediately produces `undefined` and
