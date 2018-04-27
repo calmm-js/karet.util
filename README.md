@@ -979,26 +979,29 @@ the property is ended and the `abort` action is called once.
 For example:
 
 ```js
-const fetchAsProperty = (input, init = {}) =>
-  U.fromPromise(() => fetch(input, init))
+const fetchJSON =
+  typeof AbortController === 'undefined'
+    ? (url, params = {}) =>
+        U.fromPromise(() => fetch(url, params).then(res => res.json()))
+    : (url, params = {}) =>
+        U.fromPromise(() => {
+          const controller = new AbortController()
+          return {
+            ready: fetch(url, {...params, signal: controller.signal}).then(
+              res => res.json()
+            ),
+            abort() {
+              controller.abort()
+            }
+          }
+        })
 ```
-
-```js
-const abortableFetchAsProperty = (input, init = {}) =>
-  U.fromPromise(() => {
-    const controller = new AbortController()
-    return {
-      ready: fetch(input, {...init, signal: controller.signal}),
-      abort: () => controller.abort()
-    }
-  })
-```
-
-Note that `U.fromPromise` is not the same as Kefir's
-[`fromPromise`](https://kefirjs.github.io/kefir/#from-promise).
 
 See the live [GitHub search](https://codesandbox.io/s/wk51qz3kjl) CodeSandbox
 for an example.
+
+Note that `U.fromPromise` is not the same as Kefir's
+[`fromPromise`](https://kefirjs.github.io/kefir/#from-promise).
 
 ##### <a id="U-sink"></a> [≡](#contents) [`U.sink(observable)`](#U-sink)
 
