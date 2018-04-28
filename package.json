@@ -4,6 +4,7 @@
   "description": "Utilities for working with Karet",
   "module": "dist/karet.util.es.js",
   "main": "dist/karet.util.cjs.js",
+  "sideEffects": false,
   "scripts": {
     "dist": "rollup -c",
     "lint": "eslint src test",
