@@ -3,7 +3,7 @@ import * as K from 'kefir'
 import * as I from 'infestines'
 
 import * as L from 'partial.lenses'
-import * as C from 'kefir.combines'
+import * as F from 'karet.lift'
 import * as React from 'react'
 
 const header = 'karet.util: '
@@ -19,7 +19,7 @@ function warn(f, m) {
 
 const doN = (n, method) =>
   I.arityN(n + 1, (target, ...params) =>
-    C.combines(params, params => () => target[method].apply(target, params))
+    F.combine(params, (...params) => () => target[method].apply(target, params))
   )
 
 // Kefir ///////////////////////////////////////////////////////////////////////
@@ -70,7 +70,7 @@ export const skipIdenticals = skipDuplicates(I.identicalU)
 export const skipUnless = I.curry((p, xs) => toConstant(xs).filter(p))
 export const skipWhen = I.curry((p, xs) => toConstant(xs).filter(x => !p(x)))
 export const startWith = I.curry((x, xs) => toConstant(xs).toProperty(() => x))
-export const sink = I.pipe2U(startWith(undefined), C.lift1(toUndefined))
+export const sink = I.pipe2U(startWith(undefined), F.lift(toUndefined))
 export const takeFirst = I.curry((n, xs) => toConstant(xs).take(n))
 export const takeFirstErrors = I.curry((n, xs) => toConstant(xs).takeErrors(n))
 export const takeUntilBy = I.curry((ts, xs) => toConstant(xs).takeUntilBy(ts))
@@ -153,7 +153,20 @@ export function cond(_) {
 
 // Lifting ---------------------------------------------------------------------
 
-export {combines, liftRec} from 'kefir.combines'
+export {combine, lift, liftRec} from 'karet.lift'
+
+import {combines as combinesRaw} from 'kefir.combines'
+
+export const combines =
+  process.env.NODE_ENV === 'production'
+    ? combinesRaw
+    : function() {
+        warn(
+          combines,
+          '`combines` has been obsoleted.  Please use `combine`, `template`, `lift`, or `liftRec` instead.'
+        )
+        return combinesRaw.apply(null, arguments)
+      }
 
 // Bus -------------------------------------------------------------------------
 
@@ -202,9 +215,9 @@ export const seqPartial =
 
 export const scope = fn => fn()
 
-export const template = observables => C.combines(observables, I.id)
+export const template = observables => F.combine([observables], I.id)
 
-export const tapPartial = C.liftRec(
+export const tapPartial = F.lift(
   I.curry((effect, data) => {
     if (undefined !== data) effect(data)
     return data
@@ -212,7 +225,7 @@ export const tapPartial = C.liftRec(
 )
 
 export const toPartial = fn =>
-  C.liftRec(
+  F.liftRec(
     I.arityN(
       fn.length,
       (...xs) => (xs.every(I.isDefined) ? fn(...xs) : undefined)
@@ -273,10 +286,9 @@ const showIso = (...xs) =>
 
 export function show(_) {
   const n = arguments.length - 1
-  const xs = Array(n + 1)
+  const xs = Array(n)
   for (let i = 0; i < n; ++i) xs[i] = arguments[i]
-  xs[n] = showIso
-  return view(C.combines.apply(null, xs), arguments[n])
+  return view(F.combine(xs, showIso), arguments[n])
 }
 
 // React ///////////////////////////////////////////////////////////////////////
@@ -353,7 +365,7 @@ export const refTo = settable => elem => {
 
 // Events ----------------------------------------------------------------------
 
-export const actions = C.liftRec((...fns) => (...args) => {
+export const actions = F.lift((...fns) => (...args) => {
   for (let i = 0, n = fns.length; i < n; ++i)
     if (I.isFunction(fns[i])) fns[i](...args)
 })
@@ -367,55 +379,55 @@ export const stopPropagation = invoke('stopPropagation')
 
 const cnsImmediate = L.join(' ', [L.flatten, L.when(I.id)])
 
-export const cns = C.liftRec((...xs) => cnsImmediate(xs) || undefined)
+export const cns = F.lift((...xs) => cnsImmediate(xs) || undefined)
 
 // Standard ////////////////////////////////////////////////////////////////////
 
 // JSON ------------------------------------------------------------------------
 
-export const parse = C.liftRec(JSON.parse)
-export const stringify = C.liftRec(JSON.stringify)
+export const parse = F.lift(JSON.parse)
+export const stringify = F.lift(JSON.stringify)
 
 // Math ------------------------------------------------------------------------
 
-export const abs = C.liftRec(Math.abs)
-export const acos = C.liftRec(Math.acos)
-export const acosh = C.liftRec(Math.acosh)
-export const asin = C.liftRec(Math.asin)
-export const asinh = C.liftRec(Math.asinh)
-export const atan = C.liftRec(Math.atan)
-export const atan2 = C.liftRec(Math.atan2)
-export const atanh = C.liftRec(Math.atanh)
-export const cbrt = C.liftRec(Math.cbrt)
-export const ceil = C.liftRec(Math.ceil)
-export const clz32 = C.liftRec(Math.clz32)
-export const cos = C.liftRec(Math.cos)
-export const cosh = C.liftRec(Math.cosh)
-export const exp = C.liftRec(Math.exp)
-export const expm1 = C.liftRec(Math.expm1)
-export const floor = C.liftRec(Math.floor)
-export const fround = C.liftRec(Math.fround)
-export const hypot = C.liftRec(Math.hypot)
-export const imul = C.liftRec(Math.imul)
-export const log = C.liftRec(Math.log)
-export const log10 = C.liftRec(Math.log10)
-export const log1p = C.liftRec(Math.log1p)
-export const log2 = C.liftRec(Math.log2)
-export const max = C.liftRec(Math.max)
-export const min = C.liftRec(Math.min)
-export const pow = C.liftRec(Math.pow)
-export const round = C.liftRec(Math.round)
-export const sign = C.liftRec(Math.sign)
-export const sin = C.liftRec(Math.sin)
-export const sinh = C.liftRec(Math.sinh)
-export const sqrt = C.liftRec(Math.sqrt)
-export const tan = C.liftRec(Math.tan)
-export const tanh = C.liftRec(Math.tanh)
-export const trunc = C.liftRec(Math.trunc)
+export const abs = F.lift(Math.abs)
+export const acos = F.lift(Math.acos)
+export const acosh = F.lift(Math.acosh)
+export const asin = F.lift(Math.asin)
+export const asinh = F.lift(Math.asinh)
+export const atan = F.lift(Math.atan)
+export const atan2 = F.lift(Math.atan2)
+export const atanh = F.lift(Math.atanh)
+export const cbrt = F.lift(Math.cbrt)
+export const ceil = F.lift(Math.ceil)
+export const clz32 = F.lift(Math.clz32)
+export const cos = F.lift(Math.cos)
+export const cosh = F.lift(Math.cosh)
+export const exp = F.lift(Math.exp)
+export const expm1 = F.lift(Math.expm1)
+export const floor = F.lift(Math.floor)
+export const fround = F.lift(Math.fround)
+export const hypot = F.lift(Math.hypot)
+export const imul = F.lift(Math.imul)
+export const log = F.lift(Math.log)
+export const log10 = F.lift(Math.log10)
+export const log1p = F.lift(Math.log1p)
+export const log2 = F.lift(Math.log2)
+export const max = F.lift(Math.max)
+export const min = F.lift(Math.min)
+export const pow = F.lift(Math.pow)
+export const round = F.lift(Math.round)
+export const sign = F.lift(Math.sign)
+export const sin = F.lift(Math.sin)
+export const sinh = F.lift(Math.sinh)
+export const sqrt = F.lift(Math.sqrt)
+export const tan = F.lift(Math.tan)
+export const tanh = F.lift(Math.tanh)
+export const trunc = F.lift(Math.trunc)
 
 // String ----------------------------------------------------------------------
 
-export const string = C.liftRec(String.raw)
+export const string = F.lift(String.raw)
 
 // Atoms ///////////////////////////////////////////////////////////////////////
 
@@ -432,7 +444,7 @@ export {holding} from 'kefir.atom'
 // Side-effects ----------------------------------------------------------------
 
 export const set = I.curry((settable, xs) => {
-  const ss = C.combines(xs, xs => settable.set(xs))
+  const ss = F.combine([xs], xs => settable.set(xs))
   if (isProperty(ss)) return ss.toProperty(toUndefined)
 })
 
@@ -447,10 +459,10 @@ export const doRemove = doN(0, 'remove')
 export const view = I.curry((l, xs) => {
   if (isMutable(xs)) {
     return isProperty(template(l))
-      ? new A.Join(C.combines(l, l => xs.view(l)))
+      ? new A.Join(F.combine([l], l => xs.view(l)))
       : xs.view(l)
   } else {
-    return C.combines(l, xs, L.get)
+    return F.combine([l, xs], L.get)
   }
 })
 

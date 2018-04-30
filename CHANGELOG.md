@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.18.6
+
+Marked `combines` as obsolete.  It uses the old Kefir Combines library and has
+an unnecessarily complex signature, because it uses variadic arguments and the
+combiner function is optional.
+
 ## 0.18.3
 
 Obsoleted `seq` and `seqPartial`.  The motivation here is to reduce the library

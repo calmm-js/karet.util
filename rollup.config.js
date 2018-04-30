@@ -5,12 +5,13 @@ import replace from 'rollup-plugin-replace'
 import uglify from 'rollup-plugin-uglify'
 
 const globals = {
-  infestines: 'I',
-  karet: 'karet',
-  kefir: 'Kefir',
+  'karet.lift': 'karet.lift',
   'kefir.atom': 'kefir.atom',
   'kefir.combines': 'kefir.combines',
   'partial.lenses': 'L',
+  infestines: 'I',
+  karet: 'karet',
+  kefir: 'Kefir',
   ramda: 'R',
   react: 'React'
 }

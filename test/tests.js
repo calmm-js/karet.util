@@ -69,10 +69,10 @@ describe('U.actions', () => {
 
 describe('U.view', () => {
   testEq(101, () => U.view('x', C({x: 101})))
-  testEq(101, () => U.view(U.serially(['x']), C({x: 101})))
+  testEq(101, () => U.view(U.serially(['x']).toProperty(), C({x: 101})))
   testEq(101, () =>
     U.view(
-      [U.thru(U.serially([0, 'x']), U.skipUnless(R.is(String)))],
+      [U.thru(U.serially([0, 'x']).toProperty(), U.skipUnless(R.is(String)))],
       C({x: 101})
     )
   )
@@ -82,7 +82,10 @@ describe('U.view', () => {
     U.view(U.thru(C('x'), U.skipWhen(R.is(Number))), U.atom({x: 101}))
   )
   testEq(101, () =>
-    U.view([U.thru(C('x'), U.flatMapSerial(x => x))], U.atom({x: 101}))
+    U.view(
+      [U.thru(C('x'), U.flatMapSerial(x => x), U.toProperty)],
+      U.atom({x: 101})
+    )
   )
 })
 
@@ -254,7 +257,13 @@ describe('U.tapPartial', () => {
   testEq([1, 2], () => {
     const x = U.atom(0)
     const events = []
-    U.thru(x, U.changes, U.tapPartial(v => events.push(v)), U.on({}))
+    U.thru(
+      x,
+      U.changes,
+      U.toProperty,
+      U.tapPartial(v => events.push(v)),
+      U.on({})
+    )
     x.set(1)
     x.set(undefined)
     x.set(2)
@@ -358,7 +367,9 @@ describe('U.setProps', () => {
   testEq(42, () => {
     const value = U.bus()
     const target = {value: 101}
-    const ref = U.setProps({value: U.takeFirstErrors(1, U.ignoreValues(value))})
+    const ref = U.setProps({
+      value: U.toProperty(U.takeFirstErrors(1, U.ignoreValues(value)))
+    })
     ref(target)
     try {
       value.push(101)
@@ -450,6 +461,10 @@ describe('fromPromise', () => {
       U.flatMapErrors(error => error + 59)
     )
   )
+})
+
+describe('combines', () => {
+  testEq(3, () => U.combines(1, 2, R.add))
 })
 
 describe('obsoleted', () => {
