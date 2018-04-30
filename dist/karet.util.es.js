@@ -3,9 +3,10 @@ export { holding } from 'kefir.atom';
 import { Property, Observable, constant, concat, merge, interval, later, never, fromEvents, Stream, stream } from 'kefir';
 import { arityN, curry, pipe2U, identicalU, inherit, seq, seqPartial, id, isDefined, always, object0, isFunction } from 'infestines';
 import { iso, join, flatten, when, get, find } from 'partial.lenses';
-import { combines, lift1, liftRec } from 'kefir.combines';
-export { combines, liftRec } from 'kefir.combines';
+import { combine, lift, liftRec } from 'karet.lift';
+export { combine, lift, liftRec } from 'karet.lift';
 import { createContext, createElement } from 'react';
+import { combines } from 'kefir.combines';
 
 var header = 'karet.util: ';
 
@@ -24,7 +25,11 @@ var doN = function doN(n, method) {
       params[_key - 1] = arguments[_key];
     }
 
-    return combines(params, function (params) {
+    return combine(params, function () {
+      for (var _len2 = arguments.length, params = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+        params[_key2] = arguments[_key2];
+      }
+
       return function () {
         return target[method].apply(target, params);
       };
@@ -128,7 +133,7 @@ var startWith = /*#__PURE__*/curry(function (x, xs) {
     return x;
   });
 });
-var sink = /*#__PURE__*/pipe2U( /*#__PURE__*/startWith(undefined), /*#__PURE__*/lift1(toUndefined));
+var sink = /*#__PURE__*/pipe2U( /*#__PURE__*/startWith(undefined), /*#__PURE__*/lift(toUndefined));
 var takeFirst = /*#__PURE__*/curry(function (n, xs) {
   return toConstant(xs).take(n);
 });
@@ -225,6 +230,11 @@ function cond(_) {
   return op;
 }
 
+var combines$1 = process.env.NODE_ENV === 'production' ? combines : function () {
+  warn(combines$1, '`combines` has been obsoleted.  Please use `combine`, `template`, `lift`, or `liftRec` instead.');
+  return combines.apply(null, arguments);
+};
+
 // Bus -------------------------------------------------------------------------
 
 var streamPrototype = Stream.prototype;
@@ -264,18 +274,18 @@ var scope = function scope(fn) {
 };
 
 var template = function template(observables) {
-  return combines(observables, id);
+  return combine([observables], id);
 };
 
-var tapPartial = /*#__PURE__*/liftRec( /*#__PURE__*/curry(function (effect, data) {
+var tapPartial = /*#__PURE__*/lift( /*#__PURE__*/curry(function (effect, data) {
   if (undefined !== data) effect(data);
   return data;
 }));
 
 var toPartial = function toPartial(fn) {
   return liftRec(arityN(fn.length, function () {
-    for (var _len2 = arguments.length, xs = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-      xs[_key2] = arguments[_key2];
+    for (var _len3 = arguments.length, xs = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+      xs[_key3] = arguments[_key3];
     }
 
     return xs.every(isDefined) ? fn.apply(undefined, xs) : undefined;
@@ -337,8 +347,8 @@ function through() {
 // Debugging ///////////////////////////////////////////////////////////////////
 
 var showIso = function showIso() {
-  for (var _len3 = arguments.length, xs = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
-    xs[_key3] = arguments[_key3];
+  for (var _len4 = arguments.length, xs = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+    xs[_key4] = arguments[_key4];
   }
 
   return iso(function (x) {
@@ -350,11 +360,10 @@ var showIso = function showIso() {
 
 function show(_) {
   var n = arguments.length - 1;
-  var xs = Array(n + 1);
+  var xs = Array(n);
   for (var i = 0; i < n; ++i) {
     xs[i] = arguments[i];
-  }xs[n] = showIso;
-  return view(combines.apply(null, xs), arguments[n]);
+  }return view(combine(xs, showIso), arguments[n]);
 }
 
 // React ///////////////////////////////////////////////////////////////////////
@@ -454,9 +463,9 @@ var refTo = function refTo(settable) {
 
 // Events ----------------------------------------------------------------------
 
-var actions = /*#__PURE__*/liftRec(function () {
-  for (var _len4 = arguments.length, fns = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
-    fns[_key4] = arguments[_key4];
+var actions = /*#__PURE__*/lift(function () {
+  for (var _len5 = arguments.length, fns = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
+    fns[_key5] = arguments[_key5];
   }
 
   return function () {
@@ -479,9 +488,9 @@ var stopPropagation = /*#__PURE__*/invoke('stopPropagation');
 
 var cnsImmediate = /*#__PURE__*/join(' ', [flatten, /*#__PURE__*/when(id)]);
 
-var cns = /*#__PURE__*/liftRec(function () {
-  for (var _len5 = arguments.length, xs = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
-    xs[_key5] = arguments[_key5];
+var cns = /*#__PURE__*/lift(function () {
+  for (var _len6 = arguments.length, xs = Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
+    xs[_key6] = arguments[_key6];
   }
 
   return cnsImmediate(xs) || undefined;
@@ -491,49 +500,49 @@ var cns = /*#__PURE__*/liftRec(function () {
 
 // JSON ------------------------------------------------------------------------
 
-var parse = /*#__PURE__*/liftRec(JSON.parse);
-var stringify = /*#__PURE__*/liftRec(JSON.stringify);
+var parse = /*#__PURE__*/lift(JSON.parse);
+var stringify = /*#__PURE__*/lift(JSON.stringify);
 
 // Math ------------------------------------------------------------------------
 
-var abs = /*#__PURE__*/liftRec(Math.abs);
-var acos = /*#__PURE__*/liftRec(Math.acos);
-var acosh = /*#__PURE__*/liftRec(Math.acosh);
-var asin = /*#__PURE__*/liftRec(Math.asin);
-var asinh = /*#__PURE__*/liftRec(Math.asinh);
-var atan = /*#__PURE__*/liftRec(Math.atan);
-var atan2 = /*#__PURE__*/liftRec(Math.atan2);
-var atanh = /*#__PURE__*/liftRec(Math.atanh);
-var cbrt = /*#__PURE__*/liftRec(Math.cbrt);
-var ceil = /*#__PURE__*/liftRec(Math.ceil);
-var clz32 = /*#__PURE__*/liftRec(Math.clz32);
-var cos = /*#__PURE__*/liftRec(Math.cos);
-var cosh = /*#__PURE__*/liftRec(Math.cosh);
-var exp = /*#__PURE__*/liftRec(Math.exp);
-var expm1 = /*#__PURE__*/liftRec(Math.expm1);
-var floor = /*#__PURE__*/liftRec(Math.floor);
-var fround = /*#__PURE__*/liftRec(Math.fround);
-var hypot = /*#__PURE__*/liftRec(Math.hypot);
-var imul = /*#__PURE__*/liftRec(Math.imul);
-var log = /*#__PURE__*/liftRec(Math.log);
-var log10 = /*#__PURE__*/liftRec(Math.log10);
-var log1p = /*#__PURE__*/liftRec(Math.log1p);
-var log2 = /*#__PURE__*/liftRec(Math.log2);
-var max = /*#__PURE__*/liftRec(Math.max);
-var min = /*#__PURE__*/liftRec(Math.min);
-var pow = /*#__PURE__*/liftRec(Math.pow);
-var round = /*#__PURE__*/liftRec(Math.round);
-var sign = /*#__PURE__*/liftRec(Math.sign);
-var sin = /*#__PURE__*/liftRec(Math.sin);
-var sinh = /*#__PURE__*/liftRec(Math.sinh);
-var sqrt = /*#__PURE__*/liftRec(Math.sqrt);
-var tan = /*#__PURE__*/liftRec(Math.tan);
-var tanh = /*#__PURE__*/liftRec(Math.tanh);
-var trunc = /*#__PURE__*/liftRec(Math.trunc);
+var abs = /*#__PURE__*/lift(Math.abs);
+var acos = /*#__PURE__*/lift(Math.acos);
+var acosh = /*#__PURE__*/lift(Math.acosh);
+var asin = /*#__PURE__*/lift(Math.asin);
+var asinh = /*#__PURE__*/lift(Math.asinh);
+var atan = /*#__PURE__*/lift(Math.atan);
+var atan2 = /*#__PURE__*/lift(Math.atan2);
+var atanh = /*#__PURE__*/lift(Math.atanh);
+var cbrt = /*#__PURE__*/lift(Math.cbrt);
+var ceil = /*#__PURE__*/lift(Math.ceil);
+var clz32 = /*#__PURE__*/lift(Math.clz32);
+var cos = /*#__PURE__*/lift(Math.cos);
+var cosh = /*#__PURE__*/lift(Math.cosh);
+var exp = /*#__PURE__*/lift(Math.exp);
+var expm1 = /*#__PURE__*/lift(Math.expm1);
+var floor = /*#__PURE__*/lift(Math.floor);
+var fround = /*#__PURE__*/lift(Math.fround);
+var hypot = /*#__PURE__*/lift(Math.hypot);
+var imul = /*#__PURE__*/lift(Math.imul);
+var log = /*#__PURE__*/lift(Math.log);
+var log10 = /*#__PURE__*/lift(Math.log10);
+var log1p = /*#__PURE__*/lift(Math.log1p);
+var log2 = /*#__PURE__*/lift(Math.log2);
+var max = /*#__PURE__*/lift(Math.max);
+var min = /*#__PURE__*/lift(Math.min);
+var pow = /*#__PURE__*/lift(Math.pow);
+var round = /*#__PURE__*/lift(Math.round);
+var sign = /*#__PURE__*/lift(Math.sign);
+var sin = /*#__PURE__*/lift(Math.sin);
+var sinh = /*#__PURE__*/lift(Math.sinh);
+var sqrt = /*#__PURE__*/lift(Math.sqrt);
+var tan = /*#__PURE__*/lift(Math.tan);
+var tanh = /*#__PURE__*/lift(Math.tanh);
+var trunc = /*#__PURE__*/lift(Math.trunc);
 
 // String ----------------------------------------------------------------------
 
-var string = /*#__PURE__*/liftRec(String.raw);
+var string = /*#__PURE__*/lift(String.raw);
 
 // Atoms ///////////////////////////////////////////////////////////////////////
 
@@ -552,7 +561,7 @@ var molecule = function molecule(template) {
 // Side-effects ----------------------------------------------------------------
 
 var set = /*#__PURE__*/curry(function (settable, xs) {
-  var ss = combines(xs, function (xs) {
+  var ss = combine([xs], function (xs) {
     return settable.set(xs);
   });
   if (isProperty(ss)) return ss.toProperty(toUndefined);
@@ -568,11 +577,11 @@ var doRemove = /*#__PURE__*/doN(0, 'remove');
 
 var view = /*#__PURE__*/curry(function (l, xs) {
   if (isMutable(xs)) {
-    return isProperty(template(l)) ? new Join(combines(l, function (l) {
+    return isProperty(template(l)) ? new Join(combine([l], function (l) {
       return xs.view(l);
     })) : xs.view(l);
   } else {
-    return combines(l, xs, get);
+    return combine([l, xs], get);
   }
 });
 
@@ -629,4 +638,4 @@ var mapElemsWithIds = /*#__PURE__*/curry(function (idL, xi2y, xs) {
   }, []), skipIdenticals);
 });
 
-export { debounce, changes, serially, parallel, delay, endWith, mapValue, flatMapParallel, flatMapSerial, flatMapErrors, flatMapLatest, foldPast, interval$1 as interval, later$1 as later, lazy, never$1 as never, on, sampledBy, skipFirst, skipDuplicates, skipIdenticals, skipUnless, skipWhen, startWith, sink, takeFirst, takeFirstErrors, takeUntilBy, toProperty, throttle, fromEvents$1 as fromEvents, ignoreValues, ignoreErrors, fromPromise, ifElse, unless, when$1 as when, cond, Bus, bus, doPush, doError, doEnd, seq$1 as seq, seqPartial$1 as seqPartial, scope, template, tapPartial, toPartial, thru, through, show, onUnmount, Context, withContext, getProps, setProps, refTo, actions, preventDefault, stopPropagation, cns, parse, stringify, abs, acos, acosh, asin, asinh, atan, atan2, atanh, cbrt, ceil, clz32, cos, cosh, exp, expm1, floor, fround, hypot, imul, log, log10, log1p, log2, max, min, pow, round, sign, sin, sinh, sqrt, tan, tanh, trunc, string, atom, variable, molecule, set, doModify, doSet, doRemove, view, mapElems, mapElemsWithIds };
+export { debounce, changes, serially, parallel, delay, endWith, mapValue, flatMapParallel, flatMapSerial, flatMapErrors, flatMapLatest, foldPast, interval$1 as interval, later$1 as later, lazy, never$1 as never, on, sampledBy, skipFirst, skipDuplicates, skipIdenticals, skipUnless, skipWhen, startWith, sink, takeFirst, takeFirstErrors, takeUntilBy, toProperty, throttle, fromEvents$1 as fromEvents, ignoreValues, ignoreErrors, fromPromise, ifElse, unless, when$1 as when, cond, combines$1 as combines, Bus, bus, doPush, doError, doEnd, seq$1 as seq, seqPartial$1 as seqPartial, scope, template, tapPartial, toPartial, thru, through, show, onUnmount, Context, withContext, getProps, setProps, refTo, actions, preventDefault, stopPropagation, cns, parse, stringify, abs, acos, acosh, asin, asinh, atan, atan2, atanh, cbrt, ceil, clz32, cos, cosh, exp, expm1, floor, fround, hypot, imul, log, log10, log1p, log2, max, min, pow, round, sign, sin, sinh, sqrt, tan, tanh, trunc, string, atom, variable, molecule, set, doModify, doSet, doRemove, view, mapElems, mapElemsWithIds };

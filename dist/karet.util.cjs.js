@@ -6,8 +6,9 @@ var A = require('kefir.atom');
 var K = require('kefir');
 var I = require('infestines');
 var L = require('partial.lenses');
-var C = require('kefir.combines');
+var F = require('karet.lift');
 var React = require('react');
+var kefir_combines = require('kefir.combines');
 
 var header = 'karet.util: ';
 
@@ -26,7 +27,11 @@ var doN = function doN(n, method) {
       params[_key - 1] = arguments[_key];
     }
 
-    return C.combines(params, function (params) {
+    return F.combine(params, function () {
+      for (var _len2 = arguments.length, params = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+        params[_key2] = arguments[_key2];
+      }
+
       return function () {
         return target[method].apply(target, params);
       };
@@ -130,7 +135,7 @@ var startWith = /*#__PURE__*/I.curry(function (x, xs) {
     return x;
   });
 });
-var sink = /*#__PURE__*/I.pipe2U( /*#__PURE__*/startWith(undefined), /*#__PURE__*/C.lift1(toUndefined));
+var sink = /*#__PURE__*/I.pipe2U( /*#__PURE__*/startWith(undefined), /*#__PURE__*/F.lift(toUndefined));
 var takeFirst = /*#__PURE__*/I.curry(function (n, xs) {
   return toConstant(xs).take(n);
 });
@@ -227,6 +232,11 @@ function cond(_) {
   return op;
 }
 
+var combines = process.env.NODE_ENV === 'production' ? kefir_combines.combines : function () {
+  warn(combines, '`combines` has been obsoleted.  Please use `combine`, `template`, `lift`, or `liftRec` instead.');
+  return kefir_combines.combines.apply(null, arguments);
+};
+
 // Bus -------------------------------------------------------------------------
 
 var streamPrototype = K.Stream.prototype;
@@ -266,18 +276,18 @@ var scope = function scope(fn) {
 };
 
 var template = function template(observables) {
-  return C.combines(observables, I.id);
+  return F.combine([observables], I.id);
 };
 
-var tapPartial = /*#__PURE__*/C.liftRec( /*#__PURE__*/I.curry(function (effect, data) {
+var tapPartial = /*#__PURE__*/F.lift( /*#__PURE__*/I.curry(function (effect, data) {
   if (undefined !== data) effect(data);
   return data;
 }));
 
 var toPartial = function toPartial(fn) {
-  return C.liftRec(I.arityN(fn.length, function () {
-    for (var _len2 = arguments.length, xs = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-      xs[_key2] = arguments[_key2];
+  return F.liftRec(I.arityN(fn.length, function () {
+    for (var _len3 = arguments.length, xs = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+      xs[_key3] = arguments[_key3];
     }
 
     return xs.every(I.isDefined) ? fn.apply(undefined, xs) : undefined;
@@ -339,8 +349,8 @@ function through() {
 // Debugging ///////////////////////////////////////////////////////////////////
 
 var showIso = function showIso() {
-  for (var _len3 = arguments.length, xs = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
-    xs[_key3] = arguments[_key3];
+  for (var _len4 = arguments.length, xs = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+    xs[_key4] = arguments[_key4];
   }
 
   return L.iso(function (x) {
@@ -352,11 +362,10 @@ var showIso = function showIso() {
 
 function show(_) {
   var n = arguments.length - 1;
-  var xs = Array(n + 1);
+  var xs = Array(n);
   for (var i = 0; i < n; ++i) {
     xs[i] = arguments[i];
-  }xs[n] = showIso;
-  return view(C.combines.apply(null, xs), arguments[n]);
+  }return view(F.combine(xs, showIso), arguments[n]);
 }
 
 // React ///////////////////////////////////////////////////////////////////////
@@ -456,9 +465,9 @@ var refTo = function refTo(settable) {
 
 // Events ----------------------------------------------------------------------
 
-var actions = /*#__PURE__*/C.liftRec(function () {
-  for (var _len4 = arguments.length, fns = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
-    fns[_key4] = arguments[_key4];
+var actions = /*#__PURE__*/F.lift(function () {
+  for (var _len5 = arguments.length, fns = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
+    fns[_key5] = arguments[_key5];
   }
 
   return function () {
@@ -481,9 +490,9 @@ var stopPropagation = /*#__PURE__*/invoke('stopPropagation');
 
 var cnsImmediate = /*#__PURE__*/L.join(' ', [L.flatten, /*#__PURE__*/L.when(I.id)]);
 
-var cns = /*#__PURE__*/C.liftRec(function () {
-  for (var _len5 = arguments.length, xs = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
-    xs[_key5] = arguments[_key5];
+var cns = /*#__PURE__*/F.lift(function () {
+  for (var _len6 = arguments.length, xs = Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
+    xs[_key6] = arguments[_key6];
   }
 
   return cnsImmediate(xs) || undefined;
@@ -493,49 +502,49 @@ var cns = /*#__PURE__*/C.liftRec(function () {
 
 // JSON ------------------------------------------------------------------------
 
-var parse = /*#__PURE__*/C.liftRec(JSON.parse);
-var stringify = /*#__PURE__*/C.liftRec(JSON.stringify);
+var parse = /*#__PURE__*/F.lift(JSON.parse);
+var stringify = /*#__PURE__*/F.lift(JSON.stringify);
 
 // Math ------------------------------------------------------------------------
 
-var abs = /*#__PURE__*/C.liftRec(Math.abs);
-var acos = /*#__PURE__*/C.liftRec(Math.acos);
-var acosh = /*#__PURE__*/C.liftRec(Math.acosh);
-var asin = /*#__PURE__*/C.liftRec(Math.asin);
-var asinh = /*#__PURE__*/C.liftRec(Math.asinh);
-var atan = /*#__PURE__*/C.liftRec(Math.atan);
-var atan2 = /*#__PURE__*/C.liftRec(Math.atan2);
-var atanh = /*#__PURE__*/C.liftRec(Math.atanh);
-var cbrt = /*#__PURE__*/C.liftRec(Math.cbrt);
-var ceil = /*#__PURE__*/C.liftRec(Math.ceil);
-var clz32 = /*#__PURE__*/C.liftRec(Math.clz32);
-var cos = /*#__PURE__*/C.liftRec(Math.cos);
-var cosh = /*#__PURE__*/C.liftRec(Math.cosh);
-var exp = /*#__PURE__*/C.liftRec(Math.exp);
-var expm1 = /*#__PURE__*/C.liftRec(Math.expm1);
-var floor = /*#__PURE__*/C.liftRec(Math.floor);
-var fround = /*#__PURE__*/C.liftRec(Math.fround);
-var hypot = /*#__PURE__*/C.liftRec(Math.hypot);
-var imul = /*#__PURE__*/C.liftRec(Math.imul);
-var log = /*#__PURE__*/C.liftRec(Math.log);
-var log10 = /*#__PURE__*/C.liftRec(Math.log10);
-var log1p = /*#__PURE__*/C.liftRec(Math.log1p);
-var log2 = /*#__PURE__*/C.liftRec(Math.log2);
-var max = /*#__PURE__*/C.liftRec(Math.max);
-var min = /*#__PURE__*/C.liftRec(Math.min);
-var pow = /*#__PURE__*/C.liftRec(Math.pow);
-var round = /*#__PURE__*/C.liftRec(Math.round);
-var sign = /*#__PURE__*/C.liftRec(Math.sign);
-var sin = /*#__PURE__*/C.liftRec(Math.sin);
-var sinh = /*#__PURE__*/C.liftRec(Math.sinh);
-var sqrt = /*#__PURE__*/C.liftRec(Math.sqrt);
-var tan = /*#__PURE__*/C.liftRec(Math.tan);
-var tanh = /*#__PURE__*/C.liftRec(Math.tanh);
-var trunc = /*#__PURE__*/C.liftRec(Math.trunc);
+var abs = /*#__PURE__*/F.lift(Math.abs);
+var acos = /*#__PURE__*/F.lift(Math.acos);
+var acosh = /*#__PURE__*/F.lift(Math.acosh);
+var asin = /*#__PURE__*/F.lift(Math.asin);
+var asinh = /*#__PURE__*/F.lift(Math.asinh);
+var atan = /*#__PURE__*/F.lift(Math.atan);
+var atan2 = /*#__PURE__*/F.lift(Math.atan2);
+var atanh = /*#__PURE__*/F.lift(Math.atanh);
+var cbrt = /*#__PURE__*/F.lift(Math.cbrt);
+var ceil = /*#__PURE__*/F.lift(Math.ceil);
+var clz32 = /*#__PURE__*/F.lift(Math.clz32);
+var cos = /*#__PURE__*/F.lift(Math.cos);
+var cosh = /*#__PURE__*/F.lift(Math.cosh);
+var exp = /*#__PURE__*/F.lift(Math.exp);
+var expm1 = /*#__PURE__*/F.lift(Math.expm1);
+var floor = /*#__PURE__*/F.lift(Math.floor);
+var fround = /*#__PURE__*/F.lift(Math.fround);
+var hypot = /*#__PURE__*/F.lift(Math.hypot);
+var imul = /*#__PURE__*/F.lift(Math.imul);
+var log = /*#__PURE__*/F.lift(Math.log);
+var log10 = /*#__PURE__*/F.lift(Math.log10);
+var log1p = /*#__PURE__*/F.lift(Math.log1p);
+var log2 = /*#__PURE__*/F.lift(Math.log2);
+var max = /*#__PURE__*/F.lift(Math.max);
+var min = /*#__PURE__*/F.lift(Math.min);
+var pow = /*#__PURE__*/F.lift(Math.pow);
+var round = /*#__PURE__*/F.lift(Math.round);
+var sign = /*#__PURE__*/F.lift(Math.sign);
+var sin = /*#__PURE__*/F.lift(Math.sin);
+var sinh = /*#__PURE__*/F.lift(Math.sinh);
+var sqrt = /*#__PURE__*/F.lift(Math.sqrt);
+var tan = /*#__PURE__*/F.lift(Math.tan);
+var tanh = /*#__PURE__*/F.lift(Math.tanh);
+var trunc = /*#__PURE__*/F.lift(Math.trunc);
 
 // String ----------------------------------------------------------------------
 
-var string = /*#__PURE__*/C.liftRec(String.raw);
+var string = /*#__PURE__*/F.lift(String.raw);
 
 // Atoms ///////////////////////////////////////////////////////////////////////
 
@@ -554,7 +563,7 @@ var molecule = function molecule(template) {
 // Side-effects ----------------------------------------------------------------
 
 var set = /*#__PURE__*/I.curry(function (settable, xs) {
-  var ss = C.combines(xs, function (xs) {
+  var ss = F.combine([xs], function (xs) {
     return settable.set(xs);
   });
   if (isProperty(ss)) return ss.toProperty(toUndefined);
@@ -570,11 +579,11 @@ var doRemove = /*#__PURE__*/doN(0, 'remove');
 
 var view = /*#__PURE__*/I.curry(function (l, xs) {
   if (isMutable(xs)) {
-    return isProperty(template(l)) ? new A.Join(C.combines(l, function (l) {
+    return isProperty(template(l)) ? new A.Join(F.combine([l], function (l) {
       return xs.view(l);
     })) : xs.view(l);
   } else {
-    return C.combines(l, xs, L.get);
+    return F.combine([l, xs], L.get);
   }
 });
 
@@ -632,8 +641,9 @@ var mapElemsWithIds = /*#__PURE__*/I.curry(function (idL, xi2y, xs) {
 });
 
 exports.holding = A.holding;
-exports.combines = C.combines;
-exports.liftRec = C.liftRec;
+exports.combine = F.combine;
+exports.lift = F.lift;
+exports.liftRec = F.liftRec;
 exports.debounce = debounce;
 exports.changes = changes;
 exports.serially = serially;
@@ -672,6 +682,7 @@ exports.ifElse = ifElse;
 exports.unless = unless;
 exports.when = when;
 exports.cond = cond;
+exports.combines = combines;
 exports.Bus = Bus;
 exports.bus = bus;
 exports.doPush = doPush;
