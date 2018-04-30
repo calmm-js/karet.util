@@ -71,7 +71,9 @@ A collection of utilities for working with
       * [`U.unless(condition, alternative)`](#U-unless)
       * [`U.when(condition, consequent)`](#U-when)
     * [Lifting](#lifting)
-      * [`U.combines(...any[, fn])`](#U-combines)
+      * [`U.combine([...any], fn)`](#U-combine)
+      * ~~[`U.combines(...any, fn)`](#U-combines)~~
+      * [`U.lift((...) => ...)`](#U-lift)
       * [`U.liftRec((...) => ...)`](#U-liftRec)
     * [Curried combinators](#curried-combinators)
       * [`U.changes(observable)`](https://kefirjs.github.io/kefir/#changes)
@@ -847,7 +849,47 @@ consequent, undefined)`](#U-ifElse).
 
 #### <a id="lifting"></a> [≡](#contents) [Lifting](#lifting)
 
-##### <a id="U-combines"></a> [≡](#contents) [`U.combines(...any[, fn])`](#U-combines)
+##### <a id="U-combine"></a> [≡](#contents) [`U.combine([...any], fn)`](#U-combine)
+
+`U.combine` is a special purpose [Kefir](https://kefirjs.github.io/kefir/)
+observable property combinator designed for combining properties for a sink that
+accepts both observable properties and constant values such as the Reactive VDOM
+of [Karet](https://github.com/calmm-js/karet).
+
+Unlike typical property combinators, when `U.combine` is invoked with only
+constants (no properties), then the result is computed immediately and returned
+as a plain value.  This optimization eliminates redundant properties.
+
+The basic semantics of `U.combine` can be described as
+
+```js
+U.combine(xs, fn) === Kefir.combine(xs, fn).skipDuplicates(R.identical)
+```
+
+where [`Kefir.combine`](https://kefirjs.github.io/kefir/#combine) and
+[`skipDuplicates`](https://kefirjs.github.io/kefir/#skip-duplicates) come from
+Kefir and [`R.identical`](http://ramdajs.com/docs/#identical) from
+[Ramda](http://ramdajs.com/).  Duplicates are skipped, because that can reduce
+unnecessary updates.  Ramda's `R.identical` provides a semantics of equality
+that works well within the context of embedding properties to VDOM.
+
+Unlike with [`Kefir.combine`](https://kefirjs.github.io/kefir/#combine), any of
+the argument `xs` given to `U.combine` is allowed to be
+* a constant,
+* a property, or
+* a data structure of nested arrays and plain objects containing properties.
+
+In other words, `U.combine` also provides functionality similar to
+[`Bacon.combineTemplate`](https://github.com/baconjs/bacon.js#bacon-combinetemplate).
+
+Note: `U.combine` is carefully optimized for space&mdash;if you write equivalent
+combinations using Kefir's own operators, they will likely take more memory.
+
+##### <a id="U-combines"></a> [≡](#contents) ~~[`U.combines(...any[, fn])`](#U-combines)~~
+
+**WARNING: `combines` has been obsoleted.  Please use [`U.combine`](#U-combine),
+[`U.template`](#U-template), [`U.lift`](U-lift), or [`U.liftRec`](#U-liftRec)
+instead.**
 
 `U.combines` is a special purpose [Kefir](https://kefirjs.github.io/kefir/)
 observable combinator designed for combining properties for a sink that accepts
@@ -884,19 +926,41 @@ Note: `U.combines` is carefully optimized for space&mdash;if you write
 equivalent combinations using Kefir's own operators, they will likely take more
 memory.
 
-##### <a id="U-liftRec"></a> [≡](#contents) [`U.liftRec((...) => ...)`](#U-liftRec)
+##### <a id="U-lift"></a> [≡](#contents) [`U.lift((...) => ...)`](#U-lift)
 
-`U.liftRec` allows one to lift a function operating on plain values to a
-function that operates both on plain values and on observables.  When given only
-plain values, the resulting function returns a plain value.  When given
-observables, the resulting function returns an observable of results.
+`U.lift` allows one to lift a function operating on plain values to a function
+that operates both on plain values and on observable properties.  When given
+only plain values, the resulting function returns a plain value.  When given
+observable properties, the resulting function returns an observable property of
+results.  See also [`U.liftRec`](#U-liftRec)
 
 For example:
 
 ```js
-const includes = U.liftRec( (xs, x) => xs.includes(x) )
+const includes = U.lift( (xs, x) => xs.includes(x) )
 
 const obsOfBooleans = includes(obsOfArrays, obsOfValues)
+```
+
+`U.lift` works well for simple functions that do not return functions.  If you
+need to lift higher-order functions that return new functions that should also
+be lifted, try [`U.liftRec`](#U-liftRec).
+
+##### <a id="U-liftRec"></a> [≡](#contents) [`U.liftRec((...) => ...)`](#U-liftRec)
+
+`U.liftRec` allows one to lift a function operating on plain values to a
+function that operates both on plain values and on observable properties.  When
+given only plain values, the resulting function returns a plain value.  When
+given observable properties, the resulting function returns an observable
+property of results.  See also [`U.lift`](#U-lift).
+
+For example:
+
+```js
+const either = U.liftRec(R.either)
+const equals = U.lift(R.equals)
+
+const obsOfBooleans = either(R.equals(obs1), R.equals(obs2))
 ```
 
 `U.liftRec` is designed to be very simple to use.  For example, the [Kefir
