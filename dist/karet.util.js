@@ -226,6 +226,38 @@
     return op;
   }
 
+  // Animation -------------------------------------------------------------------
+
+  var Ticks = /*#__PURE__*/I.inherit(function Ticks(duration) {
+    var self = this;
+    K.Property.call(self);
+    self.d = duration;
+    self.s = self.i = 0;
+  }, K.Property, {
+    _onActivation: function _onActivation() {
+      var self = this;
+      var step = function step(t) {
+        if (!self.s) self.s = t;
+        var n = (t - self.s) / self.d;
+        if (1 < n) n = 1;
+        self._emitValue(n);
+        if (n < 1) {
+          self.i = requestAnimationFrame(step);
+        } else {
+          self._emitEnd();
+        }
+      };
+      self.i = requestAnimationFrame(step);
+    },
+    _onDeactivation: function _onDeactivation() {
+      cancelAnimationFrame(this.i);
+    }
+  });
+
+  var animationSpan = function (d) {
+    return typeof window === 'undefined' ? never : new Ticks(d);
+  };
+
   var combines = function () {
     warn(combines, '`combines` has been obsoleted.  Please use `combine`, `template`, `lift`, or `liftRec` instead.');
     return kefir_combines.combines.apply(null, arguments);
@@ -676,6 +708,7 @@
   exports.unless = unless;
   exports.when = when;
   exports.cond = cond;
+  exports.animationSpan = animationSpan;
   exports.combines = combines;
   exports.Bus = Bus;
   exports.bus = bus;

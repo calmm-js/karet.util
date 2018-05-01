@@ -1,7 +1,7 @@
 import { AbstractMutable, Atom, Molecule, Join } from 'kefir.atom';
 export { holding } from 'kefir.atom';
 import { Property, Observable, constant, concat, merge, interval, later, never, fromEvents, Stream, stream } from 'kefir';
-import { arityN, curry, pipe2U, identicalU, inherit, seq, seqPartial, id, isDefined, always, object0, isFunction } from 'infestines';
+import { arityN, curry, pipe2U, identicalU, inherit, always, seq, seqPartial, id, isDefined, object0, isFunction } from 'infestines';
 import { iso, join, flatten, when, get, find } from 'partial.lenses';
 import { combine, lift, liftRec } from 'karet.lift';
 export { combine, lift, liftRec } from 'karet.lift';
@@ -229,6 +229,40 @@ function cond(_) {
   }
   return op;
 }
+
+// Animation -------------------------------------------------------------------
+
+var Ticks = /*#__PURE__*/inherit(function Ticks(duration) {
+  var self = this;
+  Property.call(self);
+  self.d = duration;
+  self.s = self.i = 0;
+}, Property, {
+  _onActivation: function _onActivation() {
+    var self = this;
+    var step = function step(t) {
+      if (!self.s) self.s = t;
+      var n = (t - self.s) / self.d;
+      if (1 < n) n = 1;
+      self._emitValue(n);
+      if (n < 1) {
+        self.i = requestAnimationFrame(step);
+      } else {
+        self._emitEnd();
+      }
+    };
+    self.i = requestAnimationFrame(step);
+  },
+  _onDeactivation: function _onDeactivation() {
+    cancelAnimationFrame(this.i);
+  }
+});
+
+var animationSpan = process.env.NODE_ENV === 'production' ? typeof window === 'undefined' ? /*#__PURE__*/always(never$1) : function (d) {
+  return new Ticks(d);
+} : function (d) {
+  return typeof window === 'undefined' ? never$1 : new Ticks(d);
+};
 
 var combines$1 = process.env.NODE_ENV === 'production' ? combines : function () {
   warn(combines$1, '`combines` has been obsoleted.  Please use `combine`, `template`, `lift`, or `liftRec` instead.');
@@ -638,4 +672,4 @@ var mapElemsWithIds = /*#__PURE__*/curry(function (idL, xi2y, xs) {
   }, []), skipIdenticals);
 });
 
-export { debounce, changes, serially, parallel, delay, endWith, mapValue, flatMapParallel, flatMapSerial, flatMapErrors, flatMapLatest, foldPast, interval$1 as interval, later$1 as later, lazy, never$1 as never, on, sampledBy, skipFirst, skipDuplicates, skipIdenticals, skipUnless, skipWhen, startWith, sink, takeFirst, takeFirstErrors, takeUntilBy, toProperty, throttle, fromEvents$1 as fromEvents, ignoreValues, ignoreErrors, fromPromise, ifElse, unless, when$1 as when, cond, combines$1 as combines, Bus, bus, doPush, doError, doEnd, seq$1 as seq, seqPartial$1 as seqPartial, scope, template, tapPartial, toPartial, thru, through, show, onUnmount, Context, withContext, getProps, setProps, refTo, actions, preventDefault, stopPropagation, cns, parse, stringify, abs, acos, acosh, asin, asinh, atan, atan2, atanh, cbrt, ceil, clz32, cos, cosh, exp, expm1, floor, fround, hypot, imul, log, log10, log1p, log2, max, min, pow, round, sign, sin, sinh, sqrt, tan, tanh, trunc, string, atom, variable, molecule, set, doModify, doSet, doRemove, view, mapElems, mapElemsWithIds };
+export { debounce, changes, serially, parallel, delay, endWith, mapValue, flatMapParallel, flatMapSerial, flatMapErrors, flatMapLatest, foldPast, interval$1 as interval, later$1 as later, lazy, never$1 as never, on, sampledBy, skipFirst, skipDuplicates, skipIdenticals, skipUnless, skipWhen, startWith, sink, takeFirst, takeFirstErrors, takeUntilBy, toProperty, throttle, fromEvents$1 as fromEvents, ignoreValues, ignoreErrors, fromPromise, ifElse, unless, when$1 as when, cond, animationSpan, combines$1 as combines, Bus, bus, doPush, doError, doEnd, seq$1 as seq, seqPartial$1 as seqPartial, scope, template, tapPartial, toPartial, thru, through, show, onUnmount, Context, withContext, getProps, setProps, refTo, actions, preventDefault, stopPropagation, cns, parse, stringify, abs, acos, acosh, asin, asinh, atan, atan2, atanh, cbrt, ceil, clz32, cos, cosh, exp, expm1, floor, fround, hypot, imul, log, log10, log1p, log2, max, min, pow, round, sign, sin, sinh, sqrt, tan, tanh, trunc, string, atom, variable, molecule, set, doModify, doSet, doRemove, view, mapElems, mapElemsWithIds };
