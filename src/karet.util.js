@@ -151,6 +151,43 @@ export function cond(_) {
   return op
 }
 
+// Animation -------------------------------------------------------------------
+
+const Ticks = I.inherit(
+  function Ticks(duration) {
+    const self = this
+    K.Property.call(self)
+    self.d = duration
+    self.s = self.i = 0
+  },
+  K.Property,
+  {
+    _onActivation() {
+      const self = this
+      const step = t => {
+        if (!self.s) self.s = t
+        let n = (t - self.s) / self.d
+        if (1 < n) n = 1
+        self._emitValue(n)
+        if (n < 1) {
+          self.i = requestAnimationFrame(step)
+        } else {
+          self._emitEnd()
+        }
+      }
+      self.i = requestAnimationFrame(step)
+    },
+    _onDeactivation() {
+      cancelAnimationFrame(this.i)
+    }
+  }
+)
+
+export const animationSpan =
+  process.env.NODE_ENV === 'production'
+    ? typeof window === 'undefined' ? I.always(never) : d => new Ticks(d)
+    : d => (typeof window === 'undefined' ? never : new Ticks(d))
+
 // Lifting ---------------------------------------------------------------------
 
 export {combine, lift, liftRec} from 'karet.lift'

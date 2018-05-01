@@ -471,3 +471,22 @@ describe('obsoleted', () => {
   testEq(2, () => U.seq(1, R.inc))
   testEq(2, () => U.seqPartial(1, R.inc))
 })
+
+describe('animationSpan', () => {
+  testEq([0, 0.25, 0.5, 0.75, 1, 'done'], () => {
+    global.window = 1
+    global.cancelAnimationFrame = () => {}
+    let i = 0
+    global.requestAnimationFrame = step => {
+      setTimeout(() => step(500 * ++i), 0)
+    }
+    const values = []
+    return U.thru(
+      U.serially([U.animationSpan(2000), 'done']),
+      U.toProperty,
+      R.tap(x => values.push(x)),
+      U.skipUnless(R.equals('done')),
+      U.mapValue(_ => values)
+    )
+  })
+})
