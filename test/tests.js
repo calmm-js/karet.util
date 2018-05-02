@@ -139,6 +139,18 @@ describe('U.sink', () => {
   testEq(undefined, () => U.sink(C('lol')))
 })
 
+describe('U.consume', () => {
+  testEq(undefined, () => U.consume(console.log, U.never))
+  testEq([undefined, [-3, -2, -1]], () => {
+    const values = []
+    return U.thru(
+      U.serially([1, 2, 3]),
+      U.consume(x => values.unshift(-x)),
+      U.flatMapLatest(x => [x, values])
+    )
+  })
+})
+
 describe('U.string', () => {
   testEq('Hello!', () => U.string`Hello!`)
   testEq('Hello, constant!', () => U.string`Hello, ${'constant'}!`)

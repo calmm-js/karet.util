@@ -41,7 +41,6 @@ export const changes = xs => toConstant(xs).changes()
 export const serially = xs => K.concat(xs.map(toConstant))
 export const parallel = K.merge
 export const delay = I.curry((ms, xs) => toConstant(xs).delay(ms))
-export const endWith = I.curry((v, xs) => toConstant(xs).concat(toConstant(v)))
 export const mapValue = I.curry((fn, xs) => toConstant(xs).map(fn))
 export const flatMapParallel = I.curry((fn, xs) =>
   toConstant(xs).flatMap(I.pipe2U(fn, toConstant))
@@ -58,7 +57,6 @@ export const flatMapLatest = I.curry((fn, xs) =>
 export const foldPast = I.curry((fn, s, xs) => toConstant(xs).scan(fn, s))
 export const interval = I.curry(K.interval)
 export const later = I.curry(K.later)
-export const lazy = th => toProperty(flatMapLatest(th, toProperty()))
 export const never = K.never()
 export const on = I.curry((efs, xs) => toConstant(xs).onAny(toHandler(efs)))
 export const sampledBy = I.curry((es, xs) => toConstant(xs).sampledBy(es))
@@ -66,11 +64,7 @@ export const skipFirst = I.curry((n, xs) => toConstant(xs).skip(n))
 export const skipDuplicates = I.curry((equals, xs) =>
   toConstant(xs).skipDuplicates(equals)
 )
-export const skipIdenticals = skipDuplicates(I.identicalU)
 export const skipUnless = I.curry((p, xs) => toConstant(xs).filter(p))
-export const skipWhen = I.curry((p, xs) => toConstant(xs).filter(x => !p(x)))
-export const startWith = I.curry((x, xs) => toConstant(xs).toProperty(() => x))
-export const sink = I.pipe2U(startWith(undefined), F.lift(toUndefined))
 export const takeFirst = I.curry((n, xs) => toConstant(xs).take(n))
 export const takeFirstErrors = I.curry((n, xs) => toConstant(xs).takeErrors(n))
 export const takeUntilBy = I.curry((ts, xs) => toConstant(xs).takeUntilBy(ts))
@@ -80,7 +74,17 @@ export const fromEvents = I.curry(K.fromEvents)
 export const ignoreValues = s => s.ignoreValues()
 export const ignoreErrors = s => s.ignoreErrors()
 
-// Promises --------------------------------------------------------------------
+// Additional ------------------------------------------------------------------
+
+export const startWith = I.curry((x, xs) => toConstant(xs).toProperty(() => x))
+export const sink = I.pipe2U(startWith(undefined), F.lift(toUndefined))
+
+export const consume = I.pipe2U(mapValue, sink)
+export const endWith = I.curry((v, xs) => toConstant(xs).concat(toConstant(v)))
+export const lazy = th => toProperty(flatMapLatest(th, toProperty()))
+export const skipIdenticals = skipDuplicates(I.identicalU)
+export const skipWhen = I.curry((p, xs) => toConstant(xs).filter(x => !p(x)))
+export const template = observables => F.combine([observables], I.id)
 
 const FromPromise = I.inherit(
   function FromPromise(makePromise) {
@@ -251,8 +255,6 @@ export const seqPartial =
       }
 
 export const scope = fn => fn()
-
-export const template = observables => F.combine([observables], I.id)
 
 export const tapPartial = F.lift(
   I.curry((effect, data) => {

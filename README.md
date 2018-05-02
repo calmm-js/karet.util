@@ -106,6 +106,7 @@ A collection of utilities for working with
       * [`U.throttle(ms, observable)`](https://kefirjs.github.io/kefir/#throttle)
       * [`U.toProperty(observable)`](https://kefirjs.github.io/kefir/#to-property)
     * [Additional combinators](#additional-combinators)
+      * [`U.consume(action, observable)`](#U-consume)
       * [`U.endWith(value, observable)`](#U-endWith)
       * [`U.fromPromise(() => promise | {ready, abort})`](#U-fromPromise)
       * [`U.lazy(() => observable)`](#U-lazy)
@@ -1024,6 +1025,13 @@ The following are simply links to the relevant
 
 #### <a id="additional-combinators"></a> [≡](#contents) [Additional combinators](#additional-combinators)
 
+##### <a id="U-consume"></a> [≡](#contents) [`U.consume(action, observable)`](#U-consume)
+
+`U.consume` creates a property that simply immediately produces `undefined` and
+subscribes to the given observable whose values it passes to the given action
+for as long as the returned property is subscribed to.  See also
+[`U.sink`](#U-sink).
+
 ##### <a id="U-endWith"></a> [≡](#contents) [`U.endWith(value, observable)`](#U-endWith)
 
 `U.endWith` creates an observable that ends with the given value.  That is,
@@ -1084,7 +1092,7 @@ Note that `U.fromPromise` is not the same as Kefir's
 
 `U.sink` creates a property that simply immediately produces `undefined` and
 subscribes to the given observable for as long as the returned sink is
-subscribed to.
+subscribed to.  See also [`U.consume`](#U-consume).
 
 ##### <a id="U-skipIdenticals"></a> [≡](#contents) [`U.skipIdenticals(observable)`](#U-skipIdenticals)
 
