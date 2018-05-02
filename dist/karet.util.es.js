@@ -1,7 +1,7 @@
 import { AbstractMutable, Atom, Molecule, Join } from 'kefir.atom';
 export { holding } from 'kefir.atom';
 import { Property, Observable, constant, concat, merge, interval, later, never, fromEvents, Stream, stream } from 'kefir';
-import { arityN, curry, pipe2U, identicalU, inherit, always, seq, seqPartial, id, isDefined, object0, isFunction } from 'infestines';
+import { arityN, curry, pipe2U, identicalU, id, inherit, always, seq, seqPartial, isDefined, object0, isFunction } from 'infestines';
 import { iso, join, flatten, when, get, find } from 'partial.lenses';
 import { combine, lift, liftRec } from 'karet.lift';
 export { combine, lift, liftRec } from 'karet.lift';
@@ -80,9 +80,6 @@ var parallel = merge;
 var delay = /*#__PURE__*/curry(function (ms, xs) {
   return toConstant(xs).delay(ms);
 });
-var endWith = /*#__PURE__*/curry(function (v, xs) {
-  return toConstant(xs).concat(toConstant(v));
-});
 var mapValue = /*#__PURE__*/curry(function (fn, xs) {
   return toConstant(xs).map(fn);
 });
@@ -103,9 +100,6 @@ var foldPast = /*#__PURE__*/curry(function (fn, s, xs) {
 });
 var interval$1 = /*#__PURE__*/curry(interval);
 var later$1 = /*#__PURE__*/curry(later);
-var lazy = function lazy(th) {
-  return toProperty(flatMapLatest(th, toProperty()));
-};
 var never$1 = /*#__PURE__*/never();
 var on = /*#__PURE__*/curry(function (efs, xs) {
   return toConstant(xs).onAny(toHandler(efs));
@@ -119,21 +113,9 @@ var skipFirst = /*#__PURE__*/curry(function (n, xs) {
 var skipDuplicates = /*#__PURE__*/curry(function (equals, xs) {
   return toConstant(xs).skipDuplicates(equals);
 });
-var skipIdenticals = /*#__PURE__*/skipDuplicates(identicalU);
 var skipUnless = /*#__PURE__*/curry(function (p, xs) {
   return toConstant(xs).filter(p);
 });
-var skipWhen = /*#__PURE__*/curry(function (p, xs) {
-  return toConstant(xs).filter(function (x) {
-    return !p(x);
-  });
-});
-var startWith = /*#__PURE__*/curry(function (x, xs) {
-  return toConstant(xs).toProperty(function () {
-    return x;
-  });
-});
-var sink = /*#__PURE__*/pipe2U( /*#__PURE__*/startWith(undefined), /*#__PURE__*/lift(toUndefined));
 var takeFirst = /*#__PURE__*/curry(function (n, xs) {
   return toConstant(xs).take(n);
 });
@@ -157,7 +139,31 @@ var ignoreErrors = function ignoreErrors(s) {
   return s.ignoreErrors();
 };
 
-// Promises --------------------------------------------------------------------
+// Additional ------------------------------------------------------------------
+
+var startWith = /*#__PURE__*/curry(function (x, xs) {
+  return toConstant(xs).toProperty(function () {
+    return x;
+  });
+});
+var sink = /*#__PURE__*/pipe2U( /*#__PURE__*/startWith(undefined), /*#__PURE__*/lift(toUndefined));
+
+var consume = /*#__PURE__*/pipe2U(mapValue, sink);
+var endWith = /*#__PURE__*/curry(function (v, xs) {
+  return toConstant(xs).concat(toConstant(v));
+});
+var lazy = function lazy(th) {
+  return toProperty(flatMapLatest(th, toProperty()));
+};
+var skipIdenticals = /*#__PURE__*/skipDuplicates(identicalU);
+var skipWhen = /*#__PURE__*/curry(function (p, xs) {
+  return toConstant(xs).filter(function (x) {
+    return !p(x);
+  });
+});
+var template = function template(observables) {
+  return combine([observables], id);
+};
 
 var FromPromise = /*#__PURE__*/inherit(function FromPromise(makePromise) {
   Property.call(this);
@@ -305,10 +311,6 @@ var seqPartial$1 = process.env.NODE_ENV === 'production' ? seqPartial : function
 
 var scope = function scope(fn) {
   return fn();
-};
-
-var template = function template(observables) {
-  return combine([observables], id);
 };
 
 var tapPartial = /*#__PURE__*/lift( /*#__PURE__*/curry(function (effect, data) {
@@ -672,4 +674,4 @@ var mapElemsWithIds = /*#__PURE__*/curry(function (idL, xi2y, xs) {
   }, []), skipIdenticals);
 });
 
-export { debounce, changes, serially, parallel, delay, endWith, mapValue, flatMapParallel, flatMapSerial, flatMapErrors, flatMapLatest, foldPast, interval$1 as interval, later$1 as later, lazy, never$1 as never, on, sampledBy, skipFirst, skipDuplicates, skipIdenticals, skipUnless, skipWhen, startWith, sink, takeFirst, takeFirstErrors, takeUntilBy, toProperty, throttle, fromEvents$1 as fromEvents, ignoreValues, ignoreErrors, fromPromise, ifElse, unless, when$1 as when, cond, animationSpan, combines$1 as combines, Bus, bus, doPush, doError, doEnd, seq$1 as seq, seqPartial$1 as seqPartial, scope, template, tapPartial, toPartial, thru, through, show, onUnmount, Context, withContext, getProps, setProps, refTo, actions, preventDefault, stopPropagation, cns, parse, stringify, abs, acos, acosh, asin, asinh, atan, atan2, atanh, cbrt, ceil, clz32, cos, cosh, exp, expm1, floor, fround, hypot, imul, log, log10, log1p, log2, max, min, pow, round, sign, sin, sinh, sqrt, tan, tanh, trunc, string, atom, variable, molecule, set, doModify, doSet, doRemove, view, mapElems, mapElemsWithIds };
+export { debounce, changes, serially, parallel, delay, mapValue, flatMapParallel, flatMapSerial, flatMapErrors, flatMapLatest, foldPast, interval$1 as interval, later$1 as later, never$1 as never, on, sampledBy, skipFirst, skipDuplicates, skipUnless, takeFirst, takeFirstErrors, takeUntilBy, toProperty, throttle, fromEvents$1 as fromEvents, ignoreValues, ignoreErrors, startWith, sink, consume, endWith, lazy, skipIdenticals, skipWhen, template, fromPromise, ifElse, unless, when$1 as when, cond, animationSpan, combines$1 as combines, Bus, bus, doPush, doError, doEnd, seq$1 as seq, seqPartial$1 as seqPartial, scope, tapPartial, toPartial, thru, through, show, onUnmount, Context, withContext, getProps, setProps, refTo, actions, preventDefault, stopPropagation, cns, parse, stringify, abs, acos, acosh, asin, asinh, atan, atan2, atanh, cbrt, ceil, clz32, cos, cosh, exp, expm1, floor, fround, hypot, imul, log, log10, log1p, log2, max, min, pow, round, sign, sin, sinh, sqrt, tan, tanh, trunc, string, atom, variable, molecule, set, doModify, doSet, doRemove, view, mapElems, mapElemsWithIds };

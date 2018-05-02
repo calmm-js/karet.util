@@ -82,9 +82,6 @@ var parallel = K.merge;
 var delay = /*#__PURE__*/I.curry(function (ms, xs) {
   return toConstant(xs).delay(ms);
 });
-var endWith = /*#__PURE__*/I.curry(function (v, xs) {
-  return toConstant(xs).concat(toConstant(v));
-});
 var mapValue = /*#__PURE__*/I.curry(function (fn, xs) {
   return toConstant(xs).map(fn);
 });
@@ -105,9 +102,6 @@ var foldPast = /*#__PURE__*/I.curry(function (fn, s, xs) {
 });
 var interval = /*#__PURE__*/I.curry(K.interval);
 var later = /*#__PURE__*/I.curry(K.later);
-var lazy = function lazy(th) {
-  return toProperty(flatMapLatest(th, toProperty()));
-};
 var never = /*#__PURE__*/K.never();
 var on = /*#__PURE__*/I.curry(function (efs, xs) {
   return toConstant(xs).onAny(toHandler(efs));
@@ -121,21 +115,9 @@ var skipFirst = /*#__PURE__*/I.curry(function (n, xs) {
 var skipDuplicates = /*#__PURE__*/I.curry(function (equals, xs) {
   return toConstant(xs).skipDuplicates(equals);
 });
-var skipIdenticals = /*#__PURE__*/skipDuplicates(I.identicalU);
 var skipUnless = /*#__PURE__*/I.curry(function (p, xs) {
   return toConstant(xs).filter(p);
 });
-var skipWhen = /*#__PURE__*/I.curry(function (p, xs) {
-  return toConstant(xs).filter(function (x) {
-    return !p(x);
-  });
-});
-var startWith = /*#__PURE__*/I.curry(function (x, xs) {
-  return toConstant(xs).toProperty(function () {
-    return x;
-  });
-});
-var sink = /*#__PURE__*/I.pipe2U( /*#__PURE__*/startWith(undefined), /*#__PURE__*/F.lift(toUndefined));
 var takeFirst = /*#__PURE__*/I.curry(function (n, xs) {
   return toConstant(xs).take(n);
 });
@@ -159,7 +141,31 @@ var ignoreErrors = function ignoreErrors(s) {
   return s.ignoreErrors();
 };
 
-// Promises --------------------------------------------------------------------
+// Additional ------------------------------------------------------------------
+
+var startWith = /*#__PURE__*/I.curry(function (x, xs) {
+  return toConstant(xs).toProperty(function () {
+    return x;
+  });
+});
+var sink = /*#__PURE__*/I.pipe2U( /*#__PURE__*/startWith(undefined), /*#__PURE__*/F.lift(toUndefined));
+
+var consume = /*#__PURE__*/I.pipe2U(mapValue, sink);
+var endWith = /*#__PURE__*/I.curry(function (v, xs) {
+  return toConstant(xs).concat(toConstant(v));
+});
+var lazy = function lazy(th) {
+  return toProperty(flatMapLatest(th, toProperty()));
+};
+var skipIdenticals = /*#__PURE__*/skipDuplicates(I.identicalU);
+var skipWhen = /*#__PURE__*/I.curry(function (p, xs) {
+  return toConstant(xs).filter(function (x) {
+    return !p(x);
+  });
+});
+var template = function template(observables) {
+  return F.combine([observables], I.id);
+};
 
 var FromPromise = /*#__PURE__*/I.inherit(function FromPromise(makePromise) {
   K.Property.call(this);
@@ -307,10 +313,6 @@ var seqPartial = process.env.NODE_ENV === 'production' ? I.seqPartial : function
 
 var scope = function scope(fn) {
   return fn();
-};
-
-var template = function template(observables) {
-  return F.combine([observables], I.id);
 };
 
 var tapPartial = /*#__PURE__*/F.lift( /*#__PURE__*/I.curry(function (effect, data) {
@@ -683,7 +685,6 @@ exports.changes = changes;
 exports.serially = serially;
 exports.parallel = parallel;
 exports.delay = delay;
-exports.endWith = endWith;
 exports.mapValue = mapValue;
 exports.flatMapParallel = flatMapParallel;
 exports.flatMapSerial = flatMapSerial;
@@ -692,17 +693,12 @@ exports.flatMapLatest = flatMapLatest;
 exports.foldPast = foldPast;
 exports.interval = interval;
 exports.later = later;
-exports.lazy = lazy;
 exports.never = never;
 exports.on = on;
 exports.sampledBy = sampledBy;
 exports.skipFirst = skipFirst;
 exports.skipDuplicates = skipDuplicates;
-exports.skipIdenticals = skipIdenticals;
 exports.skipUnless = skipUnless;
-exports.skipWhen = skipWhen;
-exports.startWith = startWith;
-exports.sink = sink;
 exports.takeFirst = takeFirst;
 exports.takeFirstErrors = takeFirstErrors;
 exports.takeUntilBy = takeUntilBy;
@@ -711,6 +707,14 @@ exports.throttle = throttle;
 exports.fromEvents = fromEvents;
 exports.ignoreValues = ignoreValues;
 exports.ignoreErrors = ignoreErrors;
+exports.startWith = startWith;
+exports.sink = sink;
+exports.consume = consume;
+exports.endWith = endWith;
+exports.lazy = lazy;
+exports.skipIdenticals = skipIdenticals;
+exports.skipWhen = skipWhen;
+exports.template = template;
 exports.fromPromise = fromPromise;
 exports.ifElse = ifElse;
 exports.unless = unless;
@@ -726,7 +730,6 @@ exports.doEnd = doEnd;
 exports.seq = seq;
 exports.seqPartial = seqPartial;
 exports.scope = scope;
-exports.template = template;
 exports.tapPartial = tapPartial;
 exports.toPartial = toPartial;
 exports.thru = thru;
