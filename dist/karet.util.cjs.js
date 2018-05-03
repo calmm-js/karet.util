@@ -541,6 +541,13 @@ var cns = /*#__PURE__*/F.lift(function () {
 var parse = /*#__PURE__*/F.lift(JSON.parse);
 var stringify = /*#__PURE__*/F.lift(JSON.stringify);
 
+// URIs ------------------------------------------------------------------------
+
+var du = /*#__PURE__*/F.lift(decodeURI);
+var duc = /*#__PURE__*/F.lift(decodeURIComponent);
+var eu = /*#__PURE__*/F.lift(encodeURI);
+var euc = /*#__PURE__*/F.lift(encodeURIComponent);
+
 // Math ------------------------------------------------------------------------
 
 var abs = /*#__PURE__*/F.lift(Math.abs);
@@ -747,6 +754,10 @@ exports.stopPropagation = stopPropagation;
 exports.cns = cns;
 exports.parse = parse;
 exports.stringify = stringify;
+exports.decodeURI = du;
+exports.decodeURIComponent = duc;
+exports.encodeURI = eu;
+exports.encodeURIComponent = euc;
 exports.abs = abs;
 exports.acos = acos;
 exports.acosh = acosh;
