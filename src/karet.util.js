@@ -427,6 +427,20 @@ export const cns = F.lift((...xs) => cnsImmediate(xs) || undefined)
 export const parse = F.lift(JSON.parse)
 export const stringify = F.lift(JSON.stringify)
 
+// URIs ------------------------------------------------------------------------
+
+const du = F.lift(decodeURI)
+const duc = F.lift(decodeURIComponent)
+const eu = F.lift(encodeURI)
+const euc = F.lift(encodeURIComponent)
+
+export {
+  du as decodeURI,
+  duc as decodeURIComponent,
+  eu as encodeURI,
+  euc as encodeURIComponent
+}
+
 // Math ------------------------------------------------------------------------
 
 export const abs = F.lift(Math.abs)
