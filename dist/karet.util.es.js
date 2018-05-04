@@ -1,9 +1,9 @@
 import { AbstractMutable, Atom, Molecule, Join } from 'kefir.atom';
 export { holding } from 'kefir.atom';
-import { Property, Observable, constant, concat, merge, interval, later, never, fromEvents, Stream, stream } from 'kefir';
+import { Observable, Property, Stream, constant, concat, merge, interval, later, never, fromEvents, combine, stream } from 'kefir';
 import { arityN, curry, pipe2U, identicalU, id, inherit, always, seq, seqPartial, isDefined, object0, isFunction } from 'infestines';
-import { iso, join, flatten, when, get, find } from 'partial.lenses';
-import { combine, lift, liftRec } from 'karet.lift';
+import { iso, get, join, flatten, when, find } from 'partial.lenses';
+import { combine as combine$1, lift, liftRec } from 'karet.lift';
 export { combine, lift, liftRec } from 'karet.lift';
 import { createContext, createElement } from 'react';
 import { combines } from 'kefir.combines';
@@ -25,7 +25,7 @@ var doN = function doN(n, method) {
       params[_key - 1] = arguments[_key];
     }
 
-    return combine(params, function () {
+    return combine$1(params, function () {
       for (var _len2 = arguments.length, params = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
         params[_key2] = arguments[_key2];
       }
@@ -42,11 +42,14 @@ var doN = function doN(n, method) {
 var isMutable = function isMutable(x) {
   return x instanceof AbstractMutable;
 };
+var isObservable = function isObservable(x) {
+  return x instanceof Observable;
+};
 var isProperty = function isProperty(x) {
   return x instanceof Property;
 };
-var isObservable = function isObservable(x) {
-  return x instanceof Observable;
+var isStream = function isStream(x) {
+  return x instanceof Stream;
 };
 
 var toUndefined = function toUndefined(_) {};
@@ -162,7 +165,7 @@ var skipWhen = /*#__PURE__*/curry(function (p, xs) {
   });
 });
 var template = function template(observables) {
-  return combine([observables], id);
+  return combine$1([observables], id);
 };
 
 var FromPromise = /*#__PURE__*/inherit(function FromPromise(makePromise) {
@@ -399,7 +402,9 @@ function show(_) {
   var xs = Array(n);
   for (var i = 0; i < n; ++i) {
     xs[i] = arguments[i];
-  }return view(combine(xs, showIso), arguments[n]);
+  }var iso$$1 = combine$1(xs, showIso);
+  var s = arguments[n];
+  return isStream(s) ? isProperty(iso$$1) ? combine([iso$$1, s], get) : mapValue(get(iso$$1), s) : view(iso$$1, s);
 }
 
 // React ///////////////////////////////////////////////////////////////////////
@@ -604,7 +609,7 @@ var molecule = function molecule(template) {
 // Side-effects ----------------------------------------------------------------
 
 var set = /*#__PURE__*/curry(function (settable, xs) {
-  var ss = combine([xs], function (xs) {
+  var ss = combine$1([xs], function (xs) {
     return settable.set(xs);
   });
   if (isProperty(ss)) return ss.toProperty(toUndefined);
@@ -620,11 +625,11 @@ var doRemove = /*#__PURE__*/doN(0, 'remove');
 
 var view = /*#__PURE__*/curry(function (l, xs) {
   if (isMutable(xs)) {
-    return isProperty(template(l)) ? new Join(combine([l], function (l) {
+    return isProperty(template(l)) ? new Join(combine$1([l], function (l) {
       return xs.view(l);
     })) : xs.view(l);
   } else {
-    return combine([l, xs], get);
+    return combine$1([l, xs], get);
   }
 });
 

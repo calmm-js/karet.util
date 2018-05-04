@@ -44,11 +44,14 @@ var doN = function doN(n, method) {
 var isMutable = function isMutable(x) {
   return x instanceof A.AbstractMutable;
 };
+var isObservable = function isObservable(x) {
+  return x instanceof K.Observable;
+};
 var isProperty = function isProperty(x) {
   return x instanceof K.Property;
 };
-var isObservable = function isObservable(x) {
-  return x instanceof K.Observable;
+var isStream = function isStream(x) {
+  return x instanceof K.Stream;
 };
 
 var toUndefined = function toUndefined(_) {};
@@ -401,7 +404,9 @@ function show(_) {
   var xs = Array(n);
   for (var i = 0; i < n; ++i) {
     xs[i] = arguments[i];
-  }return view(F.combine(xs, showIso), arguments[n]);
+  }var iso = F.combine(xs, showIso);
+  var s = arguments[n];
+  return isStream(s) ? isProperty(iso) ? K.combine([iso, s], L.get) : mapValue(L.get(iso), s) : view(iso, s);
 }
 
 // React ///////////////////////////////////////////////////////////////////////

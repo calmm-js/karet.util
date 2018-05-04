@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.18.10
+
+Fixed `show` to also work with Kefir streams.
+
 ## 0.18.6
 
 Marked `combines` as obsolete.  It uses the old Kefir Combines library and has
