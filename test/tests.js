@@ -421,7 +421,7 @@ describe('Kefir', () => {
 const laterPromise = (ms, value) =>
   new Promise(fulfill => setTimeout(() => fulfill(value), ms))
 
-describe('fromPromise', () => {
+describe('U.fromPromise', () => {
   testEq(1, () => U.fromPromise(() => laterPromise(25, 1)))
 
   testEq(3, () =>
@@ -475,16 +475,7 @@ describe('fromPromise', () => {
   )
 })
 
-describe('combines', () => {
-  testEq(3, () => U.combines(1, 2, R.add))
-})
-
-describe('obsoleted', () => {
-  testEq(2, () => U.seq(1, R.inc))
-  testEq(2, () => U.seqPartial(1, R.inc))
-})
-
-describe('animationSpan', () => {
+describe('U.animationSpan', () => {
   testEq([0, 0.25, 0.5, 0.75, 1, 'done'], () => {
     global.window = 1
     global.cancelAnimationFrame = () => {}
@@ -501,4 +492,10 @@ describe('animationSpan', () => {
       U.mapValue(_ => values)
     )
   })
+})
+
+describe('obsoleted', () => {
+  testEq(2, () => U.seq(1, R.inc))
+  testEq(2, () => U.seqPartial(1, R.inc))
+  testEq(3, () => U.combines(1, 2, R.add))
 })
