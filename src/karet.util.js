@@ -25,8 +25,9 @@ const doN = (n, method) =>
 // Kefir ///////////////////////////////////////////////////////////////////////
 
 const isMutable = x => x instanceof A.AbstractMutable
-const isProperty = x => x instanceof K.Property
 const isObservable = x => x instanceof K.Observable
+const isProperty = x => x instanceof K.Property
+const isStream = x => x instanceof K.Stream
 
 const toUndefined = _ => {}
 const toConstant = x => (isObservable(x) ? x : K.constant(x))
@@ -327,7 +328,11 @@ export function show(_) {
   const n = arguments.length - 1
   const xs = Array(n)
   for (let i = 0; i < n; ++i) xs[i] = arguments[i]
-  return view(F.combine(xs, showIso), arguments[n])
+  const iso = F.combine(xs, showIso)
+  const s = arguments[n]
+  return isStream(s)
+    ? isProperty(iso) ? K.combine([iso, s], L.get) : mapValue(L.get(iso), s)
+    : view(iso, s)
 }
 
 // React ///////////////////////////////////////////////////////////////////////
