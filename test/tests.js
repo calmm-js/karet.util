@@ -2,7 +2,7 @@ import * as L from 'kefir.partial.lenses'
 import * as R from 'kefir.ramda'
 import * as React from 'karet'
 import ReactDOM from 'react-dom/server'
-import {Observable, constant as C} from 'kefir'
+import {Observable, Property, Stream, constant as C} from 'kefir'
 
 import {AbstractMutable} from 'kefir.atom'
 import * as U from '../dist/karet.util.cjs'
@@ -26,7 +26,8 @@ const toExpr = f =>
     .replace(/function\s*(\([a-zA-Z]*\))\s*/g, '$1 => ')
     .replace(/{\s*return\s*([^{;]+)\s*;\s*}/g, '$1')
     .replace(/\(([a-zA-Z0-9_]+)\) =>/g, '$1 =>')
-    .replace(/\(0, _kefir[^.]*.constant\)/g, 'C')
+    .replace(/\(0, _kefir[^.]*[.]constant\)/g, 'C')
+    .replace(/_kefir[^.][.]/g, '')
 
 const testEq = (expect, thunk) =>
   it(`${toExpr(thunk)} => ${show(expect)}`, done => {
@@ -255,7 +256,9 @@ describe('U.show', () => {
   testEq('any', () => U.show('any'))
   testEq('string', () => typeof U.show('any'))
   testEq('whatever', () => U.show(C('whatever')))
-  testEq(true, () => U.show(C('whatever')) instanceof Observable)
+  testEq(true, () => U.show(U.interval(0, 'whatever')) instanceof Stream)
+  testEq('whatever', () => U.show(U.interval(0, 'whatever')))
+  testEq(true, () => U.show(C('whatever')) instanceof Property)
   testEq('whatever', () => U.show(U.atom('whatever')))
   testEq(true, () => U.show(U.atom('whatever')) instanceof AbstractMutable)
   testEq(true, () => {
