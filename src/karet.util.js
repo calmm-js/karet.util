@@ -30,61 +30,68 @@ const isProperty = x => x instanceof K.Property
 const isStream = x => x instanceof K.Stream
 
 const toUndefined = _ => {}
-const toConstant = x => (isObservable(x) ? x : K.constant(x))
+const toObservable = x => (isObservable(x) ? x : K.constant(x))
 
 const invokeIf = (fn, x) => fn && fn(x)
 const toHandler = fns => ({type, value}) => invokeIf(fns[type], value)
 
 // Curried ---------------------------------------------------------------------
 
-export const debounce = I.curry((ms, xs) => toConstant(xs).debounce(ms))
-export const changes = xs => toConstant(xs).changes()
-export const serially = xs => K.concat(xs.map(toConstant))
+export const debounce = I.curry((ms, xs) => toObservable(xs).debounce(ms))
+export const changes = xs => toObservable(xs).changes()
+export const serially = xs => K.concat(xs.map(toObservable))
 export const parallel = K.merge
-export const delay = I.curry((ms, xs) => toConstant(xs).delay(ms))
-export const mapValue = I.curry((fn, xs) => toConstant(xs).map(fn))
+export const delay = I.curry((ms, xs) => toObservable(xs).delay(ms))
+export const mapValue = I.curry((fn, xs) => toObservable(xs).map(fn))
 export const flatMapParallel = I.curry((fn, xs) =>
-  toConstant(xs).flatMap(I.pipe2U(fn, toConstant))
+  toObservable(xs).flatMap(I.pipe2U(fn, toObservable))
 )
 export const flatMapSerial = I.curry((fn, xs) =>
-  toConstant(xs).flatMapConcat(I.pipe2U(fn, toConstant))
+  toObservable(xs).flatMapConcat(I.pipe2U(fn, toObservable))
 )
 export const flatMapErrors = I.curry((fn, xs) =>
-  toConstant(xs).flatMapErrors(I.pipe2U(fn, toConstant))
+  toObservable(xs).flatMapErrors(I.pipe2U(fn, toObservable))
 )
 export const flatMapLatest = I.curry((fn, xs) =>
-  toConstant(xs).flatMapLatest(I.pipe2U(fn, toConstant))
+  toObservable(xs).flatMapLatest(I.pipe2U(fn, toObservable))
 )
-export const foldPast = I.curry((fn, s, xs) => toConstant(xs).scan(fn, s))
+export const foldPast = I.curry((fn, s, xs) => toObservable(xs).scan(fn, s))
 export const interval = I.curry(K.interval)
 export const later = I.curry(K.later)
 export const never = K.never()
-export const on = I.curry((efs, xs) => toConstant(xs).onAny(toHandler(efs)))
-export const sampledBy = I.curry((es, xs) => toConstant(xs).sampledBy(es))
-export const skipFirst = I.curry((n, xs) => toConstant(xs).skip(n))
+export const on = I.curry((efs, xs) => toObservable(xs).onAny(toHandler(efs)))
+export const sampledBy = I.curry((es, xs) => toObservable(xs).sampledBy(es))
+export const skipFirst = I.curry((n, xs) => toObservable(xs).skip(n))
 export const skipDuplicates = I.curry((equals, xs) =>
-  toConstant(xs).skipDuplicates(equals)
+  toObservable(xs).skipDuplicates(equals)
 )
-export const skipUnless = I.curry((p, xs) => toConstant(xs).filter(p))
-export const takeFirst = I.curry((n, xs) => toConstant(xs).take(n))
-export const takeFirstErrors = I.curry((n, xs) => toConstant(xs).takeErrors(n))
-export const takeUntilBy = I.curry((ts, xs) => toConstant(xs).takeUntilBy(ts))
-export const toProperty = xs => toConstant(xs).toProperty()
-export const throttle = I.curry((ms, xs) => toConstant(xs).throttle(ms))
+export const skipUnless = I.curry((p, xs) => toObservable(xs).filter(p))
+export const takeFirst = I.curry((n, xs) => toObservable(xs).take(n))
+export const takeFirstErrors = I.curry((n, xs) =>
+  toObservable(xs).takeErrors(n)
+)
+export const takeUntilBy = I.curry((ts, xs) => toObservable(xs).takeUntilBy(ts))
+export const toProperty = xs =>
+  isProperty(xs) ? xs : isStream(xs) ? xs.toProperty() : K.constant(xs)
+export const throttle = I.curry((ms, xs) => toObservable(xs).throttle(ms))
 export const fromEvents = I.curry(K.fromEvents)
 export const ignoreValues = s => s.ignoreValues()
 export const ignoreErrors = s => s.ignoreErrors()
 
 // Additional ------------------------------------------------------------------
 
-export const startWith = I.curry((x, xs) => toConstant(xs).toProperty(() => x))
+export const startWith = I.curry((x, xs) =>
+  toObservable(xs).toProperty(() => x)
+)
 export const sink = I.pipe2U(startWith(undefined), F.lift(toUndefined))
 
 export const consume = I.pipe2U(mapValue, sink)
-export const endWith = I.curry((v, xs) => toConstant(xs).concat(toConstant(v)))
+export const endWith = I.curry((v, xs) =>
+  toObservable(xs).concat(toObservable(v))
+)
 export const lazy = th => toProperty(flatMapLatest(th, toProperty()))
 export const skipIdenticals = skipDuplicates(I.identicalU)
-export const skipWhen = I.curry((p, xs) => toConstant(xs).filter(x => !p(x)))
+export const skipWhen = I.curry((p, xs) => toObservable(xs).filter(x => !p(x)))
 export const template = observables => F.combine([observables], I.id)
 
 const FromPromise = I.inherit(
