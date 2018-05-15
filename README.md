@@ -89,7 +89,7 @@ A collection of utilities for working with
       * [`U.fromEvents(target, eventName, transform)` ⌘](https://kefirjs.github.io/kefir/#from-event)
       * [`U.ignoreErrors(observable)` ⌘](https://kefirjs.github.io/kefir/#ignore-errors)
       * [`U.ignoreValues(observable)` ⌘](https://kefirjs.github.io/kefir/#ignore-values)
-      * [`U.interval(ms, [...values])` ⌘](https://kefirjs.github.io/kefir/#interval)
+      * [`U.interval(ms, value)` ⌘](https://kefirjs.github.io/kefir/#interval)
       * [`U.later(ms, value)` ⌘](https://kefirjs.github.io/kefir/#later)
       * [`U.mapValue(value => value, observable)` ⌘](https://kefirjs.github.io/kefir/#map)
       * [`U.never` ⌘](https://kefirjs.github.io/kefir/#never)
@@ -1010,7 +1010,7 @@ The following are simply links to the relevant
 * [`U.fromEvents(target, eventName, transform)` ⌘](https://kefirjs.github.io/kefir/#from-event)
 * [`U.ignoreErrors(observable)` ⌘](https://kefirjs.github.io/kefir/#ignore-errors)
 * [`U.ignoreValues(observable)` ⌘](https://kefirjs.github.io/kefir/#ignore-values)
-* [`U.interval(ms, [...values])` ⌘](https://kefirjs.github.io/kefir/#interval)
+* [`U.interval(ms, value)` ⌘](https://kefirjs.github.io/kefir/#interval)
 * [`U.later(ms, value)` ⌘](https://kefirjs.github.io/kefir/#later)
 * [`U.mapValue(value => value, observable)` ⌘](https://kefirjs.github.io/kefir/#map)
 * [`U.never` ⌘](https://kefirjs.github.io/kefir/#never) &mdash; Note that this is
