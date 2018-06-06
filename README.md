@@ -430,7 +430,7 @@ const Component = ({parameters}) => {
   // ...
   return (
     <div>
-      {U.thru(state, httpRequestAsObservable(parameters))}
+      {U.set(state, httpRequestAsObservable(parameters))}
       {U.ifElse(
         R.isNil(state),
         <Spinner />,
