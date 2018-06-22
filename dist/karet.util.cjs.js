@@ -40,9 +40,9 @@ var doN = function doN(n, method, name) {
         params[_key2] = arguments[_key2];
       }
 
-      return function () {
+      return setName(function () {
         return target[method].apply(target, params);
-      };
+      }, method);
     });
   }, name));
 };
