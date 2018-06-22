@@ -30,7 +30,7 @@ const doN = (n, method, name) =>
     setName(
       (target, ...params) =>
         F.combine(params, (...params) =>
-          setName(() => target[method].apply(target, params), method)
+          setName(() => target[method].apply(target, params), name)
         ),
       name
     )
