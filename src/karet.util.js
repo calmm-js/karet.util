@@ -15,11 +15,25 @@ function warn(f, m) {
   }
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
+const setName =
+  process.env.NODE_ENV === 'production'
+    ? x => x
+    : (to, name) => I.defineNameU(to, name)
+
 // Actions /////////////////////////////////////////////////////////////////////
 
-const doN = (n, method) =>
-  I.arityN(n + 1, (target, ...params) =>
-    F.combine(params, (...params) => () => target[method].apply(target, params))
+const doN = (n, method, name) =>
+  I.arityN(
+    n + 1,
+    setName(
+      (target, ...params) =>
+        F.combine(params, (...params) => () =>
+          target[method].apply(target, params)
+        ),
+      name
+    )
   )
 
 // Kefir ///////////////////////////////////////////////////////////////////////
@@ -37,61 +51,85 @@ const toHandler = fns => ({type, value}) => invokeIf(fns[type], value)
 
 // Curried ---------------------------------------------------------------------
 
-export const debounce = I.curry((ms, xs) => toObservable(xs).debounce(ms))
+export const debounce = I.curry(function debounce(ms, xs) {
+  return toObservable(xs).debounce(ms)
+})
 export const changes = xs => toObservable(xs).changes()
 export const serially = xs => K.concat(xs.map(toObservable))
 export const parallel = K.merge
-export const delay = I.curry((ms, xs) => toObservable(xs).delay(ms))
-export const mapValue = I.curry((fn, xs) => toObservable(xs).map(fn))
-export const flatMapParallel = I.curry((fn, xs) =>
-  toObservable(xs).flatMap(I.pipe2U(fn, toObservable))
-)
-export const flatMapSerial = I.curry((fn, xs) =>
-  toObservable(xs).flatMapConcat(I.pipe2U(fn, toObservable))
-)
-export const flatMapErrors = I.curry((fn, xs) =>
-  toObservable(xs).flatMapErrors(I.pipe2U(fn, toObservable))
-)
-export const flatMapLatest = I.curry((fn, xs) =>
-  toObservable(xs).flatMapLatest(I.pipe2U(fn, toObservable))
-)
-export const foldPast = I.curry((fn, s, xs) => toObservable(xs).scan(fn, s))
+export const delay = I.curry(function delay(ms, xs) {
+  return toObservable(xs).delay(ms)
+})
+export const mapValue = I.curry(function mapValue(fn, xs) {
+  return toObservable(xs).map(fn)
+})
+export const flatMapParallel = I.curry(function flatMapParallel(fn, xs) {
+  return toObservable(xs).flatMap(I.pipe2U(fn, toObservable))
+})
+export const flatMapSerial = I.curry(function flatMapSerial(fn, xs) {
+  return toObservable(xs).flatMapConcat(I.pipe2U(fn, toObservable))
+})
+export const flatMapErrors = I.curry(function flatMapErrors(fn, xs) {
+  return toObservable(xs).flatMapErrors(I.pipe2U(fn, toObservable))
+})
+export const flatMapLatest = I.curry(function flatMapLatest(fn, xs) {
+  return toObservable(xs).flatMapLatest(I.pipe2U(fn, toObservable))
+})
+export const foldPast = I.curry(function foldPast(fn, s, xs) {
+  return toObservable(xs).scan(fn, s)
+})
 export const interval = I.curry(K.interval)
 export const later = I.curry(K.later)
 export const never = K.never()
-export const on = I.curry((efs, xs) => toObservable(xs).onAny(toHandler(efs)))
-export const sampledBy = I.curry((es, xs) => toObservable(xs).sampledBy(es))
-export const skipFirst = I.curry((n, xs) => toObservable(xs).skip(n))
-export const skipDuplicates = I.curry((equals, xs) =>
-  toObservable(xs).skipDuplicates(equals)
-)
-export const skipUnless = I.curry((p, xs) => toObservable(xs).filter(p))
-export const takeFirst = I.curry((n, xs) => toObservable(xs).take(n))
-export const takeFirstErrors = I.curry((n, xs) =>
-  toObservable(xs).takeErrors(n)
-)
-export const takeUntilBy = I.curry((ts, xs) => toObservable(xs).takeUntilBy(ts))
+export const on = I.curry(function on(efs, xs) {
+  return toObservable(xs).onAny(toHandler(efs))
+})
+export const sampledBy = I.curry(function sampledBy(es, xs) {
+  return toObservable(xs).sampledBy(es)
+})
+export const skipFirst = I.curry(function skipFirst(n, xs) {
+  return toObservable(xs).skip(n)
+})
+export const skipDuplicates = I.curry(function skipDuplicates(equals, xs) {
+  return toObservable(xs).skipDuplicates(equals)
+})
+export const skipUnless = I.curry(function skipUnless(p, xs) {
+  return toObservable(xs).filter(p)
+})
+export const takeFirst = I.curry(function takeFirst(n, xs) {
+  return toObservable(xs).take(n)
+})
+export const takeFirstErrors = I.curry(function takeFirstErrors(n, xs) {
+  return toObservable(xs).takeErrors(n)
+})
+export const takeUntilBy = I.curry(function takeUntilBy(ts, xs) {
+  return toObservable(xs).takeUntilBy(ts)
+})
 export const toProperty = xs =>
   isProperty(xs) ? xs : isStream(xs) ? xs.toProperty() : K.constant(xs)
-export const throttle = I.curry((ms, xs) => toObservable(xs).throttle(ms))
+export const throttle = I.curry(function throttle(ms, xs) {
+  return toObservable(xs).throttle(ms)
+})
 export const fromEvents = I.curry(K.fromEvents)
 export const ignoreValues = s => s.ignoreValues()
 export const ignoreErrors = s => s.ignoreErrors()
 
 // Additional ------------------------------------------------------------------
 
-export const startWith = I.curry((x, xs) =>
-  toObservable(xs).toProperty(() => x)
-)
+export const startWith = I.curry(function startWith(x, xs) {
+  return toObservable(xs).toProperty(() => x)
+})
 export const sink = I.pipe2U(startWith(undefined), F.lift(toUndefined))
 
 export const consume = I.pipe2U(mapValue, sink)
-export const endWith = I.curry((v, xs) =>
-  toObservable(xs).concat(toObservable(v))
-)
+export const endWith = I.curry(function endWith(v, xs) {
+  return toObservable(xs).concat(toObservable(v))
+})
 export const lazy = th => toProperty(flatMapLatest(th, toProperty()))
 export const skipIdenticals = skipDuplicates(I.identicalU)
-export const skipWhen = I.curry((p, xs) => toObservable(xs).filter(x => !p(x)))
+export const skipWhen = I.curry(function skipWhen(p, xs) {
+  return toObservable(xs).filter(x => !p(x))
+})
 export const template = observables => F.combine([observables], I.id)
 
 const FromPromise = I.inherit(
@@ -147,10 +185,14 @@ export const fromPromise = makePromise => new FromPromise(makePromise)
 
 // Conditionals ----------------------------------------------------------------
 
-const ifteU = (b, t, e) => toProperty(flatMapLatest(b => (b ? t : e), b))
+const ifteU = function ifElse(b, t, e) {
+  return toProperty(flatMapLatest(b => (b ? t : e), b))
+}
 
 export const ifElse = I.curry(ifteU)
-export const unless = I.curry((b, e) => ifteU(b, undefined, e))
+export const unless = I.curry(function unless(b, e) {
+  return ifteU(b, undefined, e)
+})
 export const when = I.arityN(2, ifteU)
 
 export function cond(_) {
@@ -198,7 +240,9 @@ const Ticks = I.inherit(
 export const animationSpan =
   process.env.NODE_ENV === 'production'
     ? typeof window === 'undefined' ? I.always(never) : d => new Ticks(d)
-    : d => (typeof window === 'undefined' ? never : new Ticks(d))
+    : function animationSpan(d) {
+        return typeof window === 'undefined' ? never : new Ticks(d)
+      }
 
 // Lifting ---------------------------------------------------------------------
 
@@ -209,7 +253,7 @@ import {combines as combinesRaw} from 'kefir.combines'
 export const combines =
   process.env.NODE_ENV === 'production'
     ? combinesRaw
-    : function() {
+    : function combines() {
         warn(
           combines,
           '`combines` has been obsoleted.  Please use `combine`, `template`, `lift`, or `liftRec` instead.'
@@ -237,16 +281,16 @@ export const bus = () => new Bus()
 
 // Actions on buses ------------------------------------------------------------
 
-export const doPush = doN(1, 'push')
-export const doError = doN(1, 'error')
-export const doEnd = doN(0, 'end')
+export const doPush = doN(1, 'push', 'doPush')
+export const doError = doN(1, 'error', 'doError')
+export const doEnd = doN(0, 'end', 'doEnd')
 
 // Convenience /////////////////////////////////////////////////////////////////
 
 export const seq =
   process.env.NODE_ENV === 'production'
     ? I.seq
-    : function(_) {
+    : function seq(_) {
         warn(seq, '`seq` has been obsoleted.  Use `thru` instead.')
         return I.seq.apply(null, arguments)
       }
@@ -254,7 +298,7 @@ export const seq =
 export const seqPartial =
   process.env.NODE_ENV === 'production'
     ? I.seqPartial
-    : function(_) {
+    : function seqPartial(_) {
         warn(
           seqPartial,
           '`seqPartial` has been deprecated.  There is no replacement for it.'
@@ -265,7 +309,7 @@ export const seqPartial =
 export const scope = fn => fn()
 
 export const tapPartial = F.lift(
-  I.curry((effect, data) => {
+  I.curry(function tapPartial(effect, data) {
     if (undefined !== data) effect(data)
     return data
   })
@@ -273,19 +317,23 @@ export const tapPartial = F.lift(
 
 export const toPartial = fn =>
   F.liftRec(
-    I.arityN(
-      fn.length,
-      (...xs) => (xs.every(I.isDefined) ? fn(...xs) : undefined)
-    )
+    I.arityN(fn.length, function toPartial(...xs) {
+      return xs.every(I.isDefined) ? fn(...xs) : undefined
+    })
   )
 
-function thruPlain(x, fs) {
+const thruPlain = function thru(x, fs) {
   for (let i = 0, n = fs.length; i < n; ++i) x = fs[i](x)
   return x
 }
 
-const thruProperty = (x, fs) =>
-  toProperty(flatMapLatest(fs => thruPlain(x, fs), fs))
+const thruProperty = function thru(x, fs) {
+  return toProperty(
+    flatMapLatest(function thru(fs) {
+      return thruPlain(x, fs)
+    }, fs)
+  )
+}
 
 export function thru(x) {
   const n = arguments.length
@@ -316,10 +364,14 @@ export function through() {
     if (plain) plain = !isProperty(f)
   }
   if (plain) {
-    return x => thruPlain(x, fs)
+    return function through(x) {
+      return thruPlain(x, fs)
+    }
   } else {
     fs = template(fs)
-    return x => thruProperty(x, fs)
+    return function through(x) {
+      return thruProperty(x, fs)
+    }
   }
 }
 
@@ -353,42 +405,47 @@ const {Provider, Consumer} = React.createContext(I.object0)
 
 export const Context = (process.env.NODE_ENV === 'production'
   ? I.id
-  : fn => props => {
-      warn(
-        Context,
-        '`Context` has been obsoleted.  Just use the new React context API.'
-      )
-      return fn(props)
-    })(({context, children}) => <Provider value={context}>{children}</Provider>)
+  : fn =>
+      function Context(props) {
+        warn(
+          Context,
+          '`Context` has been obsoleted.  Just use the new React context API.'
+        )
+        return fn(props)
+      })(function Context({context, children}) {
+  return <Provider value={context}>{children}</Provider>
+})
 
 export const withContext = (process.env.NODE_ENV === 'production'
   ? I.id
-  : fn => props => {
-      warn(
-        withContext,
-        '`withContext` has been obsoleted.  Just use the new React context API.'
-      )
-      return fn(props)
-    })(toElem => props => (
-  <Consumer>{context => toElem(props, context)}</Consumer>
-))
+  : fn =>
+      function withContext(props) {
+        warn(
+          withContext,
+          '`withContext` has been obsoleted.  Just use the new React context API.'
+        )
+        return fn(props)
+      })(function withContext(toElem) {
+  return props => <Consumer>{context => toElem(props, context)}</Consumer>
+})
 
 // DOM Binding -----------------------------------------------------------------
 
-export const getProps = template => ({target}) => {
-  for (const k in template) template[k].set(target[k])
-}
+export const getProps = template =>
+  function getProps({target}) {
+    for (const k in template) template[k].set(target[k])
+  }
 
 export function setProps(observables) {
   let observable
   let callback
-  return e => {
+  return function setProps(e) {
     if (callback) {
       observable.offAny(callback)
       observable = callback = null
     }
     if (e) {
-      callback = ev => {
+      callback = function setProps(ev) {
         switch (ev.type) {
           case 'value': {
             const observables = ev.value
@@ -410,18 +467,21 @@ export function setProps(observables) {
 
 // Refs ------------------------------------------------------------------------
 
-export const refTo = settable => elem => {
-  if (null !== elem) settable.set(elem)
-}
+export const refTo = settable =>
+  function refTo(elem) {
+    if (null !== elem) settable.set(elem)
+  }
 
 // Events ----------------------------------------------------------------------
 
-export const actions = F.lift((...fns) => (...args) => {
-  for (let i = 0, n = fns.length; i < n; ++i)
-    if (I.isFunction(fns[i])) fns[i](...args)
+export const actions = F.lift(function actions(...fns) {
+  return function actions(...args) {
+    for (let i = 0, n = fns.length; i < n; ++i)
+      if (I.isFunction(fns[i])) fns[i](...args)
+  }
 })
 
-const invoke = name => e => e[name]()
+const invoke = name => setName(e => e[name](), name)
 
 export const preventDefault = invoke('preventDefault')
 export const stopPropagation = invoke('stopPropagation')
@@ -430,7 +490,9 @@ export const stopPropagation = invoke('stopPropagation')
 
 const cnsImmediate = L.join(' ', [L.flatten, L.when(I.id)])
 
-export const cns = F.lift((...xs) => cnsImmediate(xs) || undefined)
+export const cns = F.lift(function cns(...xs) {
+  return cnsImmediate(xs) || undefined
+})
 
 // Standard ////////////////////////////////////////////////////////////////////
 
@@ -508,20 +570,20 @@ export {holding} from 'kefir.atom'
 
 // Side-effects ----------------------------------------------------------------
 
-export const set = I.curry((settable, xs) => {
+export const set = I.curry(function set(settable, xs) {
   const ss = F.combine([xs], xs => settable.set(xs))
   if (isProperty(ss)) return ss.toProperty(toUndefined)
 })
 
 // Actions on atoms ------------------------------------------------------------
 
-export const doModify = doN(1, 'modify')
-export const doSet = doN(1, 'set')
-export const doRemove = doN(0, 'remove')
+export const doModify = doN(1, 'modify', 'doModify')
+export const doSet = doN(1, 'set', 'doSet')
+export const doRemove = doN(0, 'remove', 'doRemove')
 
 // Decomposing -----------------------------------------------------------------
 
-export const view = I.curry((l, xs) => {
+export const view = I.curry(function view(l, xs) {
   if (isMutable(xs)) {
     return isProperty(template(l))
       ? new A.Join(F.combine([l], l => xs.view(l)))
@@ -531,11 +593,11 @@ export const view = I.curry((l, xs) => {
   }
 })
 
-export const mapElems = I.curry((xi2y, xs) => {
+export const mapElems = I.curry(function mapElems(xi2y, xs) {
   const vs = []
   return thru(
     xs,
-    foldPast((ysIn, xsIn) => {
+    foldPast(function mapElems(ysIn, xsIn) {
       const ysN = ysIn.length
       const xsN = xsIn.length
       if (xsN === ysN) return ysIn
@@ -550,13 +612,13 @@ export const mapElems = I.curry((xi2y, xs) => {
   )
 })
 
-export const mapElemsWithIds = I.curry((idL, xi2y, xs) => {
+export const mapElemsWithIds = I.curry(function mapElemsWithIds(idL, xi2y, xs) {
   const id2info = new Map()
   const idOf = L.get(idL)
   const pred = (x, _, info) => idOf(x) === info.id
   return thru(
     xs,
-    foldPast((ysIn, xsIn) => {
+    foldPast(function mapElemsWithIds(ysIn, xsIn) {
       const n = xsIn.length
       let ys = ysIn.length === n ? ysIn : Array(n)
       for (let i = 0; i < n; ++i) {
