@@ -13,10 +13,16 @@
     }
   }
 
+  ////////////////////////////////////////////////////////////////////////////////
+
+  var setName = function (to, name) {
+    return I.defineNameU(to, name);
+  };
+
   // Actions /////////////////////////////////////////////////////////////////////
 
-  var doN = function doN(n, method) {
-    return I.arityN(n + 1, function (target) {
+  var doN = function doN(n, method, name) {
+    return I.arityN(n + 1, setName(function (target) {
       for (var _len = arguments.length, params = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
         params[_key - 1] = arguments[_key];
       }
@@ -30,7 +36,7 @@
           return target[method].apply(target, params);
         };
       });
-    });
+    }, name));
   };
 
   // Kefir ///////////////////////////////////////////////////////////////////////
@@ -49,7 +55,7 @@
   };
 
   var toUndefined = function toUndefined(_) {};
-  var toConstant = function toConstant(x) {
+  var toObservable = function toObservable(x) {
     return isObservable(x) ? x : K.constant(x);
   };
 
@@ -66,69 +72,69 @@
 
   // Curried ---------------------------------------------------------------------
 
-  var debounce = /*#__PURE__*/I.curry(function (ms, xs) {
-    return toConstant(xs).debounce(ms);
+  var debounce = /*#__PURE__*/I.curry(function debounce(ms, xs) {
+    return toObservable(xs).debounce(ms);
   });
   var changes = function changes(xs) {
-    return toConstant(xs).changes();
+    return toObservable(xs).changes();
   };
   var serially = function serially(xs) {
-    return K.concat(xs.map(toConstant));
+    return K.concat(xs.map(toObservable));
   };
   var parallel = K.merge;
-  var delay = /*#__PURE__*/I.curry(function (ms, xs) {
-    return toConstant(xs).delay(ms);
+  var delay = /*#__PURE__*/I.curry(function delay(ms, xs) {
+    return toObservable(xs).delay(ms);
   });
-  var mapValue = /*#__PURE__*/I.curry(function (fn, xs) {
-    return toConstant(xs).map(fn);
+  var mapValue = /*#__PURE__*/I.curry(function mapValue(fn, xs) {
+    return toObservable(xs).map(fn);
   });
-  var flatMapParallel = /*#__PURE__*/I.curry(function (fn, xs) {
-    return toConstant(xs).flatMap(I.pipe2U(fn, toConstant));
+  var flatMapParallel = /*#__PURE__*/I.curry(function flatMapParallel(fn, xs) {
+    return toObservable(xs).flatMap(I.pipe2U(fn, toObservable));
   });
-  var flatMapSerial = /*#__PURE__*/I.curry(function (fn, xs) {
-    return toConstant(xs).flatMapConcat(I.pipe2U(fn, toConstant));
+  var flatMapSerial = /*#__PURE__*/I.curry(function flatMapSerial(fn, xs) {
+    return toObservable(xs).flatMapConcat(I.pipe2U(fn, toObservable));
   });
-  var flatMapErrors = /*#__PURE__*/I.curry(function (fn, xs) {
-    return toConstant(xs).flatMapErrors(I.pipe2U(fn, toConstant));
+  var flatMapErrors = /*#__PURE__*/I.curry(function flatMapErrors(fn, xs) {
+    return toObservable(xs).flatMapErrors(I.pipe2U(fn, toObservable));
   });
-  var flatMapLatest = /*#__PURE__*/I.curry(function (fn, xs) {
-    return toConstant(xs).flatMapLatest(I.pipe2U(fn, toConstant));
+  var flatMapLatest = /*#__PURE__*/I.curry(function flatMapLatest(fn, xs) {
+    return toObservable(xs).flatMapLatest(I.pipe2U(fn, toObservable));
   });
-  var foldPast = /*#__PURE__*/I.curry(function (fn, s, xs) {
-    return toConstant(xs).scan(fn, s);
+  var foldPast = /*#__PURE__*/I.curry(function foldPast(fn, s, xs) {
+    return toObservable(xs).scan(fn, s);
   });
   var interval = /*#__PURE__*/I.curry(K.interval);
   var later = /*#__PURE__*/I.curry(K.later);
   var never = /*#__PURE__*/K.never();
-  var on = /*#__PURE__*/I.curry(function (efs, xs) {
-    return toConstant(xs).onAny(toHandler(efs));
+  var on = /*#__PURE__*/I.curry(function on(efs, xs) {
+    return toObservable(xs).onAny(toHandler(efs));
   });
-  var sampledBy = /*#__PURE__*/I.curry(function (es, xs) {
-    return toConstant(xs).sampledBy(es);
+  var sampledBy = /*#__PURE__*/I.curry(function sampledBy(es, xs) {
+    return toObservable(xs).sampledBy(es);
   });
-  var skipFirst = /*#__PURE__*/I.curry(function (n, xs) {
-    return toConstant(xs).skip(n);
+  var skipFirst = /*#__PURE__*/I.curry(function skipFirst(n, xs) {
+    return toObservable(xs).skip(n);
   });
-  var skipDuplicates = /*#__PURE__*/I.curry(function (equals, xs) {
-    return toConstant(xs).skipDuplicates(equals);
+  var skipDuplicates = /*#__PURE__*/I.curry(function skipDuplicates(equals, xs) {
+    return toObservable(xs).skipDuplicates(equals);
   });
-  var skipUnless = /*#__PURE__*/I.curry(function (p, xs) {
-    return toConstant(xs).filter(p);
+  var skipUnless = /*#__PURE__*/I.curry(function skipUnless(p, xs) {
+    return toObservable(xs).filter(p);
   });
-  var takeFirst = /*#__PURE__*/I.curry(function (n, xs) {
-    return toConstant(xs).take(n);
+  var takeFirst = /*#__PURE__*/I.curry(function takeFirst(n, xs) {
+    return toObservable(xs).take(n);
   });
-  var takeFirstErrors = /*#__PURE__*/I.curry(function (n, xs) {
-    return toConstant(xs).takeErrors(n);
+  var takeFirstErrors = /*#__PURE__*/I.curry(function takeFirstErrors(n, xs) {
+    return toObservable(xs).takeErrors(n);
   });
-  var takeUntilBy = /*#__PURE__*/I.curry(function (ts, xs) {
-    return toConstant(xs).takeUntilBy(ts);
+  var takeUntilBy = /*#__PURE__*/I.curry(function takeUntilBy(ts, xs) {
+    return toObservable(xs).takeUntilBy(ts);
   });
   var toProperty = function toProperty(xs) {
-    return toConstant(xs).toProperty();
+    return isProperty(xs) ? xs : isStream(xs) ? xs.toProperty() : K.constant(xs);
   };
-  var throttle = /*#__PURE__*/I.curry(function (ms, xs) {
-    return toConstant(xs).throttle(ms);
+  var throttle = /*#__PURE__*/I.curry(function throttle(ms, xs) {
+    return toObservable(xs).throttle(ms);
   });
   var fromEvents = /*#__PURE__*/I.curry(K.fromEvents);
   var ignoreValues = function ignoreValues(s) {
@@ -140,23 +146,23 @@
 
   // Additional ------------------------------------------------------------------
 
-  var startWith = /*#__PURE__*/I.curry(function (x, xs) {
-    return toConstant(xs).toProperty(function () {
+  var startWith = /*#__PURE__*/I.curry(function startWith(x, xs) {
+    return toObservable(xs).toProperty(function () {
       return x;
     });
   });
   var sink = /*#__PURE__*/I.pipe2U( /*#__PURE__*/startWith(undefined), /*#__PURE__*/F.lift(toUndefined));
 
   var consume = /*#__PURE__*/I.pipe2U(mapValue, sink);
-  var endWith = /*#__PURE__*/I.curry(function (v, xs) {
-    return toConstant(xs).concat(toConstant(v));
+  var endWith = /*#__PURE__*/I.curry(function endWith(v, xs) {
+    return toObservable(xs).concat(toObservable(v));
   });
   var lazy = function lazy(th) {
     return toProperty(flatMapLatest(th, toProperty()));
   };
   var skipIdenticals = /*#__PURE__*/skipDuplicates(I.identicalU);
-  var skipWhen = /*#__PURE__*/I.curry(function (p, xs) {
-    return toConstant(xs).filter(function (x) {
+  var skipWhen = /*#__PURE__*/I.curry(function skipWhen(p, xs) {
+    return toObservable(xs).filter(function (x) {
       return !p(x);
     });
   });
@@ -213,14 +219,14 @@
 
   // Conditionals ----------------------------------------------------------------
 
-  var ifteU = function ifteU(b, t, e) {
+  var ifteU = function ifElse(b, t, e) {
     return toProperty(flatMapLatest(function (b) {
       return b ? t : e;
     }, b));
   };
 
   var ifElse = /*#__PURE__*/I.curry(ifteU);
-  var unless = /*#__PURE__*/I.curry(function (b, e) {
+  var unless = /*#__PURE__*/I.curry(function unless(b, e) {
     return ifteU(b, undefined, e);
   });
   var when = /*#__PURE__*/I.arityN(2, ifteU);
@@ -263,11 +269,11 @@
     }
   });
 
-  var animationSpan = function (d) {
+  var animationSpan = function animationSpan(d) {
     return typeof window === 'undefined' ? never : new Ticks(d);
   };
 
-  var combines = function () {
+  var combines = function combines() {
     warn(combines, '`combines` has been obsoleted.  Please use `combine`, `template`, `lift`, or `liftRec` instead.');
     return kefir_combines.combines.apply(null, arguments);
   };
@@ -290,18 +296,18 @@
 
   // Actions on buses ------------------------------------------------------------
 
-  var doPush = /*#__PURE__*/doN(1, 'push');
-  var doError = /*#__PURE__*/doN(1, 'error');
-  var doEnd = /*#__PURE__*/doN(0, 'end');
+  var doPush = /*#__PURE__*/doN(1, 'push', 'doPush');
+  var doError = /*#__PURE__*/doN(1, 'error', 'doError');
+  var doEnd = /*#__PURE__*/doN(0, 'end', 'doEnd');
 
   // Convenience /////////////////////////////////////////////////////////////////
 
-  var seq = function (_) {
+  var seq = function seq(_) {
     warn(seq, '`seq` has been obsoleted.  Use `thru` instead.');
     return I.seq.apply(null, arguments);
   };
 
-  var seqPartial = function (_) {
+  var seqPartial = function seqPartial(_) {
     warn(seqPartial, '`seqPartial` has been deprecated.  There is no replacement for it.');
     return I.seqPartial.apply(null, arguments);
   };
@@ -310,13 +316,13 @@
     return fn();
   };
 
-  var tapPartial = /*#__PURE__*/F.lift( /*#__PURE__*/I.curry(function (effect, data) {
+  var tapPartial = /*#__PURE__*/F.lift( /*#__PURE__*/I.curry(function tapPartial(effect, data) {
     if (undefined !== data) effect(data);
     return data;
   }));
 
   var toPartial = function toPartial(fn) {
-    return F.liftRec(I.arityN(fn.length, function () {
+    return F.liftRec(I.arityN(fn.length, function toPartial() {
       for (var _len3 = arguments.length, xs = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
         xs[_key3] = arguments[_key3];
       }
@@ -325,14 +331,14 @@
     }));
   };
 
-  function thruPlain(x, fs) {
+  var thruPlain = function thru(x, fs) {
     for (var i = 0, n = fs.length; i < n; ++i) {
       x = fs[i](x);
     }return x;
-  }
+  };
 
-  var thruProperty = function thruProperty(x, fs) {
-    return toProperty(flatMapLatest(function (fs) {
+  var thruProperty = function thru(x, fs) {
+    return toProperty(flatMapLatest(function thru(fs) {
       return thruPlain(x, fs);
     }, fs));
   };
@@ -366,12 +372,12 @@
       if (plain) plain = !isProperty(f);
     }
     if (plain) {
-      return function (x) {
+      return function through(x) {
         return thruPlain(x, fs);
       };
     } else {
       fs = template(fs);
-      return function (x) {
+      return function through(x) {
         return thruProperty(x, fs);
       };
     }
@@ -414,13 +420,14 @@
       Consumer = _React$createContext.Consumer;
 
   var Context = /*#__PURE__*/(function (fn) {
-    return function (props) {
+    return function Context(props) {
       warn(Context, '`Context` has been obsoleted.  Just use the new React context API.');
       return fn(props);
     };
-  })(function (_ref2) {
+  })(function Context(_ref2) {
     var context = _ref2.context,
         children = _ref2.children;
+
     return React.createElement(
       Provider,
       { value: context },
@@ -429,11 +436,11 @@
   });
 
   var withContext = /*#__PURE__*/(function (fn) {
-    return function (props) {
+    return function withContext(props) {
       warn(withContext, '`withContext` has been obsoleted.  Just use the new React context API.');
       return fn(props);
     };
-  })(function (toElem) {
+  })(function withContext(toElem) {
     return function (props) {
       return React.createElement(
         Consumer,
@@ -448,7 +455,7 @@
   // DOM Binding -----------------------------------------------------------------
 
   var getProps = function getProps(template) {
-    return function (_ref3) {
+    return function getProps(_ref3) {
       var target = _ref3.target;
 
       for (var k in template) {
@@ -459,14 +466,14 @@
 
   function setProps(observables) {
     var observable = void 0;
-    var _callback = void 0;
-    return function (e) {
-      if (_callback) {
-        observable.offAny(_callback);
-        observable = _callback = null;
+    var callback = void 0;
+    return function setProps(e) {
+      if (callback) {
+        observable.offAny(callback);
+        observable = callback = null;
       }
       if (e) {
-        _callback = function callback(ev) {
+        callback = function setProps(ev) {
           switch (ev.type) {
             case 'value':
               {
@@ -478,12 +485,12 @@
             case 'error':
               throw ev.value;
             case 'end':
-              observable = _callback = null;
+              observable = callback = null;
               break;
           }
         };
         observable = template(observables);
-        observable.onAny(_callback);
+        observable.onAny(callback);
       }
     };
   }
@@ -491,19 +498,19 @@
   // Refs ------------------------------------------------------------------------
 
   var refTo = function refTo(settable) {
-    return function (elem) {
+    return function refTo(elem) {
       if (null !== elem) settable.set(elem);
     };
   };
 
   // Events ----------------------------------------------------------------------
 
-  var actions = /*#__PURE__*/F.lift(function () {
+  var actions = /*#__PURE__*/F.lift(function actions() {
     for (var _len5 = arguments.length, fns = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
       fns[_key5] = arguments[_key5];
     }
 
-    return function () {
+    return function actions() {
       for (var i = 0, n = fns.length; i < n; ++i) {
         if (I.isFunction(fns[i])) fns[i].apply(fns, arguments);
       }
@@ -511,9 +518,9 @@
   });
 
   var invoke = function invoke(name) {
-    return function (e) {
+    return setName(function (e) {
       return e[name]();
-    };
+    }, name);
   };
 
   var preventDefault = /*#__PURE__*/invoke('preventDefault');
@@ -523,7 +530,7 @@
 
   var cnsImmediate = /*#__PURE__*/L.join(' ', [L.flatten, /*#__PURE__*/L.when(I.id)]);
 
-  var cns = /*#__PURE__*/F.lift(function () {
+  var cns = /*#__PURE__*/F.lift(function cns() {
     for (var _len6 = arguments.length, xs = Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
       xs[_key6] = arguments[_key6];
     }
@@ -602,7 +609,7 @@
 
   // Side-effects ----------------------------------------------------------------
 
-  var set = /*#__PURE__*/I.curry(function (settable, xs) {
+  var set = /*#__PURE__*/I.curry(function set(settable, xs) {
     var ss = F.combine([xs], function (xs) {
       return settable.set(xs);
     });
@@ -611,13 +618,13 @@
 
   // Actions on atoms ------------------------------------------------------------
 
-  var doModify = /*#__PURE__*/doN(1, 'modify');
-  var doSet = /*#__PURE__*/doN(1, 'set');
-  var doRemove = /*#__PURE__*/doN(0, 'remove');
+  var doModify = /*#__PURE__*/doN(1, 'modify', 'doModify');
+  var doSet = /*#__PURE__*/doN(1, 'set', 'doSet');
+  var doRemove = /*#__PURE__*/doN(0, 'remove', 'doRemove');
 
   // Decomposing -----------------------------------------------------------------
 
-  var view = /*#__PURE__*/I.curry(function (l, xs) {
+  var view = /*#__PURE__*/I.curry(function view(l, xs) {
     if (isMutable(xs)) {
       return isProperty(template(l)) ? new A.Join(F.combine([l], function (l) {
         return xs.view(l);
@@ -627,9 +634,9 @@
     }
   });
 
-  var mapElems = /*#__PURE__*/I.curry(function (xi2y, xs) {
+  var mapElems = /*#__PURE__*/I.curry(function mapElems(xi2y, xs) {
     var vs = [];
-    return thru(xs, foldPast(function (ysIn, xsIn) {
+    return thru(xs, foldPast(function mapElems(ysIn, xsIn) {
       var ysN = ysIn.length;
       var xsN = xsIn.length;
       if (xsN === ysN) return ysIn;
@@ -644,13 +651,13 @@
     }, []), skipIdenticals);
   });
 
-  var mapElemsWithIds = /*#__PURE__*/I.curry(function (idL, xi2y, xs) {
+  var mapElemsWithIds = /*#__PURE__*/I.curry(function mapElemsWithIds(idL, xi2y, xs) {
     var id2info = new Map();
     var idOf = L.get(idL);
     var pred = function pred(x, _, info) {
       return idOf(x) === info.id;
     };
-    return thru(xs, foldPast(function (ysIn, xsIn) {
+    return thru(xs, foldPast(function mapElemsWithIds(ysIn, xsIn) {
       var n = xsIn.length;
       var ys = ysIn.length === n ? ysIn : Array(n);
       for (var i = 0; i < n; ++i) {
