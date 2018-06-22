@@ -42,7 +42,7 @@ var doN = function doN(n, method, name) {
 
       return setName(function () {
         return target[method].apply(target, params);
-      }, method);
+      }, name);
     });
   }, name));
 };

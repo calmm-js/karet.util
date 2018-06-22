@@ -34,7 +34,7 @@
 
         return setName(function () {
           return target[method].apply(target, params);
-        }, method);
+        }, name);
       });
     }, name));
   };
