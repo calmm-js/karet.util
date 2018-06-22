@@ -29,8 +29,8 @@ const doN = (n, method, name) =>
     n + 1,
     setName(
       (target, ...params) =>
-        F.combine(params, (...params) => () =>
-          target[method].apply(target, params)
+        F.combine(params, (...params) =>
+          setName(() => target[method].apply(target, params), method)
         ),
       name
     )
