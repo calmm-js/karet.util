@@ -2,7 +2,7 @@ import { AbstractMutable, Atom, Molecule, Join } from 'kefir.atom';
 export { holding } from 'kefir.atom';
 import { Observable, Property, Stream, constant, concat, merge, interval, later, never, fromEvents, combine, stream } from 'kefir';
 import { defineNameU, arityN, curry, pipe2U, identicalU, id, inherit, always, seq, seqPartial, isDefined, object0, isFunction } from 'infestines';
-import { iso, get, join, flatten, when, find } from 'partial.lenses';
+import { iso, get, collect, flatten, when, join, find } from 'partial.lenses';
 import { combine as combine$1, lift, liftRec } from 'karet.lift';
 export { combine, lift, liftRec } from 'karet.lift';
 import { createContext, createElement } from 'react';
@@ -513,16 +513,26 @@ var refTo = function refTo(settable) {
 
 // Events ----------------------------------------------------------------------
 
+var actionsCollect = /*#__PURE__*/collect([flatten, /*#__PURE__*/when(isFunction)]);
+
 var actions = /*#__PURE__*/lift(function actions() {
-  for (var _len5 = arguments.length, fns = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
-    fns[_key5] = arguments[_key5];
+  for (var _len5 = arguments.length, fnsIn = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
+    fnsIn[_key5] = arguments[_key5];
   }
 
-  return function actions() {
-    for (var i = 0, n = fns.length; i < n; ++i) {
-      if (isFunction(fns[i])) fns[i].apply(fns, arguments);
-    }
-  };
+  var fns = actionsCollect(fnsIn);
+  switch (fns.length) {
+    case 0:
+      return undefined;
+    case 1:
+      return fns[0];
+    default:
+      return function actions() {
+        for (var i = 0, n = fns.length; i < n; ++i) {
+          fns[i].apply(fns, arguments);
+        }
+      };
+  }
 });
 
 var invoke = function invoke(name) {

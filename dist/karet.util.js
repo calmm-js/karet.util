@@ -505,16 +505,26 @@
 
   // Events ----------------------------------------------------------------------
 
+  var actionsCollect = /*#__PURE__*/L.collect([L.flatten, /*#__PURE__*/L.when(I.isFunction)]);
+
   var actions = /*#__PURE__*/F.lift(function actions() {
-    for (var _len5 = arguments.length, fns = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
-      fns[_key5] = arguments[_key5];
+    for (var _len5 = arguments.length, fnsIn = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
+      fnsIn[_key5] = arguments[_key5];
     }
 
-    return function actions() {
-      for (var i = 0, n = fns.length; i < n; ++i) {
-        if (I.isFunction(fns[i])) fns[i].apply(fns, arguments);
-      }
-    };
+    var fns = actionsCollect(fnsIn);
+    switch (fns.length) {
+      case 0:
+        return undefined;
+      case 1:
+        return fns[0];
+      default:
+        return function actions() {
+          for (var i = 0, n = fns.length; i < n; ++i) {
+            fns[i].apply(fns, arguments);
+          }
+        };
+    }
   });
 
   var invoke = function invoke(name) {
