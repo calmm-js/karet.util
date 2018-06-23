@@ -66,6 +66,11 @@ describe('U.actions', () => {
     ).onValue(f => f('z'))
     return i
   })
+  testEq(undefined, () => U.actions(false, 0, 'not a function'))
+  function theOnlyFunction() {}
+  testEq(theOnlyFunction, () =>
+    U.actions(false, theOnlyFunction, 'not a function')
+  )
 })
 
 describe('U.view', () => {

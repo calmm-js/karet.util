@@ -474,10 +474,19 @@ export const refTo = settable =>
 
 // Events ----------------------------------------------------------------------
 
-export const actions = F.lift(function actions(...fns) {
-  return function actions(...args) {
-    for (let i = 0, n = fns.length; i < n; ++i)
-      if (I.isFunction(fns[i])) fns[i](...args)
+const actionsCollect = L.collect([L.flatten, L.when(I.isFunction)])
+
+export const actions = F.lift(function actions(...fnsIn) {
+  const fns = actionsCollect(fnsIn)
+  switch (fns.length) {
+    case 0:
+      return undefined
+    case 1:
+      return fns[0]
+    default:
+      return function actions(...args) {
+        for (let i = 0, n = fns.length; i < n; ++i) fns[i](...args)
+      }
   }
 })
 
