@@ -7,6 +7,7 @@ var K = require('kefir');
 var I = require('infestines');
 var L = require('partial.lenses');
 var F = require('karet.lift');
+var Karet = require('karet');
 var React = require('react');
 var kefir_combines = require('kefir.combines');
 
@@ -464,14 +465,27 @@ var withContext = /*#__PURE__*/(process.env.NODE_ENV === 'production' ? I.id : f
 
 // DOM Binding -----------------------------------------------------------------
 
-var getProps = function getProps(template) {
-  return function getProps(_ref3) {
+var getProp = function getProp(name, settable) {
+  return function getProp(_ref3) {
     var target = _ref3.target;
 
-    for (var k in template) {
-      template[k].set(target[k]);
-    }
+    settable.set(target[name]);
   };
+};
+
+var getProps = function getProps(template) {
+  var result = void 0;
+  for (var k in template) {
+    if (result) return function getProps(_ref4) {
+      var target = _ref4.target;
+
+      for (var _k in template) {
+        template[_k].set(target[_k]);
+      }
+    };
+    result = getProp(k, template[k]);
+  }
+  return result;
 };
 
 function setProps(observables) {
@@ -504,6 +518,28 @@ function setProps(observables) {
     }
   };
 }
+
+// Input components ------------------------------------------------------------
+
+var isSettable = function isSettable(x) {
+  return null != x && I.isFunction(x.set);
+};
+
+function tryGet(name, props) {
+  var value = props[name];
+  if (isSettable(value)) return getProp(name, value);
+}
+
+var mkBound = function mkBound(Elem, name, checked) {
+  return setName(function (props) {
+    var getter = tryGet('value', props) || checked && tryGet(checked, props);
+    return Karet.createElement(Elem, getter ? L.set('onChange', actions(getter, props.onChange), props) : props);
+  }, name);
+};
+
+var Select = /*#__PURE__*/mkBound('select', 'Select');
+var Input = /*#__PURE__*/mkBound('input', 'Input', 'checked');
+var TextArea = /*#__PURE__*/mkBound('textarea', 'TextArea');
 
 // Refs ------------------------------------------------------------------------
 
@@ -771,6 +807,9 @@ exports.Context = Context;
 exports.withContext = withContext;
 exports.getProps = getProps;
 exports.setProps = setProps;
+exports.Select = Select;
+exports.Input = Input;
+exports.TextArea = TextArea;
 exports.refTo = refTo;
 exports.actions = actions;
 exports.preventDefault = preventDefault;

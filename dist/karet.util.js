@@ -1,8 +1,8 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('kefir.atom'), require('kefir'), require('infestines'), require('partial.lenses'), require('karet.lift'), require('react'), require('kefir.combines')) :
-  typeof define === 'function' && define.amd ? define(['exports', 'kefir.atom', 'kefir', 'infestines', 'partial.lenses', 'karet.lift', 'react', 'kefir.combines'], factory) :
-  (factory((global.karet = global.karet || {}, global.karet.util = {}),global.kefir.atom,global.Kefir,global.I,global.L,global.karet.lift,global.React,global.kefir.combines));
-}(this, (function (exports,A,K,I,L,F,React,kefir_combines) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('kefir.atom'), require('kefir'), require('infestines'), require('partial.lenses'), require('karet.lift'), require('karet'), require('react'), require('kefir.combines')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'kefir.atom', 'kefir', 'infestines', 'partial.lenses', 'karet.lift', 'karet', 'react', 'kefir.combines'], factory) :
+  (factory((global.karet = global.karet || {}, global.karet.util = {}),global.kefir.atom,global.Kefir,global.I,global.L,global.karet.lift,global.karet,global.React,global.kefir.combines));
+}(this, (function (exports,A,K,I,L,F,Karet,React,kefir_combines) { 'use strict';
 
   var header = 'karet.util: ';
 
@@ -454,14 +454,27 @@
 
   // DOM Binding -----------------------------------------------------------------
 
-  var getProps = function getProps(template) {
-    return function getProps(_ref3) {
+  var getProp = function getProp(name, settable) {
+    return function getProp(_ref3) {
       var target = _ref3.target;
 
-      for (var k in template) {
-        template[k].set(target[k]);
-      }
+      settable.set(target[name]);
     };
+  };
+
+  var getProps = function getProps(template) {
+    var result = void 0;
+    for (var k in template) {
+      if (result) return function getProps(_ref4) {
+        var target = _ref4.target;
+
+        for (var _k in template) {
+          template[_k].set(target[_k]);
+        }
+      };
+      result = getProp(k, template[k]);
+    }
+    return result;
   };
 
   function setProps(observables) {
@@ -494,6 +507,28 @@
       }
     };
   }
+
+  // Input components ------------------------------------------------------------
+
+  var isSettable = function isSettable(x) {
+    return null != x && I.isFunction(x.set);
+  };
+
+  function tryGet(name, props) {
+    var value = props[name];
+    if (isSettable(value)) return getProp(name, value);
+  }
+
+  var mkBound = function mkBound(Elem, name, checked) {
+    return setName(function (props) {
+      var getter = tryGet('value', props) || checked && tryGet(checked, props);
+      return Karet.createElement(Elem, getter ? L.set('onChange', actions(getter, props.onChange), props) : props);
+    }, name);
+  };
+
+  var Select = /*#__PURE__*/mkBound('select', 'Select');
+  var Input = /*#__PURE__*/mkBound('input', 'Input', 'checked');
+  var TextArea = /*#__PURE__*/mkBound('textarea', 'TextArea');
 
   // Refs ------------------------------------------------------------------------
 
@@ -761,6 +796,9 @@
   exports.withContext = withContext;
   exports.getProps = getProps;
   exports.setProps = setProps;
+  exports.Select = Select;
+  exports.Input = Input;
+  exports.TextArea = TextArea;
   exports.refTo = refTo;
   exports.actions = actions;
   exports.preventDefault = preventDefault;

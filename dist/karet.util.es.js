@@ -2,10 +2,11 @@ import { AbstractMutable, Atom, Molecule, Join } from 'kefir.atom';
 export { holding } from 'kefir.atom';
 import { Observable, Property, Stream, constant, concat, merge, interval, later, never, fromEvents, combine, stream } from 'kefir';
 import { defineNameU, arityN, curry, pipe2U, identicalU, id, inherit, always, seq, seqPartial, isDefined, object0, isFunction } from 'infestines';
-import { iso, get, collect, flatten, when, join, find } from 'partial.lenses';
+import { iso, get, set, collect, flatten, when, join, find } from 'partial.lenses';
 import { combine as combine$1, lift, liftRec } from 'karet.lift';
 export { combine, lift, liftRec } from 'karet.lift';
-import { createContext, createElement } from 'react';
+import { createElement } from 'karet';
+import { createContext, createElement as createElement$1 } from 'react';
 import { combines } from 'kefir.combines';
 
 var header = 'karet.util: ';
@@ -436,7 +437,7 @@ var Context = /*#__PURE__*/(process.env.NODE_ENV === 'production' ? id : functio
   var context = _ref2.context,
       children = _ref2.children;
 
-  return createElement(
+  return createElement$1(
     Provider,
     { value: context },
     children
@@ -450,7 +451,7 @@ var withContext = /*#__PURE__*/(process.env.NODE_ENV === 'production' ? id : fun
   };
 })(function withContext(toElem) {
   return function (props) {
-    return createElement(
+    return createElement$1(
       Consumer,
       null,
       function (context) {
@@ -462,14 +463,27 @@ var withContext = /*#__PURE__*/(process.env.NODE_ENV === 'production' ? id : fun
 
 // DOM Binding -----------------------------------------------------------------
 
-var getProps = function getProps(template) {
-  return function getProps(_ref3) {
+var getProp = function getProp(name, settable) {
+  return function getProp(_ref3) {
     var target = _ref3.target;
 
-    for (var k in template) {
-      template[k].set(target[k]);
-    }
+    settable.set(target[name]);
   };
+};
+
+var getProps = function getProps(template) {
+  var result = void 0;
+  for (var k in template) {
+    if (result) return function getProps(_ref4) {
+      var target = _ref4.target;
+
+      for (var _k in template) {
+        template[_k].set(target[_k]);
+      }
+    };
+    result = getProp(k, template[k]);
+  }
+  return result;
 };
 
 function setProps(observables) {
@@ -502,6 +516,28 @@ function setProps(observables) {
     }
   };
 }
+
+// Input components ------------------------------------------------------------
+
+var isSettable = function isSettable(x) {
+  return null != x && isFunction(x.set);
+};
+
+function tryGet(name, props) {
+  var value = props[name];
+  if (isSettable(value)) return getProp(name, value);
+}
+
+var mkBound = function mkBound(Elem, name, checked) {
+  return setName(function (props) {
+    var getter = tryGet('value', props) || checked && tryGet(checked, props);
+    return createElement(Elem, getter ? set('onChange', actions(getter, props.onChange), props) : props);
+  }, name);
+};
+
+var Select = /*#__PURE__*/mkBound('select', 'Select');
+var Input = /*#__PURE__*/mkBound('input', 'Input', 'checked');
+var TextArea = /*#__PURE__*/mkBound('textarea', 'TextArea');
 
 // Refs ------------------------------------------------------------------------
 
@@ -627,7 +663,7 @@ var molecule = function molecule(template) {
 
 // Side-effects ----------------------------------------------------------------
 
-var set = /*#__PURE__*/curry(function set(settable, xs) {
+var set$1 = /*#__PURE__*/curry(function set$$1(settable, xs) {
   var ss = combine$1([xs], function (xs) {
     return settable.set(xs);
   });
@@ -705,4 +741,4 @@ var mapElemsWithIds = /*#__PURE__*/curry(function mapElemsWithIds(idL, xi2y, xs)
   }, []), skipIdenticals);
 });
 
-export { debounce, changes, serially, parallel, delay, mapValue, flatMapParallel, flatMapSerial, flatMapErrors, flatMapLatest, foldPast, interval$1 as interval, later$1 as later, never$1 as never, on, sampledBy, skipFirst, skipDuplicates, skipUnless, takeFirst, takeFirstErrors, takeUntilBy, toProperty, throttle, fromEvents$1 as fromEvents, ignoreValues, ignoreErrors, startWith, sink, consume, endWith, lazy, skipIdenticals, skipWhen, template, fromPromise, ifElse, unless, when$1 as when, cond, animationSpan, combines$1 as combines, Bus, bus, doPush, doError, doEnd, seq$1 as seq, seqPartial$1 as seqPartial, scope, tapPartial, toPartial, thru, through, show, onUnmount, Context, withContext, getProps, setProps, refTo, actions, preventDefault, stopPropagation, cns, parse, stringify, du as decodeURI, duc as decodeURIComponent, eu as encodeURI, euc as encodeURIComponent, abs, acos, acosh, asin, asinh, atan, atan2, atanh, cbrt, ceil, clz32, cos, cosh, exp, expm1, floor, fround, hypot, imul, log, log10, log1p, log2, max, min, pow, round, sign, sin, sinh, sqrt, tan, tanh, trunc, string, atom, variable, molecule, set, doModify, doSet, doRemove, view, mapElems, mapElemsWithIds };
+export { debounce, changes, serially, parallel, delay, mapValue, flatMapParallel, flatMapSerial, flatMapErrors, flatMapLatest, foldPast, interval$1 as interval, later$1 as later, never$1 as never, on, sampledBy, skipFirst, skipDuplicates, skipUnless, takeFirst, takeFirstErrors, takeUntilBy, toProperty, throttle, fromEvents$1 as fromEvents, ignoreValues, ignoreErrors, startWith, sink, consume, endWith, lazy, skipIdenticals, skipWhen, template, fromPromise, ifElse, unless, when$1 as when, cond, animationSpan, combines$1 as combines, Bus, bus, doPush, doError, doEnd, seq$1 as seq, seqPartial$1 as seqPartial, scope, tapPartial, toPartial, thru, through, show, onUnmount, Context, withContext, getProps, setProps, Select, Input, TextArea, refTo, actions, preventDefault, stopPropagation, cns, parse, stringify, du as decodeURI, duc as decodeURIComponent, eu as encodeURI, euc as encodeURIComponent, abs, acos, acosh, asin, asinh, atan, atan2, atanh, cbrt, ceil, clz32, cos, cosh, exp, expm1, floor, fround, hypot, imul, log, log10, log1p, log2, max, min, pow, round, sign, sin, sinh, sqrt, tan, tanh, trunc, string, atom, variable, molecule, set$1 as set, doModify, doSet, doRemove, view, mapElems, mapElemsWithIds };
