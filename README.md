@@ -54,6 +54,10 @@ A collection of utilities for working with
     * [Binding](#binding)
       * [`U.getProps({...propName: atom})`](#U-getProps)
       * [`U.setProps({...propName: observable})`](#U-setProps)
+    * [Input components](#input-components)
+      * [`<U.Input {...{value|checked}} />`](#U-Input)
+      * [`<U.Select {...{value}} />`](#U-Select)
+      * [`<U.TextArea {...{value}} />`](#U-TextArea)
     * [Refs](#refs)
       * [`U.refTo(variable)`](#U-refTo)
     * [Lifecycle](#lifcycle)
@@ -710,6 +714,51 @@ properties such as scroll position that are not HTML attributes.  See also
 
 See the live [Scroll](https://codesandbox.io/s/w6lpz5m9n7) CodeSandbox for an
 example.
+
+#### <a id="input-components"></a> [≡](#contents) [Input components](#input-components)
+
+##### <a id="U-Input"></a> [≡](#contents) [`<U.Input {...{value|checked}} />`](#U-Input)
+
+`U.Input` is a wrapper for an `input` element that binds either
+[`onChange={U.getProps({value})}`](#U-getProps) or
+[`onChange={U.getProps({checked})}`](#U-getProps) when either `value` or
+`checked` is a settable property.
+
+For example:
+
+```jsx
+const checked = U.atom(false)
+// ...
+<U.Input type="checkbox" checked={checked} />
+```
+
+##### <a id="U-Select"></a> [≡](#contents) [`<U.Select {...{value}} />`](#U-Select)
+
+`U.Select` is a wrapper for a `select` element that binds
+[`onChange={U.getProps({value})}`](#U-getProps) when `value` is a settable
+property.
+
+For example:
+
+```jsx
+const value = U.atom('')
+// ...
+<U.Select value={value} />
+```
+
+##### <a id="U-TextArea"></a> [≡](#contents) [`<U.TextArea {...{value}} />`](#U-TextArea)
+
+`U.TextArea` is a wrapper for a `textarea` element that binds
+[`onChange={U.getProps({value})}`](#U-getProps) when `value` is a settable
+property.
+
+For example:
+
+```jsx
+const value = U.atom('')
+// ...
+<U.TextArea value={value} />
+```
 
 #### <a id="refs"></a> [≡](#contents) [Refs](#refs)
 

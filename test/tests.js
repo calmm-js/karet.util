@@ -177,6 +177,42 @@ describe('U.Context', () => {
   ))
 })
 
+describe('bound inputs', () => {
+  const checked = U.atom(true)
+  const value = U.atom('lol')
+  testRender(
+    '<div><input type="checkbox" checked=""/><input type="text" value="lol"/><select></select><textarea>lol</textarea></div>',
+    () => (
+      <div>
+        <U.Input type="checkbox" {...{checked}} />
+        <U.Input type="text" {...{value}} />
+        <U.Select {...{value}} />
+        <U.TextArea {...{value}} />
+      </div>
+    )
+  )
+  testEq('101', () => {
+    const value = {
+      set(v) {
+        this.value = v
+      }
+    }
+    const elem = U.Input({value})
+    elem.props.onChange({target: {value: '101'}})
+    return value.value
+  })
+  testEq(false, () => {
+    const checked = {
+      set(v) {
+        this.value = v
+      }
+    }
+    const elem = U.Input({checked})
+    elem.props.onChange({target: {checked: false}})
+    return checked.value
+  })
+})
+
 describe('U.bus', () => {
   testEq(101, () => {
     const b = U.bus()
