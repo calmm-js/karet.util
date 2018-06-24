@@ -431,10 +431,22 @@ export const withContext = (process.env.NODE_ENV === 'production'
 
 // DOM Binding -----------------------------------------------------------------
 
-export const getProps = template =>
-  function getProps({target}) {
-    for (const k in template) template[k].set(target[k])
+const getProp = (name, settable) =>
+  function getProp({target}) {
+    settable.set(target[name])
   }
+
+export const getProps = template => {
+  let result
+  for (const k in template) {
+    if (result)
+      return function getProps({target}) {
+        for (const k in template) template[k].set(target[k])
+      }
+    result = getProp(k, template[k])
+  }
+  return result
+}
 
 export function setProps(observables) {
   let observable
