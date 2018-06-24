@@ -6,7 +6,7 @@ import { iso, get, set, collect, flatten, when, join, find } from 'partial.lense
 import { combine as combine$1, lift, liftRec } from 'karet.lift';
 export { combine, lift, liftRec } from 'karet.lift';
 import { createElement } from 'karet';
-import { createContext, createElement as createElement$1 } from 'react';
+import { createContext, createElement as createElement$1, forwardRef } from 'react';
 import { combines } from 'kefir.combines';
 
 var header = 'karet.util: ';
@@ -529,10 +529,11 @@ function tryGet(name, props) {
 }
 
 var mkBound = function mkBound(Elem, name, checked) {
-  return setName(function (props) {
+  return forwardRef(setName(function (props, ref) {
     var getter = tryGet('value', props) || checked && tryGet(checked, props);
-    return createElement(Elem, getter ? set('onChange', actions(getter, props.onChange), props) : props);
-  }, name);
+    if (getter) props = set('onChange', actions(getter, props.onChange), props);
+    return createElement(Elem, ref ? set('ref', ref, props) : props);
+  }, name));
 };
 
 var Select = /*#__PURE__*/mkBound('select', 'Select');

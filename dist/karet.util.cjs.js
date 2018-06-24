@@ -531,10 +531,11 @@ function tryGet(name, props) {
 }
 
 var mkBound = function mkBound(Elem, name, checked) {
-  return setName(function (props) {
+  return React.forwardRef(setName(function (props, ref) {
     var getter = tryGet('value', props) || checked && tryGet(checked, props);
-    return Karet.createElement(Elem, getter ? L.set('onChange', actions(getter, props.onChange), props) : props);
-  }, name);
+    if (getter) props = L.set('onChange', actions(getter, props.onChange), props);
+    return Karet.createElement(Elem, ref ? L.set('ref', ref, props) : props);
+  }, name));
 };
 
 var Select = /*#__PURE__*/mkBound('select', 'Select');
