@@ -488,13 +488,15 @@ function tryGet(name, props) {
 }
 
 const mkBound = (Elem, name, checked) =>
-  setName(props => {
-    const getter = tryGet('value', props) || (checked && tryGet(checked, props))
-    return Karet.createElement(
-      Elem,
-      getter ? L.set('onChange', actions(getter, props.onChange), props) : props
-    )
-  }, name)
+  React.forwardRef(
+    setName((props, ref) => {
+      const getter =
+        tryGet('value', props) || (checked && tryGet(checked, props))
+      if (getter)
+        props = L.set('onChange', actions(getter, props.onChange), props)
+      return Karet.createElement(Elem, ref ? L.set('ref', ref, props) : props)
+    }, name)
+  )
 
 export const Select = mkBound('select', 'Select')
 export const Input = mkBound('input', 'Input', 'checked')

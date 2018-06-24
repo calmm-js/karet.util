@@ -191,13 +191,14 @@ describe('bound inputs', () => {
       </div>
     )
   )
+  const fakeMount = elem => elem.type.render(elem.props)
   testEq('101', () => {
     const value = {
       set(v) {
         this.value = v
       }
     }
-    const elem = U.Input({value})
+    const elem = fakeMount(<U.Input {...{value}} />)
     elem.props.onChange({target: {value: '101'}})
     return value.value
   })
@@ -207,7 +208,7 @@ describe('bound inputs', () => {
         this.value = v
       }
     }
-    const elem = U.Input({checked})
+    const elem = fakeMount(<U.Input {...{checked}} />)
     elem.props.onChange({target: {checked: false}})
     return checked.value
   })
