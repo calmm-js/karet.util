@@ -4,6 +4,7 @@ import * as I from 'infestines'
 
 import * as L from 'partial.lenses'
 import * as F from 'karet.lift'
+import * as Karet from 'karet'
 import * as React from 'react'
 
 const header = 'karet.util: '
@@ -476,6 +477,28 @@ export function setProps(observables) {
     }
   }
 }
+
+// Input components ------------------------------------------------------------
+
+const isSettable = x => null != x && I.isFunction(x.set)
+
+function tryGet(name, props) {
+  const value = props[name]
+  if (isSettable(value)) return getProp(name, value)
+}
+
+const mkBound = (Elem, name, checked) =>
+  setName(props => {
+    const getter = tryGet('value', props) || (checked && tryGet(checked, props))
+    return Karet.createElement(
+      Elem,
+      getter ? L.set('onChange', actions(getter, props.onChange), props) : props
+    )
+  }, name)
+
+export const Select = mkBound('select', 'Select')
+export const Input = mkBound('input', 'Input', 'checked')
+export const TextArea = mkBound('textarea', 'TextArea')
 
 // Refs ------------------------------------------------------------------------
 
