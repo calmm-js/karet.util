@@ -538,6 +538,79 @@ export const cns = F.lift(function cns(...xs) {
   return cnsImmediate(xs) || undefined
 })
 
+// Observables -----------------------------------------------------------------
+
+function shallowWhereEq(lhs, rhs) {
+  for (const k in lhs) if (!I.identicalU(lhs[k], rhs[k])) return false
+  return true
+}
+
+const shallowEquals = (lhs, rhs) =>
+  shallowWhereEq(lhs, rhs) && shallowWhereEq(rhs, lhs)
+
+function updateObs(prevObs, nextProps, plain) {
+  const nextObs = {}
+  for (const k in nextProps) {
+    const v = nextProps[k]
+    if (plain(k)) {
+      nextObs[k] = v
+    } else {
+      const obs = (nextObs[k] =
+        prevObs[k] || new K.Property().skipDuplicates(I.identicalU))
+      obs._emitValue(v)
+    }
+  }
+  for (const k in prevObs) {
+    if (!plain(k)) {
+      const v = prevObs[k]
+      if (v !== nextObs[k]) {
+        v._emitEnd()
+      }
+    }
+  }
+  return nextObs
+}
+
+export const toReactExcept = I.curry(function toReactExcept(plain, Calmm) {
+  const Pure = I.inherit(
+    function Pure(props) {
+      React.PureComponent.call(this, props)
+    },
+    React.PureComponent,
+    {
+      render() {
+        return <Calmm {...this.props} />
+      }
+    }
+  )
+  return I.inherit(
+    function ToClass(props) {
+      React.PureComponent.call(this, props)
+      this.o = updateObs(I.object0, props, plain)
+    },
+    React.PureComponent,
+    {
+      componentDidUpdate() {
+        const prev = this.o
+        const next = (this.o = updateObs(prev, this.props, plain))
+        if (!shallowEquals(prev, next)) {
+          this.forceUpdate()
+        }
+      },
+      render() {
+        return <Pure {...this.o} />
+      },
+      componentWillUnmount() {
+        updateObs(this.o, I.object0, plain)
+      }
+    }
+  )
+})
+
+export const toReact = toReactExcept(I.always(false))
+
+export {fromClass as toKaret} from 'karet'
+
 // Standard ////////////////////////////////////////////////////////////////////
 
 // JSON ------------------------------------------------------------------------
