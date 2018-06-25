@@ -541,6 +541,28 @@ describe('U.animationSpan', () => {
   })
 })
 
+describe('toReact', () => {
+  const Foo = U.toReactExcept(R.identical('foo'), function Foo({foo, bar = 2}) {
+    return (
+      <div>
+        {foo}
+        {bar}
+      </div>
+    )
+  })
+  testRender('<div>101</div>', () => <Foo foo={10} bar={1} />)
+  it('smoke test', () => {
+    const foo = new Foo({foo: 10, bar: 1})
+    foo.props = {foo: 20, bar: 2}
+    foo.componentDidUpdate()
+    foo.props = {foo: 20, bar: 3}
+    foo.componentDidUpdate()
+    foo.props = {foo: 15}
+    foo.componentDidUpdate()
+    foo.componentWillUnmount()
+  })
+})
+
 describe('obsoleted', () => {
   testEq(2, () => U.seq(1, R.inc))
   testEq(2, () => U.seqPartial(1, R.inc))

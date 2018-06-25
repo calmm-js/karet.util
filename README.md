@@ -68,6 +68,10 @@ A collection of utilities for working with
       * [`U.stopPropagation(event)`](#U-stopPropagation)
     * [Class names](#class-names)
       * [`U.cns(...classNames)`](#U-cns)
+    * [Interop](#interop)
+      * [`U.toKaret(ReactComponent)`](#U-toKaret)
+      * [`U.toReact(KaretComponent)`](#U-toReact)
+      * [`U.toReactExcept(propName => boolean, KaretComponent)`](#U-toReactExcept)
   * [Kefir](#kefir)
     * [Conditionals](#conditionals)
       * [`U.cond(...[condition, consequent][, [alternative]])`](#U-cond)
@@ -859,6 +863,41 @@ const Component = ({className}) => (
   <div className={U.cns(className, 'a-class-name', false, 'another-one', undefined)} />
 )
 ```
+
+#### <a id="interop"></a> [≡](#contents) [Interop](#interop)
+
+##### <a id="U-toKaret"></a> [≡](#contents) [`U.toKaret(ReactComponent)`](#U-toKaret)
+
+`U.toKaret` converts a React component that takes plain value properties to a
+Karet component that can be given observable properties.  `U.toKaret` is useful
+when using React components, such as [React
+Select](http://jedwatson.github.io/react-select/), as children of Karet
+components and with observable rather than plain value properties.  `U.toKaret`
+is a synonym for [`fromClass`](https://github.com/calmm-js/karet#fromClass) from
+the [Karet](https://github.com/calmm-js/karet) library.
+
+##### <a id="U-toReact"></a> [≡](#contents) [`U.toReact(KaretComponent)`](#U-toReact)
+
+`U.toReact` converts a Karet component that expects observable properties and
+should not be rerendered unnecessarily into a React component that takes plain
+value properties.  `U.toReact` may be needed particularly when a Karet component
+is controlled by a higher-order React component, such as [React
+Router](https://reacttraining.com/react-router/), because Karet components
+typically (are not and) must not be rerendered unnecessarily.  `U.toReact` is
+equivalent to [`U.toReactExcept(() => false)`](#U-toReactExcept).
+
+##### <a id="U-toReactExcept"></a> [≡](#contents) [`U.toReactExcept(propName => boolean, KaretComponent)`](#U-toReactExcept)
+
+`U.toReactExcept` converts a Karet component that expects observable properties
+and should not be rerendered unnecessarily into a React component that takes
+plain value properties.  The given predicate is used to determine which
+properties must not be converted to observable properties.  Like
+[`U.toReact`](#U-toReact), `U.toReactExcept` may be needed particularly when a
+Karet component is controlled by a higher-order React component, such as [React
+Router](https://reacttraining.com/react-router/), because Karet components
+typically (are not and) must not be rerendered unnecessarily.  See the [Calmm
+function to React class](https://codesandbox.io/s/kkx6zrzr35) CodeSandbox for an
+example.
 
 ### <a id="kefir"></a> [≡](#contents) [Kefir](#kefir)
 
