@@ -521,13 +521,9 @@ function setProps(observables) {
 
 // Input components ------------------------------------------------------------
 
-var isSettable = function isSettable(x) {
-  return null != x && I.isFunction(x.set);
-};
-
 function tryGet(name, props) {
   var value = props[name];
-  if (isSettable(value)) return getProp(name, value);
+  if (null != value) return getProp(name, value);
 }
 
 var mkBound = function mkBound(Elem, name, checked) {
