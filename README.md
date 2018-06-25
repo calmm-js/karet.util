@@ -722,7 +722,7 @@ example.
 `U.Input` is a wrapper for an `input` element that binds either
 [`onChange={U.getProps({value})}`](#U-getProps) or
 [`onChange={U.getProps({checked})}`](#U-getProps) when either `value` or
-`checked` is a settable property.
+`checked` is a defined property.
 
 For example:
 
@@ -735,7 +735,7 @@ const checked = U.atom(false)
 ##### <a id="U-Select"></a> [≡](#contents) [`<U.Select {...{value}} />`](#U-Select)
 
 `U.Select` is a wrapper for a `select` element that binds
-[`onChange={U.getProps({value})}`](#U-getProps) when `value` is a settable
+[`onChange={U.getProps({value})}`](#U-getProps) when `value` is a defined
 property.
 
 For example:
@@ -749,7 +749,7 @@ const value = U.atom('')
 ##### <a id="U-TextArea"></a> [≡](#contents) [`<U.TextArea {...{value}} />`](#U-TextArea)
 
 `U.TextArea` is a wrapper for a `textarea` element that binds
-[`onChange={U.getProps({value})}`](#U-getProps) when `value` is a settable
+[`onChange={U.getProps({value})}`](#U-getProps) when `value` is a defined
 property.
 
 For example:
