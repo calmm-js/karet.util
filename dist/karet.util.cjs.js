@@ -591,6 +591,70 @@ var cns = /*#__PURE__*/F.lift(function cns() {
   return cnsImmediate(xs) || undefined;
 });
 
+// Observables -----------------------------------------------------------------
+
+function shallowWhereEq(lhs, rhs) {
+  for (var k in lhs) {
+    if (!I.identicalU(lhs[k], rhs[k])) return false;
+  }return true;
+}
+
+var shallowEquals = function shallowEquals(lhs, rhs) {
+  return shallowWhereEq(lhs, rhs) && shallowWhereEq(rhs, lhs);
+};
+
+function updateObs(prevObs, nextProps, plain) {
+  var nextObs = {};
+  for (var k in nextProps) {
+    var v = nextProps[k];
+    if (plain(k)) {
+      nextObs[k] = v;
+    } else {
+      var obs = nextObs[k] = prevObs[k] || new K.Property().skipDuplicates(I.identicalU);
+      obs._emitValue(v);
+    }
+  }
+  for (var _k2 in prevObs) {
+    if (!plain(_k2)) {
+      var _v = prevObs[_k2];
+      if (_v !== nextObs[_k2]) {
+        _v._emitEnd();
+      }
+    }
+  }
+  return nextObs;
+}
+
+var toReactExcept = /*#__PURE__*/I.curry(function toReactExcept(plain, Calmm) {
+  var Pure = I.inherit(function Pure(props) {
+    React.PureComponent.call(this, props);
+  }, React.PureComponent, {
+    render: function render() {
+      return React.createElement(Calmm, this.props);
+    }
+  });
+  return I.inherit(function ToClass(props) {
+    React.PureComponent.call(this, props);
+    this.o = updateObs(I.object0, props, plain);
+  }, React.PureComponent, {
+    componentDidUpdate: function componentDidUpdate() {
+      var prev = this.o;
+      var next = this.o = updateObs(prev, this.props, plain);
+      if (!shallowEquals(prev, next)) {
+        this.forceUpdate();
+      }
+    },
+    render: function render() {
+      return React.createElement(Pure, this.o);
+    },
+    componentWillUnmount: function componentWillUnmount() {
+      updateObs(this.o, I.object0, plain);
+    }
+  });
+});
+
+var toReact = /*#__PURE__*/toReactExcept( /*#__PURE__*/I.always(false));
+
 // Standard ////////////////////////////////////////////////////////////////////
 
 // JSON ------------------------------------------------------------------------
@@ -744,6 +808,7 @@ exports.holding = A.holding;
 exports.combine = F.combine;
 exports.lift = F.lift;
 exports.liftRec = F.liftRec;
+exports.toKaret = Karet.fromClass;
 exports.debounce = debounce;
 exports.changes = changes;
 exports.serially = serially;
@@ -812,6 +877,8 @@ exports.actions = actions;
 exports.preventDefault = preventDefault;
 exports.stopPropagation = stopPropagation;
 exports.cns = cns;
+exports.toReactExcept = toReactExcept;
+exports.toReact = toReact;
 exports.parse = parse;
 exports.stringify = stringify;
 exports.decodeURI = du;

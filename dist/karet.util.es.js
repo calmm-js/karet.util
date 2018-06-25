@@ -6,7 +6,8 @@ import { iso, get, set, collect, flatten, when, join, find } from 'partial.lense
 import { combine as combine$1, lift, liftRec } from 'karet.lift';
 export { combine, lift, liftRec } from 'karet.lift';
 import { createElement } from 'karet';
-import { createContext, createElement as createElement$1, forwardRef } from 'react';
+export { fromClass as toKaret } from 'karet';
+import { createContext, createElement as createElement$1, forwardRef, PureComponent } from 'react';
 import { combines } from 'kefir.combines';
 
 var header = 'karet.util: ';
@@ -589,6 +590,70 @@ var cns = /*#__PURE__*/lift(function cns() {
   return cnsImmediate(xs) || undefined;
 });
 
+// Observables -----------------------------------------------------------------
+
+function shallowWhereEq(lhs, rhs) {
+  for (var k in lhs) {
+    if (!identicalU(lhs[k], rhs[k])) return false;
+  }return true;
+}
+
+var shallowEquals = function shallowEquals(lhs, rhs) {
+  return shallowWhereEq(lhs, rhs) && shallowWhereEq(rhs, lhs);
+};
+
+function updateObs(prevObs, nextProps, plain) {
+  var nextObs = {};
+  for (var k in nextProps) {
+    var v = nextProps[k];
+    if (plain(k)) {
+      nextObs[k] = v;
+    } else {
+      var obs = nextObs[k] = prevObs[k] || new Property().skipDuplicates(identicalU);
+      obs._emitValue(v);
+    }
+  }
+  for (var _k2 in prevObs) {
+    if (!plain(_k2)) {
+      var _v = prevObs[_k2];
+      if (_v !== nextObs[_k2]) {
+        _v._emitEnd();
+      }
+    }
+  }
+  return nextObs;
+}
+
+var toReactExcept = /*#__PURE__*/curry(function toReactExcept(plain, Calmm) {
+  var Pure = inherit(function Pure(props) {
+    PureComponent.call(this, props);
+  }, PureComponent, {
+    render: function render() {
+      return createElement$1(Calmm, this.props);
+    }
+  });
+  return inherit(function ToClass(props) {
+    PureComponent.call(this, props);
+    this.o = updateObs(object0, props, plain);
+  }, PureComponent, {
+    componentDidUpdate: function componentDidUpdate() {
+      var prev = this.o;
+      var next = this.o = updateObs(prev, this.props, plain);
+      if (!shallowEquals(prev, next)) {
+        this.forceUpdate();
+      }
+    },
+    render: function render() {
+      return createElement$1(Pure, this.o);
+    },
+    componentWillUnmount: function componentWillUnmount() {
+      updateObs(this.o, object0, plain);
+    }
+  });
+});
+
+var toReact = /*#__PURE__*/toReactExcept( /*#__PURE__*/always(false));
+
 // Standard ////////////////////////////////////////////////////////////////////
 
 // JSON ------------------------------------------------------------------------
@@ -738,4 +803,4 @@ var mapElemsWithIds = /*#__PURE__*/curry(function mapElemsWithIds(idL, xi2y, xs)
   }, []), skipIdenticals);
 });
 
-export { debounce, changes, serially, parallel, delay, mapValue, flatMapParallel, flatMapSerial, flatMapErrors, flatMapLatest, foldPast, interval$1 as interval, later$1 as later, never$1 as never, on, sampledBy, skipFirst, skipDuplicates, skipUnless, takeFirst, takeFirstErrors, takeUntilBy, toProperty, throttle, fromEvents$1 as fromEvents, ignoreValues, ignoreErrors, startWith, sink, consume, endWith, lazy, skipIdenticals, skipWhen, template, fromPromise, ifElse, unless, when$1 as when, cond, animationSpan, combines$1 as combines, Bus, bus, doPush, doError, doEnd, seq$1 as seq, seqPartial$1 as seqPartial, scope, tapPartial, toPartial, thru, through, show, onUnmount, Context, withContext, getProps, setProps, Select, Input, TextArea, refTo, actions, preventDefault, stopPropagation, cns, parse, stringify, du as decodeURI, duc as decodeURIComponent, eu as encodeURI, euc as encodeURIComponent, abs, acos, acosh, asin, asinh, atan, atan2, atanh, cbrt, ceil, clz32, cos, cosh, exp, expm1, floor, fround, hypot, imul, log, log10, log1p, log2, max, min, pow, round, sign, sin, sinh, sqrt, tan, tanh, trunc, string, atom, variable, molecule, set$1 as set, doModify, doSet, doRemove, view, mapElems, mapElemsWithIds };
+export { debounce, changes, serially, parallel, delay, mapValue, flatMapParallel, flatMapSerial, flatMapErrors, flatMapLatest, foldPast, interval$1 as interval, later$1 as later, never$1 as never, on, sampledBy, skipFirst, skipDuplicates, skipUnless, takeFirst, takeFirstErrors, takeUntilBy, toProperty, throttle, fromEvents$1 as fromEvents, ignoreValues, ignoreErrors, startWith, sink, consume, endWith, lazy, skipIdenticals, skipWhen, template, fromPromise, ifElse, unless, when$1 as when, cond, animationSpan, combines$1 as combines, Bus, bus, doPush, doError, doEnd, seq$1 as seq, seqPartial$1 as seqPartial, scope, tapPartial, toPartial, thru, through, show, onUnmount, Context, withContext, getProps, setProps, Select, Input, TextArea, refTo, actions, preventDefault, stopPropagation, cns, toReactExcept, toReact, parse, stringify, du as decodeURI, duc as decodeURIComponent, eu as encodeURI, euc as encodeURIComponent, abs, acos, acosh, asin, asinh, atan, atan2, atanh, cbrt, ceil, clz32, cos, cosh, exp, expm1, floor, fround, hypot, imul, log, log10, log1p, log2, max, min, pow, round, sign, sin, sinh, sqrt, tan, tanh, trunc, string, atom, variable, molecule, set$1 as set, doModify, doSet, doRemove, view, mapElems, mapElemsWithIds };
