@@ -788,7 +788,7 @@ skipping `null` and using an initially empty [variable](#U-variable) rather than
 an [atom](#U-atom) is that once the variable emits a value, you can be sure that
 it refers to a DOM element.
 
-Note than in case you also want to observe `null` values, you can use
+Note that in case you also want to observe `null` values, you can use
 [`U.set`](#U-set) instead of `U.refTo`:
 
 ```jsx
