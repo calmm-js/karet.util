@@ -454,28 +454,31 @@
 
   // DOM Binding -----------------------------------------------------------------
 
-  var getProp = function getProp(name, settable) {
+  var getProp = function getProp(name, object) {
     return function getProp(_ref3) {
       var target = _ref3.target;
 
-      settable.set(target[name]);
+      var value = target[name];
+      if (I.isFunction(object.push)) {
+        object.push(value);
+      } else {
+        object.set(value);
+      }
     };
   };
 
-  var getProps = function getProps(template) {
+  function getProps(template) {
     var result = void 0;
     for (var k in template) {
-      if (result) return function getProps(_ref4) {
-        var target = _ref4.target;
-
+      if (result) return function getProps(e) {
         for (var _k in template) {
-          template[_k].set(target[_k]);
+          getProp(_k, template[_k])(e);
         }
       };
       result = getProp(k, template[k]);
     }
     return result;
-  };
+  }
 
   function setProps(observables) {
     var observable = void 0;
