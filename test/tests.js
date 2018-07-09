@@ -528,13 +528,13 @@ describe('U.animationSpan', () => {
     global.cancelAnimationFrame = () => {}
     let i = 0
     global.requestAnimationFrame = step => {
-      setTimeout(() => step(500 * ++i), 0)
+      setTimeout(() => step(500 * ++i + i), 0)
     }
     const values = []
     return U.thru(
       U.serially([U.animationSpan(2000), 'done']),
       U.toProperty,
-      R.tap(x => values.push(x)),
+      R.tap(x => values.push(R.is(Number, x) ? Number(x.toFixed(2)) : x)),
       U.skipUnless(R.equals('done')),
       U.mapValue(_ => values)
     )
