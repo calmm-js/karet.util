@@ -117,6 +117,7 @@ describe('U.mapElems', () => {
     xs.set([1, 3, 4])
     return ys
   })
+  testEq([3, 1, 2], () => U.mapElems(x => x + 1, [2, 0, 1]))
 })
 
 describe('U.mapElemsWithIds', () => {
