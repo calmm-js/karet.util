@@ -713,6 +713,40 @@ const chooseGet = xs =>
 
 //
 
+const destructureUnsupported = name =>
+  function unsupported() {
+    throw Error(`destructure: \`${name}\` unsupported`)
+  }
+
+const DestructureCommon = {
+  deleteProperty: destructureUnsupported('deleteProperty'),
+  has: destructureUnsupported('has'),
+  ownKeys: destructureUnsupported('ownKeys'),
+  set: destructureUnsupported('set')
+}
+
+const DestructureMutable = I.assign({}, DestructureCommon, {
+  get: getMutable,
+  set: (target, prop, value) => !target.modify(L.set(prop, value)),
+  deleteProperty: (target, prop) => !target.modify(L.remove(prop))
+})
+
+const DestructureProperty = I.assign({}, DestructureCommon, {
+  get: getProperty
+})
+
+export function destructure(x) {
+  if (isMutable(x)) {
+    return new Proxy(x, DestructureMutable)
+  } else if (isProperty(x)) {
+    return new Proxy(x, DestructureProperty)
+  } else {
+    return x
+  }
+}
+
+//
+
 export const view = I.curry(function view(l, xs) {
   if (isMutable(xs)) {
     return isProperty(template(l))
