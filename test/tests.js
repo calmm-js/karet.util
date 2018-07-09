@@ -372,10 +372,12 @@ describe('U.onUnmount', () => {
 describe('U.getProps', () => {
   testEq({value: 101, checked: false}, () => {
     const value = U.atom()
-    const checked = U.atom()
+    const checked = U.bus()
+    const checkedProp = checked.toProperty()
+    checkedProp.observe()
     U.getProps({value, checked})({target: {value: 42, checked: false}})
     U.getProps({value})({target: {value: 101}})
-    return U.debounce(10, U.template({value, checked}))
+    return U.debounce(10, U.template({value, checked: checkedProp}))
   })
 })
 

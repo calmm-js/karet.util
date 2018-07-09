@@ -52,7 +52,7 @@ A collection of utilities for working with
       * ~~[`<U.Context context={context} />`](#U-Context)~~
       * ~~[`U.withContext((props, context) => element)`](#U-withContext)~~
     * [Binding](#binding)
-      * [`U.getProps({...propName: atom})`](#U-getProps)
+      * [`U.getProps({...propName: atom|bus})`](#U-getProps)
       * [`U.setProps({...propName: observable})`](#U-setProps)
     * [Input components](#input-components)
       * [`<U.Input {...{value|checked}} />`](#U-Input)
@@ -688,11 +688,11 @@ const Text = U.withContext(({children: text}, {language}) => (
 
 #### <a id="binding"></a> [≡](#contents) [Binding](#binding)
 
-##### <a id="U-getProps"></a> [≡](#contents) [`U.getProps({...propName: atom})`](#U-getProps)
+##### <a id="U-getProps"></a> [≡](#contents) [`U.getProps({...propName: atom|bus})`](#U-getProps)
 
 `U.getProps` returns an event callback that gets the values of the properties
-named in the given template from the event target and sets them to the atoms
-that are the values of the properties.
+named in the given template from the event target and pushes or sets them to the
+[buses](#bus) or [atoms](#atoms) that are the values of the properties.
 
 For example:
 
