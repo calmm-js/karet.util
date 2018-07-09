@@ -7,21 +7,9 @@ import * as F from 'karet.lift'
 import * as Karet from 'karet'
 import * as React from 'react'
 
-const header = 'karet.util: '
-
-function warn(f, m) {
-  if (!f.warned) {
-    f.warned = 1
-    console.warn(header + m)
-  }
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 
-const setName =
-  process.env.NODE_ENV === 'production'
-    ? x => x
-    : (to, name) => I.defineNameU(to, name)
+const setName = process.env.NODE_ENV === 'production' ? x => x : I.defineNameU
 
 // Actions /////////////////////////////////////////////////////////////////////
 
@@ -45,10 +33,29 @@ const isProperty = x => x instanceof K.Property
 const isStream = x => x instanceof K.Stream
 
 const toUndefined = _ => {}
-const toObservable = x => (isObservable(x) ? x : K.constant(x))
 
 const invokeIf = (fn, x) => fn && fn(x)
 const toHandler = fns => ({type, value}) => invokeIf(fns[type], value)
+
+const mapValueU = function mapValue(fn, xs) {
+  if (isObservable(xs)) return xs.map(fn)
+  else return fn(xs)
+}
+
+const flatMapLatestU = function flatMapLatest(fn, xs) {
+  if (isObservable(xs)) return xs.flatMapLatest(I.pipe2U(fn, toObservable))
+  else return fn(xs)
+}
+
+const flatMapParallelU = function flatMapParallel(fn, xs) {
+  if (isObservable(xs)) return xs.flatMap(I.pipe2U(fn, toObservable))
+  else return fn(xs)
+}
+
+const flatMapSerialU = function flatMapSerial(fn, xs) {
+  if (isObservable(xs)) return xs.flatMapConcat(I.pipe2U(fn, toObservable))
+  else return fn(xs)
+}
 
 // Curried ---------------------------------------------------------------------
 
@@ -57,27 +64,21 @@ export const debounce = I.curry(function debounce(ms, xs) {
 })
 export const changes = xs => toObservable(xs).changes()
 export const serially = xs => K.concat(xs.map(toObservable))
-export const parallel = K.merge
+export const parallel = xs => K.merge(xs.map(toObservable))
 export const delay = I.curry(function delay(ms, xs) {
-  return toObservable(xs).delay(ms)
+  if (isObservable(xs)) return xs.delay(ms)
+  else return xs
 })
-export const mapValue = I.curry(function mapValue(fn, xs) {
-  return toObservable(xs).map(fn)
-})
-export const flatMapParallel = I.curry(function flatMapParallel(fn, xs) {
-  return toObservable(xs).flatMap(I.pipe2U(fn, toObservable))
-})
-export const flatMapSerial = I.curry(function flatMapSerial(fn, xs) {
-  return toObservable(xs).flatMapConcat(I.pipe2U(fn, toObservable))
-})
+export const mapValue = I.curry(mapValueU)
+export const flatMapParallel = I.curry(flatMapParallelU)
+export const flatMapSerial = I.curry(flatMapSerialU)
 export const flatMapErrors = I.curry(function flatMapErrors(fn, xs) {
   return toObservable(xs).flatMapErrors(I.pipe2U(fn, toObservable))
 })
-export const flatMapLatest = I.curry(function flatMapLatest(fn, xs) {
-  return toObservable(xs).flatMapLatest(I.pipe2U(fn, toObservable))
-})
+export const flatMapLatest = I.curry(flatMapLatestU)
 export const foldPast = I.curry(function foldPast(fn, s, xs) {
-  return toObservable(xs).scan(fn, s)
+  if (isObservable(xs)) return xs.scan(fn, s)
+  else return fn(s, xs)
 })
 export const interval = I.curry(K.interval)
 export const later = I.curry(K.later)
@@ -92,7 +93,8 @@ export const skipFirst = I.curry(function skipFirst(n, xs) {
   return toObservable(xs).skip(n)
 })
 export const skipDuplicates = I.curry(function skipDuplicates(equals, xs) {
-  return toObservable(xs).skipDuplicates(equals)
+  if (isObservable(xs)) return xs.skipDuplicates(equals)
+  else return xs
 })
 export const skipUnless = I.curry(function skipUnless(p, xs) {
   return toObservable(xs).filter(p)
@@ -106,8 +108,8 @@ export const takeFirstErrors = I.curry(function takeFirstErrors(n, xs) {
 export const takeUntilBy = I.curry(function takeUntilBy(ts, xs) {
   return toObservable(xs).takeUntilBy(ts)
 })
-export const toProperty = xs =>
-  isProperty(xs) ? xs : isStream(xs) ? xs.toProperty() : K.constant(xs)
+export const toObservable = x => (isObservable(x) ? x : K.constant(x))
+export const toProperty = xs => (isStream(xs) ? xs.toProperty() : xs)
 export const throttle = I.curry(function throttle(ms, xs) {
   return toObservable(xs).throttle(ms)
 })
@@ -126,7 +128,7 @@ export const consume = I.pipe2U(mapValue, sink)
 export const endWith = I.curry(function endWith(v, xs) {
   return toObservable(xs).concat(toObservable(v))
 })
-export const lazy = th => toProperty(flatMapLatest(th, toProperty()))
+export const lazy = th => toProperty(flatMapLatestU(th, toObservable()))
 export const skipIdenticals = skipDuplicates(I.identicalU)
 export const skipWhen = I.curry(function skipWhen(p, xs) {
   return toObservable(xs).filter(x => !p(x))
@@ -202,20 +204,20 @@ const mkBop = (zero, bop) =>
 
 export const and = setName(
   mkBop(true, function and(l, r) {
-    return toProperty(flatMapLatest(l => l && r, l))
+    return toProperty(flatMapLatestU(l => l && r, l))
   }),
   'andAlso'
 )
 
 export const or = setName(
   mkBop(false, function or(l, r) {
-    return toProperty(flatMapLatest(l => l || r, l))
+    return toProperty(flatMapLatestU(l => l || r, l))
   }),
   'orElse'
 )
 
 const ifteU = function ifElse(b, t, e) {
-  return toProperty(flatMapLatest(b => (b ? t : e), b))
+  return toProperty(flatMapLatestU(b => (b ? t : e), b))
 }
 
 export const ifElse = I.curry(ifteU)
@@ -233,6 +235,24 @@ export function cond(_) {
   }
   return op
 }
+
+// Algebras --------------------------------------------------------------------
+
+export const Latest = I.Monad(
+  (f, x) => x.map(f).skipDuplicates(I.identicalU),
+  K.constant,
+  (f, x) =>
+    K.combine([f, x], I.applyU)
+      .toProperty()
+      .skipDuplicates(I.identicalU),
+  (f, x) =>
+    x
+      .flatMapLatest(f)
+      .toProperty()
+      .skipDuplicates(I.identicalU)
+)
+
+export const IdentityLatest = I.IdentityOrU(isProperty, Latest)
 
 // Animation -------------------------------------------------------------------
 
@@ -279,19 +299,6 @@ export const animationSpan =
 
 export {combine, lift, liftRec} from 'karet.lift'
 
-import {combines as combinesRaw} from 'kefir.combines'
-
-export const combines =
-  process.env.NODE_ENV === 'production'
-    ? combinesRaw
-    : function combines() {
-        warn(
-          combines,
-          '`combines` has been obsoleted.  Please use `combine`, `template`, `lift`, or `liftRec` instead.'
-        )
-        return combinesRaw.apply(null, arguments)
-      }
-
 // Bus -------------------------------------------------------------------------
 
 const streamPrototype = K.Stream.prototype
@@ -318,25 +325,6 @@ export const doEnd = doN(0, 'end', 'doEnd')
 
 // Convenience /////////////////////////////////////////////////////////////////
 
-export const seq =
-  process.env.NODE_ENV === 'production'
-    ? I.seq
-    : function seq(_) {
-        warn(seq, '`seq` has been obsoleted.  Use `thru` instead.')
-        return I.seq.apply(null, arguments)
-      }
-
-export const seqPartial =
-  process.env.NODE_ENV === 'production'
-    ? I.seqPartial
-    : function seqPartial(_) {
-        warn(
-          seqPartial,
-          '`seqPartial` has been deprecated.  There is no replacement for it.'
-        )
-        return I.seqPartial.apply(null, arguments)
-      }
-
 export const scope = fn => fn()
 
 export const tapPartial = F.lift(
@@ -360,7 +348,7 @@ const thruPlain = function thru(x, fs) {
 
 const thruProperty = function thru(x, fs) {
   return toProperty(
-    flatMapLatest(function thru(fs) {
+    flatMapLatestU(function thru(fs) {
       return thruPlain(x, fs)
     }, fs)
   )
@@ -431,36 +419,6 @@ export function show(_) {
 
 export const onUnmount = effect =>
   K.stream(I.always(effect)).toProperty(I.always(undefined))
-
-// Context ---------------------------------------------------------------------
-
-const {Provider, Consumer} = React.createContext(I.object0)
-
-export const Context = (process.env.NODE_ENV === 'production'
-  ? I.id
-  : fn =>
-      function Context(props) {
-        warn(
-          Context,
-          '`Context` has been obsoleted.  Just use the new React context API.'
-        )
-        return fn(props)
-      })(function Context({context, children}) {
-  return <Provider value={context}>{children}</Provider>
-})
-
-export const withContext = (process.env.NODE_ENV === 'production'
-  ? I.id
-  : fn =>
-      function withContext(props) {
-        warn(
-          withContext,
-          '`withContext` has been obsoleted.  Just use the new React context API.'
-        )
-        return fn(props)
-      })(function withContext(toElem) {
-  return props => <Consumer>{context => toElem(props, context)}</Consumer>
-})
 
 // DOM Binding -----------------------------------------------------------------
 

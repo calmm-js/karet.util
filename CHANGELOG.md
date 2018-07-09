@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.19.0
+
+Several of the Kefir method wrappers were optimized to only create new
+observables when necessary.  This can reduce memory usage significantly.  For
+example, previously `U.toProperty` created an observable when given a constant
+value.  Now it only creates a new observable when it is given a Kefir stream.
+
+Removed previously deprecated
+* `combines`,
+* `seq`,
+* `seqPartial`,
+* `Context`, and
+* `withContext`.
+
 ## 0.18.23
 
 `getProps` and `actions` now perform their actions while `holding` change
