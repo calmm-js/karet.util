@@ -705,18 +705,29 @@ export const doRemove = doN(0, 'remove', 'doRemove')
 
 // Decomposing -----------------------------------------------------------------
 
+const getMutable = (xs, l) => xs.view(l)
+const getProperty = (xs, l) => F.combine([l, xs], L.get)
+const getConstant = (xs, l) => L.get(l, xs)
+const chooseGet = xs =>
+  isMutable(xs) ? getMutable : isProperty(xs) ? getProperty : getConstant
+
+//
+
 export const view = I.curry(function view(l, xs) {
   if (isMutable(xs)) {
     return isProperty(template(l))
       ? new A.Join(F.combine([l], l => xs.view(l)))
-      : xs.view(l)
+      : getMutable(xs, l)
   } else {
-    return F.combine([l, xs], L.get)
+    return getProperty(xs, l)
   }
 })
 
+//
+
 export const mapElems = I.curry(function mapElems(xi2y, xs) {
   const vs = []
+  const get = chooseGet(xs)
   return thru(
     xs,
     foldPast(function mapElems(ysIn, xsIn) {
@@ -726,7 +737,7 @@ export const mapElems = I.curry(function mapElems(xi2y, xs) {
       const m = Math.min(ysN, xsN)
       const ys = ysIn.slice(0, m)
       for (let i = xsN; i < ysN; ++i) vs[i]._onDeactivation()
-      for (let i = m; i < xsN; ++i) ys[i] = xi2y((vs[i] = view(i, xs)), i)
+      for (let i = m; i < xsN; ++i) ys[i] = xi2y((vs[i] = get(xs, i)), i)
       vs.length = xsN
       return ys
     }, []),
@@ -738,6 +749,7 @@ export const mapElemsWithIds = I.curry(function mapElemsWithIds(idL, xi2y, xs) {
   const id2info = new Map()
   const idOf = L.get(idL)
   const pred = (x, _, info) => idOf(x) === info.id
+  const get = chooseGet(xs)
   return thru(
     xs,
     foldPast(function mapElemsWithIds(ysIn, xsIn) {
@@ -750,7 +762,7 @@ export const mapElemsWithIds = I.curry(function mapElemsWithIds(idL, xi2y, xs) {
           id2info.set(id, (info = {}))
           info.id = id
           info.hint = i
-          info.elem = xi2y((info.view = view(L.find(pred, info), xs)), id)
+          info.elem = xi2y((info.view = get(xs, L.find(pred, info))), id)
         }
         if (ys[i] !== info.elem) {
           info.hint = i
