@@ -186,6 +186,34 @@ export const fromPromise = makePromise => new FromPromise(makePromise)
 
 // Conditionals ----------------------------------------------------------------
 
+export const not = F.lift(function not(x) {
+  return !x
+})
+
+const mkBop = (zero, bop) =>
+  function() {
+    let n = arguments.length
+    let op = n ? arguments[--n] : zero
+    while (n--) {
+      op = bop(arguments[n], op)
+    }
+    return op
+  }
+
+export const and = setName(
+  mkBop(true, function and(l, r) {
+    return toProperty(flatMapLatest(l => l && r, l))
+  }),
+  'andAlso'
+)
+
+export const or = setName(
+  mkBop(false, function or(l, r) {
+    return toProperty(flatMapLatest(l => l || r, l))
+  }),
+  'orElse'
+)
+
 const ifteU = function ifElse(b, t, e) {
   return toProperty(flatMapLatest(b => (b ? t : e), b))
 }

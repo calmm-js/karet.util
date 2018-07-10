@@ -270,6 +270,38 @@ describe('U.bus', () => {
   })
 })
 
+describe('U.and', () => {
+  testEq(true, () => U.and())
+  testEq(1, () => U.and(C(1)))
+  testEq(false, () => U.and(U.not(C(1))))
+  testEq('', () =>
+    U.and(
+      C(1),
+      C(2),
+      C(''),
+      U.lazy(() => {
+        throw Error()
+      })
+    )
+  )
+})
+
+describe('U.or', () => {
+  testEq(false, () => U.or())
+  testEq(true, () => U.or(U.not(C(0))))
+  testEq(0, () => U.or(C(0)))
+  testEq('2', () =>
+    U.or(
+      C(''),
+      C(0),
+      C('2'),
+      U.lazy(() => {
+        throw Error()
+      })
+    )
+  )
+})
+
 describe('U.ifElse', () => {
   testEq(1, () => U.ifElse(C(true), C(1), C(2)))
   testEq(2, () => U.ifElse(C(false), 1, 2))
