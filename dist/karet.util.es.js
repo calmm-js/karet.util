@@ -1,8 +1,8 @@
 import { AbstractMutable, Atom, Molecule, Join } from 'kefir.atom';
 export { holding } from 'kefir.atom';
 import { Observable, Property, Stream, constant, concat, merge, interval, later, never, fromEvents, combine, stream } from 'kefir';
-import { defineNameU, arityN, curry, pipe2U, identicalU, id, inherit, always, seq, seqPartial, isDefined, object0, isFunction } from 'infestines';
-import { iso, get, set, collect, flatten, when, join, find } from 'partial.lenses';
+import { defineNameU, arityN, curry, pipe2U, identicalU, id, inherit, always, seq, seqPartial, isDefined, object0, isFunction, assign } from 'infestines';
+import { iso, get, set, collect, flatten, when, join, remove, find } from 'partial.lenses';
 import { combine as combine$1, lift, liftRec } from 'karet.lift';
 export { combine, lift, liftRec } from 'karet.lift';
 import { createElement } from 'karet';
@@ -743,18 +743,75 @@ var doRemove = /*#__PURE__*/doN(0, 'remove', 'doRemove');
 
 // Decomposing -----------------------------------------------------------------
 
+var getMutable = function getMutable(xs, l) {
+  return xs.view(l);
+};
+var getProperty = function getProperty(xs, l) {
+  return combine$1([l, xs], get);
+};
+var getConstant = function getConstant(xs, l) {
+  return get(l, xs);
+};
+var chooseGet = function chooseGet(xs) {
+  return isMutable(xs) ? getMutable : isProperty(xs) ? getProperty : getConstant;
+};
+
+//
+
+var destructureUnsupported = function destructureUnsupported(name) {
+  return function unsupported() {
+    throw Error('destructure: `' + name + '` unsupported');
+  };
+};
+
+var DestructureCommon = {
+  deleteProperty: /*#__PURE__*/destructureUnsupported('deleteProperty'),
+  has: /*#__PURE__*/destructureUnsupported('has'),
+  ownKeys: /*#__PURE__*/destructureUnsupported('ownKeys'),
+  set: /*#__PURE__*/destructureUnsupported('set')
+};
+
+var DestructureMutable = /*#__PURE__*/assign({}, DestructureCommon, {
+  get: getMutable,
+  set: function set$$1(target, prop, value) {
+    return !target.modify(set(prop, value));
+  },
+  deleteProperty: function deleteProperty(target, prop) {
+    return !target.modify(remove(prop));
+  }
+});
+
+var DestructureProperty = /*#__PURE__*/assign({}, DestructureCommon, {
+  get: getProperty
+});
+
+function destructure(x) {
+  if (isMutable(x)) {
+    return new Proxy(x, DestructureMutable);
+  } else if (isProperty(x)) {
+    return new Proxy(x, DestructureProperty);
+  } else {
+    return x;
+  }
+}
+
+//
+
 var view = /*#__PURE__*/curry(function view(l, xs) {
   if (isMutable(xs)) {
     return isProperty(template(l)) ? new Join(combine$1([l], function (l) {
       return xs.view(l);
-    })) : xs.view(l);
+    })) : getMutable(xs, l);
   } else {
-    return combine$1([l, xs], get);
+    return getProperty(xs, l);
   }
 });
 
+//
+
 var mapElems = /*#__PURE__*/curry(function mapElems(xi2y, xs) {
   var vs = [];
+  var get$$1 = chooseGet(xs);
   return thru(xs, foldPast(function mapElems(ysIn, xsIn) {
     var ysN = ysIn.length;
     var xsN = xsIn.length;
@@ -764,7 +821,7 @@ var mapElems = /*#__PURE__*/curry(function mapElems(xi2y, xs) {
     for (var i = xsN; i < ysN; ++i) {
       vs[i]._onDeactivation();
     }for (var _i = m; _i < xsN; ++_i) {
-      ys[_i] = xi2y(vs[_i] = view(_i, xs), _i);
+      ys[_i] = xi2y(vs[_i] = get$$1(xs, _i), _i);
     }vs.length = xsN;
     return ys;
   }, []), skipIdenticals);
@@ -776,6 +833,7 @@ var mapElemsWithIds = /*#__PURE__*/curry(function mapElemsWithIds(idL, xi2y, xs)
   var pred = function pred(x, _, info) {
     return idOf(x) === info.id;
   };
+  var get$$1 = chooseGet(xs);
   return thru(xs, foldPast(function mapElemsWithIds(ysIn, xsIn) {
     var n = xsIn.length;
     var ys = ysIn.length === n ? ysIn : Array(n);
@@ -786,7 +844,7 @@ var mapElemsWithIds = /*#__PURE__*/curry(function mapElemsWithIds(idL, xi2y, xs)
         id2info.set(id$$1, info = {});
         info.id = id$$1;
         info.hint = i;
-        info.elem = xi2y(info.view = view(find(pred, info), xs), id$$1);
+        info.elem = xi2y(info.view = get$$1(xs, find(pred, info)), id$$1);
       }
       if (ys[i] !== info.elem) {
         info.hint = i;
@@ -806,4 +864,4 @@ var mapElemsWithIds = /*#__PURE__*/curry(function mapElemsWithIds(idL, xi2y, xs)
   }, []), skipIdenticals);
 });
 
-export { debounce, changes, serially, parallel, delay, mapValue, flatMapParallel, flatMapSerial, flatMapErrors, flatMapLatest, foldPast, interval$1 as interval, later$1 as later, never$1 as never, on, sampledBy, skipFirst, skipDuplicates, skipUnless, takeFirst, takeFirstErrors, takeUntilBy, toProperty, throttle, fromEvents$1 as fromEvents, ignoreValues, ignoreErrors, startWith, sink, consume, endWith, lazy, skipIdenticals, skipWhen, template, fromPromise, ifElse, unless, when$1 as when, cond, animationSpan, combines$1 as combines, Bus, bus, doPush, doError, doEnd, seq$1 as seq, seqPartial$1 as seqPartial, scope, tapPartial, toPartial, thru, through, show, onUnmount, Context, withContext, getProps, setProps, Select, Input, TextArea, refTo, actions, preventDefault, stopPropagation, cns, toReactExcept, toReact, parse, stringify, du as decodeURI, duc as decodeURIComponent, eu as encodeURI, euc as encodeURIComponent, abs, acos, acosh, asin, asinh, atan, atan2, atanh, cbrt, ceil, clz32, cos, cosh, exp, expm1, floor, fround, hypot, imul, log, log10, log1p, log2, max, min, pow, round, sign, sin, sinh, sqrt, tan, tanh, trunc, string, atom, variable, molecule, set$1 as set, doModify, doSet, doRemove, view, mapElems, mapElemsWithIds };
+export { debounce, changes, serially, parallel, delay, mapValue, flatMapParallel, flatMapSerial, flatMapErrors, flatMapLatest, foldPast, interval$1 as interval, later$1 as later, never$1 as never, on, sampledBy, skipFirst, skipDuplicates, skipUnless, takeFirst, takeFirstErrors, takeUntilBy, toProperty, throttle, fromEvents$1 as fromEvents, ignoreValues, ignoreErrors, startWith, sink, consume, endWith, lazy, skipIdenticals, skipWhen, template, fromPromise, ifElse, unless, when$1 as when, cond, animationSpan, combines$1 as combines, Bus, bus, doPush, doError, doEnd, seq$1 as seq, seqPartial$1 as seqPartial, scope, tapPartial, toPartial, thru, through, show, onUnmount, Context, withContext, getProps, setProps, Select, Input, TextArea, refTo, actions, preventDefault, stopPropagation, cns, toReactExcept, toReact, parse, stringify, du as decodeURI, duc as decodeURIComponent, eu as encodeURI, euc as encodeURIComponent, abs, acos, acosh, asin, asinh, atan, atan2, atanh, cbrt, ceil, clz32, cos, cosh, exp, expm1, floor, fround, hypot, imul, log, log10, log1p, log2, max, min, pow, round, sign, sin, sinh, sqrt, tan, tanh, trunc, string, atom, variable, molecule, set$1 as set, doModify, doSet, doRemove, destructure, view, mapElems, mapElemsWithIds };

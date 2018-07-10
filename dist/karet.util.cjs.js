@@ -744,18 +744,75 @@ var doRemove = /*#__PURE__*/doN(0, 'remove', 'doRemove');
 
 // Decomposing -----------------------------------------------------------------
 
+var getMutable = function getMutable(xs, l) {
+  return xs.view(l);
+};
+var getProperty = function getProperty(xs, l) {
+  return F.combine([l, xs], L.get);
+};
+var getConstant = function getConstant(xs, l) {
+  return L.get(l, xs);
+};
+var chooseGet = function chooseGet(xs) {
+  return isMutable(xs) ? getMutable : isProperty(xs) ? getProperty : getConstant;
+};
+
+//
+
+var destructureUnsupported = function destructureUnsupported(name) {
+  return function unsupported() {
+    throw Error('destructure: `' + name + '` unsupported');
+  };
+};
+
+var DestructureCommon = {
+  deleteProperty: /*#__PURE__*/destructureUnsupported('deleteProperty'),
+  has: /*#__PURE__*/destructureUnsupported('has'),
+  ownKeys: /*#__PURE__*/destructureUnsupported('ownKeys'),
+  set: /*#__PURE__*/destructureUnsupported('set')
+};
+
+var DestructureMutable = /*#__PURE__*/I.assign({}, DestructureCommon, {
+  get: getMutable,
+  set: function set(target, prop, value) {
+    return !target.modify(L.set(prop, value));
+  },
+  deleteProperty: function deleteProperty(target, prop) {
+    return !target.modify(L.remove(prop));
+  }
+});
+
+var DestructureProperty = /*#__PURE__*/I.assign({}, DestructureCommon, {
+  get: getProperty
+});
+
+function destructure(x) {
+  if (isMutable(x)) {
+    return new Proxy(x, DestructureMutable);
+  } else if (isProperty(x)) {
+    return new Proxy(x, DestructureProperty);
+  } else {
+    return x;
+  }
+}
+
+//
+
 var view = /*#__PURE__*/I.curry(function view(l, xs) {
   if (isMutable(xs)) {
     return isProperty(template(l)) ? new A.Join(F.combine([l], function (l) {
       return xs.view(l);
-    })) : xs.view(l);
+    })) : getMutable(xs, l);
   } else {
-    return F.combine([l, xs], L.get);
+    return getProperty(xs, l);
   }
 });
 
+//
+
 var mapElems = /*#__PURE__*/I.curry(function mapElems(xi2y, xs) {
   var vs = [];
+  var get = chooseGet(xs);
   return thru(xs, foldPast(function mapElems(ysIn, xsIn) {
     var ysN = ysIn.length;
     var xsN = xsIn.length;
@@ -765,7 +822,7 @@ var mapElems = /*#__PURE__*/I.curry(function mapElems(xi2y, xs) {
     for (var i = xsN; i < ysN; ++i) {
       vs[i]._onDeactivation();
     }for (var _i = m; _i < xsN; ++_i) {
-      ys[_i] = xi2y(vs[_i] = view(_i, xs), _i);
+      ys[_i] = xi2y(vs[_i] = get(xs, _i), _i);
     }vs.length = xsN;
     return ys;
   }, []), skipIdenticals);
@@ -777,6 +834,7 @@ var mapElemsWithIds = /*#__PURE__*/I.curry(function mapElemsWithIds(idL, xi2y, x
   var pred = function pred(x, _, info) {
     return idOf(x) === info.id;
   };
+  var get = chooseGet(xs);
   return thru(xs, foldPast(function mapElemsWithIds(ysIn, xsIn) {
     var n = xsIn.length;
     var ys = ysIn.length === n ? ysIn : Array(n);
@@ -787,7 +845,7 @@ var mapElemsWithIds = /*#__PURE__*/I.curry(function mapElemsWithIds(idL, xi2y, x
         id2info.set(id, info = {});
         info.id = id;
         info.hint = i;
-        info.elem = xi2y(info.view = view(L.find(pred, info), xs), id);
+        info.elem = xi2y(info.view = get(xs, L.find(pred, info)), id);
       }
       if (ys[i] !== info.elem) {
         info.hint = i;
@@ -930,6 +988,7 @@ exports.set = set;
 exports.doModify = doModify;
 exports.doSet = doSet;
 exports.doRemove = doRemove;
+exports.destructure = destructure;
 exports.view = view;
 exports.mapElems = mapElems;
 exports.mapElemsWithIds = mapElemsWithIds;
