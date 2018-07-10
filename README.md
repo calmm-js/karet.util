@@ -75,8 +75,11 @@ A collection of utilities for working with
       * [`U.toReactExcept(propName => boolean, KaretComponent)`](#U-toReactExcept)
   * [Kefir](#kefir)
     * [Conditionals](#conditionals)
+      * [`U.and(...any)`](#U-and)
       * [`U.cond(...[condition, consequent][, [alternative]])`](#U-cond)
       * [`U.ifElse(condition, consequent, alternative)`](#U-ifElse)
+      * [`U.not(any)`](#U-not)
+      * [`U.or(...any)`](#U-or)
       * [`U.unless(condition, alternative)`](#U-unless)
       * [`U.when(condition, consequent)`](#U-when)
     * [Animation](#animation)
@@ -937,6 +940,11 @@ example.
 
 #### <a id="conditionals"></a> [≡](#contents) [Conditionals](#conditionals)
 
+##### <a id="U-and"></a> [≡](#contents) [`U.and(...any)`](#U-and)
+
+`U.and` is a lazy variadic logical and over potentially observable properties.
+`U.and(l, r)` does not subscribe to `r` unless `l` is truthy.
+
 ##### <a id="U-cond"></a> [≡](#contents) [`U.cond(...[condition, consequent][, [alternative]])`](#U-cond)
 
 `U.cond` allows one to express a sequence of conditionals.  `U.cond` translates
@@ -966,6 +974,15 @@ U.toProperty(
 
 except that the `consequent` and `alternative` expressions are only evaluated
 once.
+
+##### <a id="U-not"></a> [≡](#contents) [`U.not(any)`](#U-not)
+
+`U.not` is a logical negation over a potentially observable property.
+
+##### <a id="U-or"></a> [≡](#contents) [`U.or(...any)`](#U-or)
+
+`U.or` is a lazy variadic logical or over potentially observable properties.
+`U.or(l, r)` does not subscribe to `r` unless `l` is falsy.
 
 ##### <a id="U-unless"></a> [≡](#contents) [`U.unless(condition, alternative)`](#U-unless)
 
