@@ -23,6 +23,7 @@ A collection of utilities for working with
     * [Transactions](#transactions)
       * [`U.holding(() => { ... })`](#U-holding)
     * [Decomposing](#decomposing)
+      * [`U.destructure(atom)`](#U-destructure)
       * [`U.mapElems((elemAtom, index) => any, arrayAtom)`](#U-mapElems)
       * [`U.mapElemsWithIds(lensAtom, (elemAtom, id) => any, arrayAtom)`](#U-mapElemsWithIds)
       * [`U.view(lens, atom)`](#U-view)
@@ -309,6 +310,39 @@ U.holding(() => {
 ```
 
 #### <a id="decomposing"></a> [≡](#contents) [Decomposing](#decomposing)
+
+##### <a id="U-destructure"></a> [≡](#contents) [`U.destructure(atom)`](#U-destructure)
+
+`U.destructure` wraps a given atom or observable with a
+[proxy](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy)
+that performs property access via [`U.view`](#U-view).  On plain observable
+properties only `get` access is supported.  On mutable atoms `get`, `set`, and
+`deleteProperty` accesses are supported.
+
+For example,
+
+```js
+const {name, number} = U.destructure(contact)
+```
+
+is equivalent to
+
+```js
+const name = U.view('name', contact)
+const number = U.view('number', contact)
+```
+
+Note that *all* property accesses through the proxy returned by `U.destructure`
+are performed via [`U.view`](#U-view).  This means that the return value of
+`U.destructure` cannot be used as the atom or observable that it proxies.
+
+Note that `U.destructure` is not recursive, which means that nested
+destructuring cannot be used.  Only single level property access is proxied.
+
+Note that `U.destructure` requires proper
+[`Proxy`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy)
+support.  You need to [decide whether you can use
+it](https://caniuse.com/#feat=proxy).
 
 ##### <a id="U-mapElems"></a> [≡](#contents) [`U.mapElems((elemAtom, index) => any, arrayAtom)`](#U-mapElems)
 

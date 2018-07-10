@@ -47,6 +47,16 @@ const testEq = (expect, thunk) =>
     }
   })
 
+const testThrows = thunk =>
+  it(`${toExpr(thunk)} => throws`, () => {
+    try {
+      thunk()
+    } catch (_) {
+      return
+    }
+    throw Error('Did not throw as expected.')
+  })
+
 const testRender = (expect, vdomThunk) =>
   it(`${expect}`, () => {
     const actual = ReactDOM.renderToStaticMarkup(vdomThunk())
@@ -93,6 +103,29 @@ describe('U.view', () => {
       U.atom({x: 101})
     )
   )
+})
+
+describe('U.destructure', () => {
+  testEq({a: 101, b: 42}, () => {
+    const {x: a, y: b} = U.destructure({x: 101, y: 42})
+    return U.template({a, b})
+  })
+  testEq({a: 101, b: 42}, () => {
+    const {x: a, y: b} = U.destructure(C({x: 101, y: 42}))
+    return U.template({a, b})
+  })
+  testThrows(() => {
+    const {...rest} = U.destructure(C({x: 101, y: 42}))
+    return rest
+  })
+  testEq({a: 101, b: 69, s: {x: 101, z: 69}}, () => {
+    const s = U.atom({x: 101, y: 42})
+    const o = U.destructure(s)
+    o.z = 69
+    delete o.y
+    const {x: a, z: b} = o
+    return U.template({a, b, s})
+  })
 })
 
 describe('U.cns', () => {
