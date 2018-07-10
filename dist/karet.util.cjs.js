@@ -228,6 +228,33 @@ var fromPromise = function fromPromise(makePromise) {
 
 // Conditionals ----------------------------------------------------------------
 
+var not = /*#__PURE__*/F.lift(function not(x) {
+  return !x;
+});
+
+var mkBop = function mkBop(zero, bop) {
+  return function () {
+    var n = arguments.length;
+    var op = n ? arguments[--n] : zero;
+    while (n--) {
+      op = bop(arguments[n], op);
+    }
+    return op;
+  };
+};
+
+var and = /*#__PURE__*/setName( /*#__PURE__*/mkBop(true, function and(l, r) {
+  return toProperty(flatMapLatest(function (l) {
+    return l && r;
+  }, l));
+}), 'andAlso');
+
+var or = /*#__PURE__*/setName( /*#__PURE__*/mkBop(false, function or(l, r) {
+  return toProperty(flatMapLatest(function (l) {
+    return l || r;
+  }, l));
+}), 'orElse');
+
 var ifteU = function ifElse(b, t, e) {
   return toProperty(flatMapLatest(function (b) {
     return b ? t : e;
@@ -906,6 +933,9 @@ exports.skipIdenticals = skipIdenticals;
 exports.skipWhen = skipWhen;
 exports.template = template;
 exports.fromPromise = fromPromise;
+exports.not = not;
+exports.and = and;
+exports.or = or;
 exports.ifElse = ifElse;
 exports.unless = unless;
 exports.when = when;

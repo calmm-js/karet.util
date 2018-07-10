@@ -227,6 +227,33 @@ var fromPromise = function fromPromise(makePromise) {
 
 // Conditionals ----------------------------------------------------------------
 
+var not = /*#__PURE__*/lift(function not(x) {
+  return !x;
+});
+
+var mkBop = function mkBop(zero, bop) {
+  return function () {
+    var n = arguments.length;
+    var op = n ? arguments[--n] : zero;
+    while (n--) {
+      op = bop(arguments[n], op);
+    }
+    return op;
+  };
+};
+
+var and = /*#__PURE__*/setName( /*#__PURE__*/mkBop(true, function and(l, r) {
+  return toProperty(flatMapLatest(function (l) {
+    return l && r;
+  }, l));
+}), 'andAlso');
+
+var or = /*#__PURE__*/setName( /*#__PURE__*/mkBop(false, function or(l, r) {
+  return toProperty(flatMapLatest(function (l) {
+    return l || r;
+  }, l));
+}), 'orElse');
+
 var ifteU = function ifElse(b, t, e) {
   return toProperty(flatMapLatest(function (b) {
     return b ? t : e;
@@ -864,4 +891,4 @@ var mapElemsWithIds = /*#__PURE__*/curry(function mapElemsWithIds(idL, xi2y, xs)
   }, []), skipIdenticals);
 });
 
-export { debounce, changes, serially, parallel, delay, mapValue, flatMapParallel, flatMapSerial, flatMapErrors, flatMapLatest, foldPast, interval$1 as interval, later$1 as later, never$1 as never, on, sampledBy, skipFirst, skipDuplicates, skipUnless, takeFirst, takeFirstErrors, takeUntilBy, toProperty, throttle, fromEvents$1 as fromEvents, ignoreValues, ignoreErrors, startWith, sink, consume, endWith, lazy, skipIdenticals, skipWhen, template, fromPromise, ifElse, unless, when$1 as when, cond, animationSpan, combines$1 as combines, Bus, bus, doPush, doError, doEnd, seq$1 as seq, seqPartial$1 as seqPartial, scope, tapPartial, toPartial, thru, through, show, onUnmount, Context, withContext, getProps, setProps, Select, Input, TextArea, refTo, actions, preventDefault, stopPropagation, cns, toReactExcept, toReact, parse, stringify, du as decodeURI, duc as decodeURIComponent, eu as encodeURI, euc as encodeURIComponent, abs, acos, acosh, asin, asinh, atan, atan2, atanh, cbrt, ceil, clz32, cos, cosh, exp, expm1, floor, fround, hypot, imul, log, log10, log1p, log2, max, min, pow, round, sign, sin, sinh, sqrt, tan, tanh, trunc, string, atom, variable, molecule, set$1 as set, doModify, doSet, doRemove, destructure, view, mapElems, mapElemsWithIds };
+export { debounce, changes, serially, parallel, delay, mapValue, flatMapParallel, flatMapSerial, flatMapErrors, flatMapLatest, foldPast, interval$1 as interval, later$1 as later, never$1 as never, on, sampledBy, skipFirst, skipDuplicates, skipUnless, takeFirst, takeFirstErrors, takeUntilBy, toProperty, throttle, fromEvents$1 as fromEvents, ignoreValues, ignoreErrors, startWith, sink, consume, endWith, lazy, skipIdenticals, skipWhen, template, fromPromise, not, and, or, ifElse, unless, when$1 as when, cond, animationSpan, combines$1 as combines, Bus, bus, doPush, doError, doEnd, seq$1 as seq, seqPartial$1 as seqPartial, scope, tapPartial, toPartial, thru, through, show, onUnmount, Context, withContext, getProps, setProps, Select, Input, TextArea, refTo, actions, preventDefault, stopPropagation, cns, toReactExcept, toReact, parse, stringify, du as decodeURI, duc as decodeURIComponent, eu as encodeURI, euc as encodeURIComponent, abs, acos, acosh, asin, asinh, atan, atan2, atanh, cbrt, ceil, clz32, cos, cosh, exp, expm1, floor, fround, hypot, imul, log, log10, log1p, log2, max, min, pow, round, sign, sin, sinh, sqrt, tan, tanh, trunc, string, atom, variable, molecule, set$1 as set, doModify, doSet, doRemove, destructure, view, mapElems, mapElemsWithIds };
