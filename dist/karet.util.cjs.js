@@ -509,9 +509,11 @@ function getProps(template) {
   var result = void 0;
   for (var k in template) {
     if (result) return function getProps(e) {
-      for (var _k in template) {
-        getProp(_k, template[_k])(e);
-      }
+      A.holding(function getProps() {
+        for (var _k in template) {
+          getProp(_k, template[_k])(e);
+        }
+      });
     };
     result = getProp(k, template[k]);
   }
@@ -592,10 +594,12 @@ var actions = /*#__PURE__*/F.lift(function actions() {
     case 1:
       return fns[0];
     default:
-      return function actions() {
-        for (var i = 0, n = fns.length; i < n; ++i) {
-          fns[i].apply(fns, arguments);
-        }
+      return function actions(e) {
+        A.holding(function () {
+          for (var i = 0, n = fns.length; i < n; ++i) {
+            fns[i](e);
+          }
+        });
       };
   }
 });

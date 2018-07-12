@@ -1,4 +1,4 @@
-import { AbstractMutable, Atom, Molecule, Join } from 'kefir.atom';
+import { AbstractMutable, holding, Atom, Molecule, Join } from 'kefir.atom';
 export { holding } from 'kefir.atom';
 import { Observable, Property, Stream, constant, concat, merge, interval, later, never, fromEvents, combine, stream } from 'kefir';
 import { defineNameU, arityN, curry, pipe2U, identicalU, id, inherit, always, seq, seqPartial, isDefined, object0, isFunction, assign } from 'infestines';
@@ -508,9 +508,11 @@ function getProps(template) {
   var result = void 0;
   for (var k in template) {
     if (result) return function getProps(e) {
-      for (var _k in template) {
-        getProp(_k, template[_k])(e);
-      }
+      holding(function getProps() {
+        for (var _k in template) {
+          getProp(_k, template[_k])(e);
+        }
+      });
     };
     result = getProp(k, template[k]);
   }
@@ -591,10 +593,12 @@ var actions = /*#__PURE__*/lift(function actions() {
     case 1:
       return fns[0];
     default:
-      return function actions() {
-        for (var i = 0, n = fns.length; i < n; ++i) {
-          fns[i].apply(fns, arguments);
-        }
+      return function actions(e) {
+        holding(function () {
+          for (var i = 0, n = fns.length; i < n; ++i) {
+            fns[i](e);
+          }
+        });
       };
   }
 });
