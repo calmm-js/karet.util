@@ -475,7 +475,9 @@ export function getProps(template) {
   for (const k in template) {
     if (result)
       return function getProps(e) {
-        for (const k in template) getProp(k, template[k])(e)
+        A.holding(function getProps() {
+          for (const k in template) getProp(k, template[k])(e)
+        })
       }
     result = getProp(k, template[k])
   }
@@ -552,8 +554,10 @@ export const actions = F.lift(function actions(...fnsIn) {
     case 1:
       return fns[0]
     default:
-      return function actions(...args) {
-        for (let i = 0, n = fns.length; i < n; ++i) fns[i](...args)
+      return function actions(e) {
+        A.holding(() => {
+          for (let i = 0, n = fns.length; i < n; ++i) fns[i](e)
+        })
       }
   }
 })
