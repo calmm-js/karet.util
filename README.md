@@ -295,7 +295,9 @@ empty.set('first')
 `U.holding` is given a thunk to call while holding the propagation of events
 from changes to atoms. The thunk can `get`, `set`, `remove` and `modify` any
 number of atoms.  After the thunk returns, persisting changes to atoms are
-propagated. For example:
+propagated.  See also [`U.actions`](#U-actions) and [`U.getProps`](#U-getProps).
+
+For example:
 
 ```js
 const xy = U.atom({x: 1, y: 2})
@@ -729,7 +731,9 @@ const Text = U.withContext(({children: text}, {language}) => (
 
 `U.getProps` returns an event callback that gets the values of the properties
 named in the given template from the event target and pushes or sets them to the
-[buses](#bus) or [atoms](#atoms) that are the values of the properties.
+[buses](#bus) or [atoms](#atoms) that are the values of the properties.  In case
+the template contains multiple properties, the results are written while
+[holding](#U-holding) change propagation.
 
 For example:
 
@@ -861,7 +865,8 @@ const Component = () => {
 
 `U.actions` is designed for creating an action from multiple actions.  It
 returns an unary action function that calls the functions in the arguments with
-the same argument.
+the same argument.  In case there are multiple actions, they are performed while
+[holding](#U-holding) change propagation.
 
 For example:
 

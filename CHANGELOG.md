@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.18.23
+
+`getProps` and `actions` now perform their actions while `holding` change
+propagation.
+
 ## 0.18.10
 
 Fixed `show` to also work with Kefir streams.

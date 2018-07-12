@@ -81,6 +81,14 @@ describe('U.actions', () => {
   testEq(theOnlyFunction, () =>
     U.actions(false, theOnlyFunction, 'not a function')
   )
+  testEq([{x: 'x', y: 'y'}, {x: 'X', y: 'Y'}], () => {
+    const xy = U.atom({x: 'x', y: 'y'})
+    const {x, y} = U.destructure(xy)
+    const events = []
+    U.on({value: x => events.push(x)}, xy)
+    U.actions(U.doSet(x, 'X'), U.doModify(y, R.toUpper))()
+    return events
+  })
 })
 
 describe('U.view', () => {
@@ -444,6 +452,14 @@ describe('U.getProps', () => {
     U.getProps({value, checked})({target: {value: 42, checked: false}})
     U.getProps({value})({target: {value: 101}})
     return U.debounce(10, U.template({value, checked: checkedProp}))
+  })
+  testEq([{x: 'x', y: 'y'}, {x: 'a', y: 'b'}], () => {
+    const xy = U.atom({x: 'x', y: 'y'})
+    const {x, y} = U.destructure(xy)
+    const events = []
+    U.on({value: x => events.push(x)}, xy)
+    U.getProps({x, y})({target: {x: 'a', y: 'b'}})
+    return events
   })
 })
 
