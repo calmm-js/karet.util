@@ -70,6 +70,7 @@ A collection of utilities for working with
     * [Class names](#class-names)
       * [`U.cns(...classNames)`](#U-cns)
     * [Interop](#interop)
+      * [`U.pure(Component)`](#U-pure)
       * [`U.toKaret(ReactComponent)`](#U-toKaret)
       * [`U.toReact(KaretComponent)`](#U-toReact)
       * [`U.toReactExcept(propName => boolean, KaretComponent)`](#U-toReactExcept)
@@ -908,6 +909,14 @@ const Component = ({className}) => (
 
 #### <a id="interop"></a> [≡](#contents) [Interop](#interop)
 
+##### <a id="U-pure"></a> [≡](#contents) [`U.pure(Component)`](#U-pure)
+
+`U.pure` wraps the given component inside a
+[`PureComponent`](https://reactjs.org/docs/react-api.html#reactpurecomponent).
+`U.pure` can be used for preventing unnecessary rerenders when a Karet component
+is used as a child of a React component that rerenders its children even when
+their props do not change.  See also [`U.toReact`](#U-toReact).
+
 ##### <a id="U-toKaret"></a> [≡](#contents) [`U.toKaret(ReactComponent)`](#U-toKaret)
 
 `U.toKaret` converts a React component that takes plain value properties to a
@@ -926,7 +935,8 @@ value properties.  `U.toReact` may be needed particularly when a Karet component
 is controlled by a higher-order React component, such as [React
 Router](https://reacttraining.com/react-router/), because Karet components
 typically (are not and) must not be rerendered unnecessarily.  `U.toReact` is
-equivalent to [`U.toReactExcept(() => false)`](#U-toReactExcept).
+equivalent to [`U.toReactExcept(() => false)`](#U-toReactExcept).  See also
+[`U.pure`](#U-pure).
 
 ##### <a id="U-toReactExcept"></a> [≡](#contents) [`U.toReactExcept(propName => boolean, KaretComponent)`](#U-toReactExcept)
 

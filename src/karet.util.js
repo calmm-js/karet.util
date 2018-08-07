@@ -581,6 +581,19 @@ export const cns = F.lift(function cns(...xs) {
 
 // Interop ---------------------------------------------------------------------
 
+export const pure = Component =>
+  I.inherit(
+    function Pure(props) {
+      React.PureComponent.call(this, props)
+    },
+    React.PureComponent,
+    {
+      render() {
+        return <Component {...this.props} />
+      }
+    }
+  )
+
 function shallowWhereEq(lhs, rhs) {
   for (const k in lhs) if (!I.identicalU(lhs[k], rhs[k])) return false
   return true
@@ -613,17 +626,7 @@ function updateObs(prevObs, nextProps, plain) {
 }
 
 export const toReactExcept = I.curry(function toReactExcept(plain, Calmm) {
-  const Pure = I.inherit(
-    function Pure(props) {
-      React.PureComponent.call(this, props)
-    },
-    React.PureComponent,
-    {
-      render() {
-        return <Calmm {...this.props} />
-      }
-    }
-  )
+  const Pure = pure(Calmm)
   return I.inherit(
     function ToClass(props) {
       React.PureComponent.call(this, props)
