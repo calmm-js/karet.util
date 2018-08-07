@@ -575,7 +575,7 @@ export const cns = F.lift(function cns(...xs) {
   return cnsImmediate(xs) || undefined
 })
 
-// Observables -----------------------------------------------------------------
+// Interop ---------------------------------------------------------------------
 
 function shallowWhereEq(lhs, rhs) {
   for (const k in lhs) if (!I.identicalU(lhs[k], rhs[k])) return false
