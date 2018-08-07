@@ -614,7 +614,17 @@
     return cnsImmediate(xs) || undefined;
   });
 
-  // Observables -----------------------------------------------------------------
+  // Interop ---------------------------------------------------------------------
+
+  var pure = function pure(Component) {
+    return I.inherit(function Pure(props) {
+      React.PureComponent.call(this, props);
+    }, React.PureComponent, {
+      render: function render() {
+        return React.createElement(Component, this.props);
+      }
+    });
+  };
 
   function shallowWhereEq(lhs, rhs) {
     for (var k in lhs) {
@@ -649,13 +659,7 @@
   }
 
   var toReactExcept = /*#__PURE__*/I.curry(function toReactExcept(plain, Calmm) {
-    var Pure = I.inherit(function Pure(props) {
-      React.PureComponent.call(this, props);
-    }, React.PureComponent, {
-      render: function render() {
-        return React.createElement(Calmm, this.props);
-      }
-    });
+    var Pure = pure(Calmm);
     return I.inherit(function ToClass(props) {
       React.PureComponent.call(this, props);
       this.o = updateObs(I.object0, props, plain);
@@ -961,6 +965,7 @@
   exports.preventDefault = preventDefault;
   exports.stopPropagation = stopPropagation;
   exports.cns = cns;
+  exports.pure = pure;
   exports.toReactExcept = toReactExcept;
   exports.toReact = toReact;
   exports.parse = parse;
