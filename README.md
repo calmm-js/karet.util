@@ -522,9 +522,9 @@ following methods:
 * `bus.end()` to explicitly end the stream after which all the methods do
   nothing.
 
-Note that buses and event streams, in general, are fairly rarely used in Calmm.
-They can be useful for performing IO actions and in cases where actions from UI
-controls need to be throttled or combined.
+Note that buses and event streams, in general, are fairly rarely used with
+Karet.  They can be useful for performing IO actions and in cases where actions
+from UI controls need to be throttled or combined.
 
 See the live [Counter using Event Streams](https://codesandbox.io/s/1840p9xo9l)
 CodeSandbox for an example.
@@ -698,8 +698,8 @@ API](https://reactjs.org/docs/context.html).**
 `U.Context` is a component that allows one to set the context for child
 components.  See also [`U.withContext`](#U-withContext).
 
-Usually the context should be an object with the desired properties.  Also, in
-Calmm, the values are usually observable properties.
+Usually the context should be an object with the desired properties.  Also, with
+Karet, the values are usually observable properties.
 
 For example:
 
@@ -1279,7 +1279,7 @@ abProperty instanceof Kefir.Observable
 specified in the template.
 
 **Note** that explicitly subscribing to an observable should be done *very
-rarely* in a Calmm application!  Full Calmm applications can be written with
+rarely* in a Karet application!  Full Karet applications can be written with
 zero uses of explicit observable subscriptions, because the Reactive VDOM of
 [Karet](https://github.com/calmm-js/karet/) automatically subscribes to and
 unsubscribes from observables.  Nevertheless, it can sometimes be convenient to
