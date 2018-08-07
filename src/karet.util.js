@@ -268,7 +268,9 @@ const Ticks = I.inherit(
 
 export const animationSpan =
   process.env.NODE_ENV === 'production'
-    ? typeof window === 'undefined' ? I.always(never) : d => new Ticks(d)
+    ? typeof window === 'undefined'
+      ? I.always(never)
+      : d => new Ticks(d)
     : function animationSpan(d) {
         return typeof window === 'undefined' ? never : new Ticks(d)
       }
@@ -419,7 +421,9 @@ export function show(_) {
   const iso = F.combine(xs, showIso)
   const s = arguments[n]
   return isStream(s)
-    ? isProperty(iso) ? K.combine([iso, s], L.get) : mapValue(L.get(iso), s)
+    ? isProperty(iso)
+      ? K.combine([iso, s], L.get)
+      : mapValue(L.get(iso), s)
     : view(iso, s)
 }
 
