@@ -1188,8 +1188,21 @@ The following are simply links to the relevant
 
 `U.consume` creates a property that simply immediately produces `undefined` and
 subscribes to the given observable whose values it passes to the given action
-for as long as the returned property is subscribed to.  See also
-[`U.sink`](#U-sink).
+for as long as the returned property is subscribed to.  `U.consume` can be used
+for executing side-effects during the time that a component is mounted.  See
+also [`U.sink`](#U-sink).
+
+For example:
+
+```js
+const DocumentTitle = ({title}) => (
+  <React.Fragment>
+    {U.consume(title => {
+      if (typeof document !== 'undefined') document.title = title
+    }, title)}
+  </React.Fragment>
+)
+```
 
 ##### <a id="U-endWith"></a> [≡](#contents) [`U.endWith(value, observable)`](#U-endWith)
 
