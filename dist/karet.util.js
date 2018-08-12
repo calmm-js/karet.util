@@ -1,7 +1,7 @@
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('kefir.atom'), require('kefir'), require('infestines'), require('partial.lenses'), require('karet.lift'), require('karet'), require('react'), require('kefir.combines')) :
   typeof define === 'function' && define.amd ? define(['exports', 'kefir.atom', 'kefir', 'infestines', 'partial.lenses', 'karet.lift', 'karet', 'react', 'kefir.combines'], factory) :
-  (factory((global.karet = global.karet || {}, global.karet.util = {}),global.kefir.atom,global.Kefir,global.I,global.L,global.karet.lift,global.karet,global.React,global.kefir.combines));
+  (factory((global.karet = global.karet || {}, global.karet.util = {}),global.Kefir.atom,global.Kefir,global.I,global.L,global.karet.lift,global.karet,global.React,global.Kefir.combines));
 }(this, (function (exports,A,K,I,L,F,Karet,React,kefir_combines) { 'use strict';
 
   var header = 'karet.util: ';

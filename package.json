@@ -1,6 +1,6 @@
 {
   "name": "karet.util",
-  "version": "0.18.24",
+  "version": "0.18.25",
   "description": "Utilities for working with Karet",
   "module": "dist/karet.util.es.js",
   "main": "dist/karet.util.cjs.js",
@@ -52,18 +52,18 @@
     "ramda": "^0.25.0",
     "react": "^16.4.2",
     "react-dom": "^16.4.2",
-    "rollup": "^0.64.0",
+    "rollup": "^0.64.1",
     "rollup-plugin-babel": "^3.0.7",
-    "rollup-plugin-commonjs": "^9.1.4",
+    "rollup-plugin-commonjs": "^9.1.5",
     "rollup-plugin-node-resolve": "^3.3.0",
     "rollup-plugin-replace": "^2.0.0",
     "rollup-plugin-uglify": "^4.0.0",
     "watch-run": "^1.2.5"
   },
   "dependencies": {
-    "infestines": "^0.4.9",
+    "infestines": "^0.4.10",
     "karet": "^3.4.0",
-    "karet.lift": "^1.1.0",
+    "karet.lift": "^1.1.1",
     "kefir.atom": "^5.5.1",
     "kefir.combines": "^4.5.1",
     "partial.lenses": "^13.13.2"
