@@ -209,16 +209,6 @@ describe('U.string', () => {
   )
 })
 
-describe('U.Context', () => {
-  const Who = U.withContext((_, {who}) => <div>Hello, {who}!</div>)
-
-  testRender('<div>Hello, World!</div>', () => (
-    <U.Context context={{who: C('World')}}>
-      <Who />
-    </U.Context>
-  ))
-})
-
 describe('bound inputs', () => {
   const checked = U.atom(true)
   const value = U.atom('lol')
@@ -645,10 +635,4 @@ describe('toReact', () => {
     foo.componentDidUpdate()
     foo.componentWillUnmount()
   })
-})
-
-describe('obsoleted', () => {
-  testEq(2, () => U.seq(1, R.inc))
-  testEq(2, () => U.seqPartial(1, R.inc))
-  testEq(3, () => U.combines(1, 2, R.add))
 })

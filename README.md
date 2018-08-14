@@ -42,16 +42,11 @@ A collection of utilities for working with
       * [`U.doPush(bus, value)`](#U-doPush)
   * [Convenience](#convenience)
     * [`U.scope((...) => ...)`](#U-scope)
-    * ~~[`U.seq(any, ...fns)`](#U-seq)~~
-    * ~~[`U.seqPartial(any, ...fns)`](#U-seqPartial)~~
     * [`U.tapPartial(action, any)`](#U-tapPartial)
     * [`U.thru(any, ...fns)`](#U-thru)
     * [`U.through(...fns)`](#U-through)
     * [`U.toPartial(fn)`](#U-toPartial)
   * [React helpers](#react-helpers)
-    * ~~[Context](#context)~~
-      * ~~[`<U.Context context={context} />`](#U-Context)~~
-      * ~~[`U.withContext((props, context) => element)`](#U-withContext)~~
     * [Binding](#binding)
       * [`U.getProps({...propName: atom|bus})`](#U-getProps)
       * [`U.setProps({...propName: observable})`](#U-setProps)
@@ -87,7 +82,6 @@ A collection of utilities for working with
       * [`U.animationSpan(milliseconds)`](#U-animationSpan)
     * [Lifting](#lifting)
       * [`U.combine([...any], fn)`](#U-combine)
-      * ~~[`U.combines(...any, fn)`](#U-combines)~~
       * [`U.lift((...) => ...)`](#U-lift)
       * [`U.liftRec((...) => ...)`](#U-liftRec)
     * [Curried combinators](#curried-combinators)
@@ -560,65 +554,6 @@ U.scope((x = 1, y = 2) => x + y)
 // 3
 ```
 
-#### <a id="U-seq"></a> [≡](#contents) ~~[`U.seq(any, ...fns)`](#U-seq)~~
-
-**WARNING: `U.seq` has been obsoleted.  Use [`U.thru`](#U-thru) instead.**
-
-`U.seq` allows one to pipe a value through a sequence of functions.  In other
-words, `U.seq(x, fn_1, ..., fn_N)` is roughly equivalent to `fn_N( ... fn_1(x)
-... )`.  It serves a similar purpose as the
-[`->>`](https://clojuredocs.org/clojure.core/-%3E%3E) macro of Clojure or the
-`|>` operator of
-[F#](https://blogs.msdn.microsoft.com/dsyme/2011/05/17/archeological-semiotics-the-birth-of-the-pipeline-symbol-1994/)
-and [Elm](http://package.elm-lang.org/packages/elm-lang/core/latest/Basics#|>),
-for example, or the
-[`>|`](http://comp.lang.functional.narkive.com/zZJZg20r/a-family-of-function-application-operators-for-standard-ml)
-operator defined in a Usenet post by some rando.  See also [`U.thru`](#U-thru).
-
-For example:
-
-```js
-U.seq(1, x => x + 1, x => -x)
-// -2
-```
-
-A common technique in JavaScript is to use method chaining: `x.fn_1().fn_2()`.
-A problem with method chaining is that it requires having objects with methods.
-Sometimes you may need to manipulate values that are not objects, like `null`
-and `undefined`, and other times you may want to use functions that are not
-directly provided as methods and it may not be desirable to [monkey
-patch](https://en.wikipedia.org/wiki/Monkey_patch#Pitfalls) such methods.
-
-`U.seq` is designed to work with partially applied
-[curried](https://en.wikipedia.org/wiki/Currying) functions that take the <a
-href="https://en.wikipedia.org/wiki/Object_(grammar)">object</a> as their last
-argument and can be seen as providing a flexible alternative to method chaining.
-
-#### <a id="U-seqPartial"></a> [≡](#contents) ~~[`U.seqPartial(any, ...fns)`](#U-seqPartial)~~
-
-**WARNING: `seqPartial` has been deprecated.  There is no replacement for it.**
-
-`U.seqPartial` allows one to pipe a value through a sequence of function in such
-a way that if the value becomes `undefined` the process is stopped and
-`undefined` is returned without calling the remaining functions.
-
-#### <a id="U-tapPartial"></a> [≡](#contents) [`U.tapPartial(action, any)`](#U-tapPartial)
-
-`U.tapPartial` is a [lifted](#U-liftRec) partial
-[tap](http://ramdajs.com/docs/#tap) function.  The given action is called for
-values flowing through except when the value is `undefined`.
-
-For example:
-
-```js
-U.thru(
-  observable,
-  ...
-  U.tap(value => console.log(value)),
-  ...
-)
-```
-
 #### <a id="U-thru"></a> [≡](#contents) [`U.thru(any, ...fns)`](#U-thru)
 
 `U.thru` allows one to pipe a value through a sequence of functions.  In other
@@ -688,43 +623,6 @@ U.toPartial((x, y) => x + y)(1, 2)
 ```
 
 ### <a id="react-helpers"></a> [≡](#contents) [React helpers](#react-helpers)
-
-#### <a id="context"></a> [≡](#contents) ~~[Context](#context)~~
-
-##### <a id="U-Context"></a> [≡](#contents) ~~[`<U.Context context={context} />`](#U-Context)~~
-
-**WARNING: `U.Context` has been obsoleted. Just use the new [React context
-API](https://reactjs.org/docs/context.html).**
-
-`U.Context` is a component that allows one to set the context for child
-components.  See also [`U.withContext`](#U-withContext).
-
-Usually the context should be an object with the desired properties.  Also, with
-Karet, the values are usually observable properties.
-
-For example:
-
-```jsx
-<U.Context context={{language: U.atom('fi')}}/>
-  <Page />
-<U.Context/>
-```
-
-##### <a id="U-withContext"></a> [≡](#contents) ~~[`U.withContext((props, context) => element)`](#U-withContext)~~
-
-**WARNING: `U.withContext` has been obsoleted. Just use the new [React context
-API](https://reactjs.org/docs/context.html).**
-
-`U.withContext` creates a component that takes both the props and the context as
-parameters.  See also [`U.Context`](#U-Context).
-
-For example:
-
-```jsx
-const Text = U.withContext(({children: text}, {language}) => (
-  <span>{translate(language, text)}</span>
-)
-```
 
 #### <a id="binding"></a> [≡](#contents) [Binding](#binding)
 
@@ -1057,47 +955,6 @@ In other words, `U.combine` also provides functionality similar to
 
 Note: `U.combine` is carefully optimized for space&mdash;if you write equivalent
 combinations using Kefir's own operators, they will likely take more memory.
-
-##### <a id="U-combines"></a> [≡](#contents) ~~[`U.combines(...any[, fn])`](#U-combines)~~
-
-**WARNING: `combines` has been obsoleted.  Please use [`U.combine`](#U-combine),
-[`U.template`](#U-template), [`U.lift`](U-lift), or [`U.liftRec`](#U-liftRec)
-instead.**
-
-`U.combines` is a special purpose [Kefir](https://kefirjs.github.io/kefir/)
-observable combinator designed for combining properties for a sink that accepts
-both observables and constant values such as the Reactive VDOM of
-[Karet](https://github.com/calmm-js/karet).
-
-Unlike typical observable combinators, when `U.combines` is invoked with only
-constants (no observables), then the result is computed immediately and returned
-as a plain value.  This optimization eliminates redundant observables.
-
-The basic semantics of `U.combines` can be described as
-
-```js
-U.combines(...xs, fn) === Kefir.combine(xs, fn).skipDuplicates(R.identical)
-```
-
-where [`Kefir.combine`](https://kefirjs.github.io/kefir/#combine) and
-[`skipDuplicates`](https://kefirjs.github.io/kefir/#skip-duplicates) come from
-Kefir and [`R.identical`](http://ramdajs.com/docs/#identical) from
-[Ramda](http://ramdajs.com/).  Duplicates are skipped, because that can reduce
-unnecessary updates.  Ramda's `R.identical` provides a semantics of equality
-that works well within the context of embedding properties to VDOM.
-
-Unlike with [`Kefir.combine`](https://kefirjs.github.io/kefir/#combine), any
-argument of `U.combines` is allowed to be
-* a constant,
-* an observable (including the combiner function), or
-* an array or object containing observables.
-
-In other words, `U.combines` also provides functionality similar to
-[`Bacon.combineTemplate`](https://github.com/baconjs/bacon.js#bacon-combinetemplate).
-
-Note: `U.combines` is carefully optimized for space&mdash;if you write
-equivalent combinations using Kefir's own operators, they will likely take more
-memory.
 
 ##### <a id="U-lift"></a> [≡](#contents) [`U.lift((...) => ...)`](#U-lift)
 
