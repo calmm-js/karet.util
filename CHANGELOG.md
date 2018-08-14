@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.0.0
+
+Removed previously obsoleted functionality:
+* `U.combines`
+* `U.seq`
+* `U.seqPartial`
+* `U.Context`
+* `U.withContext`
+
 ## 0.18.23
 
 `getProps` and `actions` now perform their actions while `holding` change

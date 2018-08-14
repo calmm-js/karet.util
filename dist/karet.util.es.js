@@ -1,23 +1,13 @@
 import { AbstractMutable, holding, Atom, Molecule, Join } from 'kefir.atom';
 export { holding } from 'kefir.atom';
 import { Observable, Property, Stream, constant, concat, merge, interval, later, never, fromEvents, combine, stream } from 'kefir';
-import { defineNameU, arityN, curry, pipe2U, identicalU, id, inherit, always, seq, seqPartial, isDefined, object0, isFunction, assign } from 'infestines';
+import { defineNameU, arityN, curry, pipe2U, identicalU, id, inherit, always, isDefined, isFunction, object0, assign } from 'infestines';
 import { iso, get, set, collect, flatten, when, join, remove, find } from 'partial.lenses';
 import { combine as combine$1, lift, liftRec } from 'karet.lift';
 export { combine, lift, liftRec } from 'karet.lift';
 import { createElement } from 'karet';
 export { fromClass as toKaret } from 'karet';
-import { createContext, createElement as createElement$1, forwardRef, PureComponent } from 'react';
-import { combines } from 'kefir.combines';
-
-var header = 'karet.util: ';
-
-function warn(f, m) {
-  if (!f.warned) {
-    f.warned = 1;
-    console.warn(header + m);
-  }
-}
+import { forwardRef, PureComponent, createElement as createElement$1 } from 'react';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -310,11 +300,6 @@ var animationSpan = process.env.NODE_ENV === 'production' ? typeof window === 'u
   return typeof window === 'undefined' ? never$1 : new Ticks(d);
 };
 
-var combines$1 = process.env.NODE_ENV === 'production' ? combines : function combines$$1() {
-  warn(combines$$1, '`combines` has been obsoleted.  Please use `combine`, `template`, `lift`, or `liftRec` instead.');
-  return combines.apply(null, arguments);
-};
-
 // Bus -------------------------------------------------------------------------
 
 var streamPrototype = Stream.prototype;
@@ -338,16 +323,6 @@ var doError = /*#__PURE__*/doN(1, 'error', 'doError');
 var doEnd = /*#__PURE__*/doN(0, 'end', 'doEnd');
 
 // Convenience /////////////////////////////////////////////////////////////////
-
-var seq$1 = process.env.NODE_ENV === 'production' ? seq : function seq$$1(_) {
-  warn(seq$$1, '`seq` has been obsoleted.  Use `thru` instead.');
-  return seq.apply(null, arguments);
-};
-
-var seqPartial$1 = process.env.NODE_ENV === 'production' ? seqPartial : function seqPartial$$1(_) {
-  warn(seqPartial$$1, '`seqPartial` has been deprecated.  There is no replacement for it.');
-  return seqPartial.apply(null, arguments);
-};
 
 var scope = function scope(fn) {
   return fn();
@@ -450,50 +425,11 @@ var onUnmount = function onUnmount(effect) {
   return stream(always(effect)).toProperty(always(undefined));
 };
 
-// Context ---------------------------------------------------------------------
-
-var _React$createContext = /*#__PURE__*/createContext(object0),
-    Provider = _React$createContext.Provider,
-    Consumer = _React$createContext.Consumer;
-
-var Context = /*#__PURE__*/(process.env.NODE_ENV === 'production' ? id : function (fn) {
-  return function Context(props) {
-    warn(Context, '`Context` has been obsoleted.  Just use the new React context API.');
-    return fn(props);
-  };
-})(function Context(_ref2) {
-  var context = _ref2.context,
-      children = _ref2.children;
-
-  return createElement$1(
-    Provider,
-    { value: context },
-    children
-  );
-});
-
-var withContext = /*#__PURE__*/(process.env.NODE_ENV === 'production' ? id : function (fn) {
-  return function withContext(props) {
-    warn(withContext, '`withContext` has been obsoleted.  Just use the new React context API.');
-    return fn(props);
-  };
-})(function withContext(toElem) {
-  return function (props) {
-    return createElement$1(
-      Consumer,
-      null,
-      function (context) {
-        return toElem(props, context);
-      }
-    );
-  };
-});
-
 // DOM Binding -----------------------------------------------------------------
 
 var getProp = function getProp(name, object) {
-  return function getProp(_ref3) {
-    var target = _ref3.target;
+  return function getProp(_ref2) {
+    var target = _ref2.target;
 
     var value = target[name];
     if (isFunction(object.push)) {
@@ -899,4 +835,4 @@ var mapElemsWithIds = /*#__PURE__*/curry(function mapElemsWithIds(idL, xi2y, xs)
   }, []), skipIdenticals);
 });
 
-export { debounce, changes, serially, parallel, delay, mapValue, flatMapParallel, flatMapSerial, flatMapErrors, flatMapLatest, foldPast, interval$1 as interval, later$1 as later, never$1 as never, on, sampledBy, skipFirst, skipDuplicates, skipUnless, takeFirst, takeFirstErrors, takeUntilBy, toProperty, throttle, fromEvents$1 as fromEvents, ignoreValues, ignoreErrors, startWith, sink, consume, endWith, lazy, skipIdenticals, skipWhen, template, fromPromise, not, and, or, ifElse, unless, when$1 as when, cond, animationSpan, combines$1 as combines, Bus, bus, doPush, doError, doEnd, seq$1 as seq, seqPartial$1 as seqPartial, scope, tapPartial, toPartial, thru, through, show, onUnmount, Context, withContext, getProps, setProps, Select, Input, TextArea, refTo, actions, preventDefault, stopPropagation, cns, pure, toReactExcept, toReact, parse, stringify, du as decodeURI, duc as decodeURIComponent, eu as encodeURI, euc as encodeURIComponent, abs, acos, acosh, asin, asinh, atan, atan2, atanh, cbrt, ceil, clz32, cos, cosh, exp, expm1, floor, fround, hypot, imul, log, log10, log1p, log2, max, min, pow, round, sign, sin, sinh, sqrt, tan, tanh, trunc, string, atom, variable, molecule, set$1 as set, doModify, doSet, doRemove, destructure, view, mapElems, mapElemsWithIds };
+export { debounce, changes, serially, parallel, delay, mapValue, flatMapParallel, flatMapSerial, flatMapErrors, flatMapLatest, foldPast, interval$1 as interval, later$1 as later, never$1 as never, on, sampledBy, skipFirst, skipDuplicates, skipUnless, takeFirst, takeFirstErrors, takeUntilBy, toProperty, throttle, fromEvents$1 as fromEvents, ignoreValues, ignoreErrors, startWith, sink, consume, endWith, lazy, skipIdenticals, skipWhen, template, fromPromise, not, and, or, ifElse, unless, when$1 as when, cond, animationSpan, Bus, bus, doPush, doError, doEnd, scope, tapPartial, toPartial, thru, through, show, onUnmount, getProps, setProps, Select, Input, TextArea, refTo, actions, preventDefault, stopPropagation, cns, pure, toReactExcept, toReact, parse, stringify, du as decodeURI, duc as decodeURIComponent, eu as encodeURI, euc as encodeURIComponent, abs, acos, acosh, asin, asinh, atan, atan2, atanh, cbrt, ceil, clz32, cos, cosh, exp, expm1, floor, fround, hypot, imul, log, log10, log1p, log2, max, min, pow, round, sign, sin, sinh, sqrt, tan, tanh, trunc, string, atom, variable, molecule, set$1 as set, doModify, doSet, doRemove, destructure, view, mapElems, mapElemsWithIds };

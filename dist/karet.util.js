@@ -1,17 +1,8 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('kefir.atom'), require('kefir'), require('infestines'), require('partial.lenses'), require('karet.lift'), require('karet'), require('react'), require('kefir.combines')) :
-  typeof define === 'function' && define.amd ? define(['exports', 'kefir.atom', 'kefir', 'infestines', 'partial.lenses', 'karet.lift', 'karet', 'react', 'kefir.combines'], factory) :
-  (factory((global.karet = global.karet || {}, global.karet.util = {}),global.Kefir.atom,global.Kefir,global.I,global.L,global.karet.lift,global.karet,global.React,global.Kefir.combines));
-}(this, (function (exports,A,K,I,L,F,Karet,React,kefir_combines) { 'use strict';
-
-  var header = 'karet.util: ';
-
-  function warn(f, m) {
-    if (!f.warned) {
-      f.warned = 1;
-      console.warn(header + m);
-    }
-  }
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('kefir.atom'), require('kefir'), require('infestines'), require('partial.lenses'), require('karet.lift'), require('karet'), require('react')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'kefir.atom', 'kefir', 'infestines', 'partial.lenses', 'karet.lift', 'karet', 'react'], factory) :
+  (factory((global.karet = global.karet || {}, global.karet.util = {}),global.Kefir.atom,global.Kefir,global.I,global.L,global.karet.lift,global.karet,global.React));
+}(this, (function (exports,A,K,I,L,F,Karet,React) { 'use strict';
 
   ////////////////////////////////////////////////////////////////////////////////
 
@@ -300,11 +291,6 @@
     return typeof window === 'undefined' ? never : new Ticks(d);
   };
 
-  var combines = function combines() {
-    warn(combines, '`combines` has been obsoleted.  Please use `combine`, `template`, `lift`, or `liftRec` instead.');
-    return kefir_combines.combines.apply(null, arguments);
-  };
-
   // Bus -------------------------------------------------------------------------
 
   var streamPrototype = K.Stream.prototype;
@@ -328,16 +314,6 @@
   var doEnd = /*#__PURE__*/doN(0, 'end', 'doEnd');
 
   // Convenience /////////////////////////////////////////////////////////////////
-
-  var seq = function seq(_) {
-    warn(seq, '`seq` has been obsoleted.  Use `thru` instead.');
-    return I.seq.apply(null, arguments);
-  };
-
-  var seqPartial = function seqPartial(_) {
-    warn(seqPartial, '`seqPartial` has been deprecated.  There is no replacement for it.');
-    return I.seqPartial.apply(null, arguments);
-  };
 
   var scope = function scope(fn) {
     return fn();
@@ -440,50 +416,11 @@
     return K.stream(I.always(effect)).toProperty(I.always(undefined));
   };
 
-  // Context ---------------------------------------------------------------------
-
-  var _React$createContext = /*#__PURE__*/React.createContext(I.object0),
-      Provider = _React$createContext.Provider,
-      Consumer = _React$createContext.Consumer;
-
-  var Context = /*#__PURE__*/(function (fn) {
-    return function Context(props) {
-      warn(Context, '`Context` has been obsoleted.  Just use the new React context API.');
-      return fn(props);
-    };
-  })(function Context(_ref2) {
-    var context = _ref2.context,
-        children = _ref2.children;
-
-    return React.createElement(
-      Provider,
-      { value: context },
-      children
-    );
-  });
-
-  var withContext = /*#__PURE__*/(function (fn) {
-    return function withContext(props) {
-      warn(withContext, '`withContext` has been obsoleted.  Just use the new React context API.');
-      return fn(props);
-    };
-  })(function withContext(toElem) {
-    return function (props) {
-      return React.createElement(
-        Consumer,
-        null,
-        function (context) {
-          return toElem(props, context);
-        }
-      );
-    };
-  });
-
   // DOM Binding -----------------------------------------------------------------
 
   var getProp = function getProp(name, object) {
-    return function getProp(_ref3) {
-      var target = _ref3.target;
+    return function getProp(_ref2) {
+      var target = _ref2.target;
 
       var value = target[name];
       if (I.isFunction(object.push)) {
@@ -938,14 +875,11 @@
   exports.when = when;
   exports.cond = cond;
   exports.animationSpan = animationSpan;
-  exports.combines = combines;
   exports.Bus = Bus;
   exports.bus = bus;
   exports.doPush = doPush;
   exports.doError = doError;
   exports.doEnd = doEnd;
-  exports.seq = seq;
-  exports.seqPartial = seqPartial;
   exports.scope = scope;
   exports.tapPartial = tapPartial;
   exports.toPartial = toPartial;
@@ -953,8 +887,6 @@
   exports.through = through;
   exports.show = show;
   exports.onUnmount = onUnmount;
-  exports.Context = Context;
-  exports.withContext = withContext;
   exports.getProps = getProps;
   exports.setProps = setProps;
   exports.Select = Select;

@@ -7,7 +7,6 @@ import {uglify} from 'rollup-plugin-uglify'
 const globals = {
   'karet.lift': 'karet.lift',
   'kefir.atom': 'Kefir.atom',
-  'kefir.combines': 'Kefir.combines',
   'partial.lenses': 'L',
   infestines: 'I',
   karet: 'karet',

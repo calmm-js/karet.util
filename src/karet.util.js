@@ -7,15 +7,6 @@ import * as F from 'karet.lift'
 import * as Karet from 'karet'
 import * as React from 'react'
 
-const header = 'karet.util: '
-
-function warn(f, m) {
-  if (!f.warned) {
-    f.warned = 1
-    console.warn(header + m)
-  }
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 
 const setName =
@@ -279,19 +270,6 @@ export const animationSpan =
 
 export {combine, lift, liftRec} from 'karet.lift'
 
-import {combines as combinesRaw} from 'kefir.combines'
-
-export const combines =
-  process.env.NODE_ENV === 'production'
-    ? combinesRaw
-    : function combines() {
-        warn(
-          combines,
-          '`combines` has been obsoleted.  Please use `combine`, `template`, `lift`, or `liftRec` instead.'
-        )
-        return combinesRaw.apply(null, arguments)
-      }
-
 // Bus -------------------------------------------------------------------------
 
 const streamPrototype = K.Stream.prototype
@@ -317,25 +295,6 @@ export const doError = doN(1, 'error', 'doError')
 export const doEnd = doN(0, 'end', 'doEnd')
 
 // Convenience /////////////////////////////////////////////////////////////////
-
-export const seq =
-  process.env.NODE_ENV === 'production'
-    ? I.seq
-    : function seq(_) {
-        warn(seq, '`seq` has been obsoleted.  Use `thru` instead.')
-        return I.seq.apply(null, arguments)
-      }
-
-export const seqPartial =
-  process.env.NODE_ENV === 'production'
-    ? I.seqPartial
-    : function seqPartial(_) {
-        warn(
-          seqPartial,
-          '`seqPartial` has been deprecated.  There is no replacement for it.'
-        )
-        return I.seqPartial.apply(null, arguments)
-      }
 
 export const scope = fn => fn()
 
@@ -431,36 +390,6 @@ export function show(_) {
 
 export const onUnmount = effect =>
   K.stream(I.always(effect)).toProperty(I.always(undefined))
-
-// Context ---------------------------------------------------------------------
-
-const {Provider, Consumer} = React.createContext(I.object0)
-
-export const Context = (process.env.NODE_ENV === 'production'
-  ? I.id
-  : fn =>
-      function Context(props) {
-        warn(
-          Context,
-          '`Context` has been obsoleted.  Just use the new React context API.'
-        )
-        return fn(props)
-      })(function Context({context, children}) {
-  return <Provider value={context}>{children}</Provider>
-})
-
-export const withContext = (process.env.NODE_ENV === 'production'
-  ? I.id
-  : fn =>
-      function withContext(props) {
-        warn(
-          withContext,
-          '`withContext` has been obsoleted.  Just use the new React context API.'
-        )
-        return fn(props)
-      })(function withContext(toElem) {
-  return props => <Consumer>{context => toElem(props, context)}</Consumer>
-})
 
 // DOM Binding -----------------------------------------------------------------
 
