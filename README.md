@@ -614,7 +614,7 @@ For example:
 U.thru(
   observable,
   ...
-  U.tap(value => console.log(value)),
+  U.tapPartial(value => console.log(value)),
   ...
 )
 ```
