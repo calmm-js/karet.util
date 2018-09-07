@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Karet Util</title>
+    <link rel="icon" href="https://avatars1.githubusercontent.com/u/17234211">
+    <link rel="stylesheet" type="text/css" href="fw/github.css">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/googlecode.min.css">
+    <link rel="stylesheet" type="text/css" href="https://storage.googleapis.com/app.klipse.tech/css/codemirror.css">
+    <link rel="stylesheet" type="text/css" href="fw/styles.css">
+    <script type="text/javascript">startTime = Date.now()</script>
+    <script type="text/javascript">(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');ga('create','UA-52808982-2','auto');ga('send','pageview');</script>
+  </head>
+  <body class="markdown-body">
+    <div class="loading-message">
+      Please wait... The interactive code snippets on this page take a moment to render.
+    </div>
+    <div class="menu">
+      <div class="menu-overlay"></div>
+      <div class="menu-body">
+        <div class="menu-side">
+          <div>≡</div>
+          <a id="to-top" href="#" onclick="">▲</a>
+        </div>
+        <div class="menu-contents"></div>
+      </div>
+    </div>
+    <p>
+      All the code snippets on this page are <b>live</b> and <b>interactive</b>
+      powered by the <a target="_blank" href="https://github.com/viebel/klipse">klipse
+      plugin</a>.
+    </p>
+    <hr>
+    <h1><a id="karet-util"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#karet-util">■</a> <a href="#karet-util">Karet Util</a> &middot; <a href="https://gitter.im/calmm-js/chat"><img src="https://img.shields.io/gitter/room/calmm-js/chat.js.svg" alt="Gitter"></a> <a href="https://github.com/calmm-js/karet.util"><img src="https://img.shields.io/github/stars/calmm-js/karet.util.svg?style=social" alt="GitHub stars"></a> <a href="https://www.npmjs.com/package/karet.util"><img src="https://img.shields.io/npm/dm/karet.util.svg" alt="npm"></a></h1>
+<p>A collection of utilities for working with
+<a href="https://github.com/calmm-js/karet">Karet</a>.</p>
+<p><a href="http://badge.fury.io/js/karet.util"><img src="https://badge.fury.io/js/karet.util.svg" alt="npm version"></a>
+<a href="https://travis-ci.org/calmm-js/karet.util"><img src="https://travis-ci.org/calmm-js/karet.util.svg?branch=master" alt="Build Status"></a>
+<a href="https://codecov.io/github/calmm-js/karet.util?branch=master"><img src="https://img.shields.io/codecov/c/github/calmm-js/karet.util/master.svg" alt="Code Coverage"></a>
+<a href="https://david-dm.org/calmm-js/karet.util"><img src="https://david-dm.org/calmm-js/karet.util.svg" alt=""></a>
+<a href="https://david-dm.org/calmm-js/karet.util?type=dev"><img src="https://david-dm.org/calmm-js/karet.util/dev-status.svg" alt=""></a></p>
+<h2><a id="contents"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#contents">■</a> <a href="#contents">Contents</a></h2>
+<ul>
+<li><a href="#reference">Reference</a><ul>
+<li><a href="#about-lifted-functions">About lifted functions</a></li>
+<li><a href="#debugging">Debugging</a><ul>
+<li><a href="#U-show"><code>U.show(...labels, any)</code></a></li>
+</ul>
+</li>
+<li><a href="#atoms">Atoms</a><ul>
+<li><a href="#creating-atoms">Creating atoms</a><ul>
+<li><a href="#U-atom"><code>U.atom(value)</code></a></li>
+<li><a href="#U-molecule"><code>U.molecule([ ... ] | { ... })</code></a></li>
+<li><a href="#U-variable"><code>U.variable()</code></a></li>
+</ul>
+</li>
+<li><a href="#transactions">Transactions</a><ul>
+<li><a href="#U-holding"><code>U.holding(() =&gt; { ... })</code></a></li>
+</ul>
+</li>
+<li><a href="#decomposing">Decomposing</a><ul>
+<li><a href="#U-destructure"><code>U.destructure(atom)</code></a></li>
+<li><a href="#U-mapElems"><code>U.mapElems((elemAtom, index) =&gt; any, arrayAtom)</code></a></li>
+<li><a href="#U-mapElemsWithIds"><code>U.mapElemsWithIds(lensAtom, (elemAtom, id) =&gt; any, arrayAtom)</code></a></li>
+<li><a href="#U-view"><code>U.view(lens, atom)</code></a></li>
+</ul>
+</li>
+<li><a href="#side-effects-on-atoms">Side-effects on atoms</a><ul>
+<li><a href="#U-set"><code>U.set(atom, value)</code></a></li>
+</ul>
+</li>
+<li><a href="#actions-on-atoms">Actions on atoms</a><ul>
+<li><a href="#U-doModify"><code>U.doModify(atom, mapper)</code></a></li>
+<li><a href="#U-doRemove"><code>U.doRemove(atom)</code></a></li>
+<li><a href="#U-doSet"><code>U.doSet(atom, value)</code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#bus">Bus</a><ul>
+<li><a href="#creating-buses">Creating buses</a><ul>
+<li><a href="#U-bus"><code>U.bus()</code></a></li>
+</ul>
+</li>
+<li><a href="#actions-on-buses">Actions on buses</a><ul>
+<li><a href="#U-doEnd"><code>U.doEnd(bus)</code></a></li>
+<li><a href="#U-doError"><code>U.doError(bus, error)</code></a></li>
+<li><a href="#U-doPush"><code>U.doPush(bus, value)</code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#convenience">Convenience</a><ul>
+<li><a href="#U-scope"><code>U.scope((...) =&gt; ...)</code></a></li>
+<li><del><a href="#U-seq"><code>U.seq(any, ...fns)</code></a></del></li>
+<li><del><a href="#U-seqPartial"><code>U.seqPartial(any, ...fns)</code></a></del></li>
+<li><a href="#U-tapPartial"><code>U.tapPartial(action, any)</code></a></li>
+<li><a href="#U-thru"><code>U.thru(any, ...fns)</code></a></li>
+<li><a href="#U-through"><code>U.through(...fns)</code></a></li>
+<li><a href="#U-toPartial"><code>U.toPartial(fn)</code></a></li>
+</ul>
+</li>
+<li><a href="#react-helpers">React helpers</a><ul>
+<li><del><a href="#context">Context</a></del><ul>
+<li><del><a href="#U-Context"><code>&lt;U.Context context={context} /&gt;</code></a></del></li>
+<li><del><a href="#U-withContext"><code>U.withContext((props, context) =&gt; element)</code></a></del></li>
+</ul>
+</li>
+<li><a href="#binding">Binding</a><ul>
+<li><a href="#U-getProps"><code>U.getProps({...propName: atom|bus})</code></a></li>
+<li><a href="#U-setProps"><code>U.setProps({...propName: observable})</code></a></li>
+</ul>
+</li>
+<li><a href="#input-components">Input components</a><ul>
+<li><a href="#U-Input"><code>&lt;U.Input {...{value|checked}} /&gt;</code></a></li>
+<li><a href="#U-Select"><code>&lt;U.Select {...{value}} /&gt;</code></a></li>
+<li><a href="#U-TextArea"><code>&lt;U.TextArea {...{value}} /&gt;</code></a></li>
+</ul>
+</li>
+<li><a href="#refs">Refs</a><ul>
+<li><a href="#U-refTo"><code>U.refTo(variable)</code></a></li>
+</ul>
+</li>
+<li><a href="#lifecycle">Lifecycle</a><ul>
+<li><a href="#U-onUnmount"><code>U.onUnmount(action)</code></a></li>
+</ul>
+</li>
+<li><a href="#events">Events</a><ul>
+<li><a href="#U-actions"><code>U.actions(...actions)</code></a></li>
+<li><a href="#U-preventDefault"><code>U.preventDefault(event)</code></a></li>
+<li><a href="#U-stopPropagation"><code>U.stopPropagation(event)</code></a></li>
+</ul>
+</li>
+<li><a href="#class-names">Class names</a><ul>
+<li><a href="#U-cns"><code>U.cns(...classNames)</code></a></li>
+</ul>
+</li>
+<li><a href="#interop">Interop</a><ul>
+<li><a href="#U-pure"><code>U.pure(Component)</code></a></li>
+<li><a href="#U-toKaret"><code>U.toKaret(ReactComponent)</code></a></li>
+<li><a href="#U-toReact"><code>U.toReact(KaretComponent)</code></a></li>
+<li><a href="#U-toReactExcept"><code>U.toReactExcept(propName =&gt; boolean, KaretComponent)</code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#kefir">Kefir</a><ul>
+<li><a href="#conditionals">Conditionals</a><ul>
+<li><a href="#U-and"><code>U.and(...any)</code></a></li>
+<li><a href="#U-cond"><code>U.cond(...[condition, consequent][, [alternative]])</code></a></li>
+<li><a href="#U-ifElse"><code>U.ifElse(condition, consequent, alternative)</code></a></li>
+<li><a href="#U-not"><code>U.not(any)</code></a></li>
+<li><a href="#U-or"><code>U.or(...any)</code></a></li>
+<li><a href="#U-unless"><code>U.unless(condition, alternative)</code></a></li>
+<li><a href="#U-when"><code>U.when(condition, consequent)</code></a></li>
+</ul>
+</li>
+<li><a href="#animation">Animation</a><ul>
+<li><a href="#U-animationSpan"><code>U.animationSpan(milliseconds)</code></a></li>
+</ul>
+</li>
+<li><a href="#lifting">Lifting</a><ul>
+<li><a href="#U-combine"><code>U.combine([...any], fn)</code></a></li>
+<li><del><a href="#U-combines"><code>U.combines(...any, fn)</code></a></del></li>
+<li><a href="#U-lift"><code>U.lift((...) =&gt; ...)</code></a></li>
+<li><a href="#U-liftRec"><code>U.liftRec((...) =&gt; ...)</code></a></li>
+</ul>
+</li>
+<li><a href="#curried-combinators">Curried combinators</a><ul>
+<li><a href="https://kefirjs.github.io/kefir/#changes"><code>U.changes(observable)</code> ⌘</a></li>
+<li><a href="https://kefirjs.github.io/kefir/#debounce"><code>U.debounce(ms, observable)</code> ⌘</a></li>
+<li><a href="https://kefirjs.github.io/kefir/#delay"><code>U.delay(ms, observable)</code> ⌘</a></li>
+<li><a href="https://kefirjs.github.io/kefir/#flat-map-errors"><code>U.flatMapErrors(value =&gt; observable, observable)</code> ⌘</a></li>
+<li><a href="https://kefirjs.github.io/kefir/#flat-map-latest"><code>U.flatMapLatest(value =&gt; observable, observable)</code> ⌘</a></li>
+<li><a href="https://kefirjs.github.io/kefir/#flat-map"><code>U.flatMapParallel(value =&gt; observable, observable)</code> ⌘</a></li>
+<li><a href="https://kefirjs.github.io/kefir/#flat-map-concat"><code>U.flatMapSerial(value =&gt; observable, observable)</code> ⌘</a></li>
+<li><a href="https://kefirjs.github.io/kefir/#scan"><code>U.foldPast((state, value) =&gt; state, state, observable)</code> ⌘</a></li>
+<li><a href="https://kefirjs.github.io/kefir/#from-event"><code>U.fromEvents(target, eventName, transform)</code> ⌘</a></li>
+<li><a href="https://kefirjs.github.io/kefir/#ignore-errors"><code>U.ignoreErrors(observable)</code> ⌘</a></li>
+<li><a href="https://kefirjs.github.io/kefir/#ignore-values"><code>U.ignoreValues(observable)</code> ⌘</a></li>
+<li><a href="https://kefirjs.github.io/kefir/#interval"><code>U.interval(ms, value)</code> ⌘</a></li>
+<li><a href="https://kefirjs.github.io/kefir/#later"><code>U.later(ms, value)</code> ⌘</a></li>
+<li><a href="https://kefirjs.github.io/kefir/#map"><code>U.mapValue(value =&gt; value, observable)</code> ⌘</a></li>
+<li><a href="https://kefirjs.github.io/kefir/#never"><code>U.never</code> ⌘</a></li>
+<li><a href="https://kefirjs.github.io/kefir/#merge"><code>U.parallel([...observables])</code> ⌘</a></li>
+<li><a href="https://kefirjs.github.io/kefir/#obs-sampled-by"><code>U.sampledBy(eventStream, property)</code> ⌘</a></li>
+<li><a href="https://kefirjs.github.io/kefir/#concat"><code>U.serially([...observables])</code> ⌘</a></li>
+<li><a href="https://kefirjs.github.io/kefir/#skip-duplicates"><code>U.skipDuplicates(equality, observable)</code> ⌘</a></li>
+<li><a href="https://kefirjs.github.io/kefir/#skip"><code>U.skipFirst(number, observable)</code> ⌘</a></li>
+<li><a href="https://kefirjs.github.io/kefir/#skip-errors"><code>U.skipFirstErrors(n, observable)</code> ⌘</a></li>
+<li><a href="https://kefirjs.github.io/kefir/#filter"><code>U.skipUnless(predicate, observable)</code> ⌘</a></li>
+<li><a href="https://kefirjs.github.io/kefir/#take"><code>U.takeFirst(number, observable)</code> ⌘</a></li>
+<li><a href="https://kefirjs.github.io/kefir/#take-errors"><code>U.takeFirstErrors(number, observable)</code> ⌘</a></li>
+<li><a href="https://kefirjs.github.io/kefir/#take-until-by"><code>U.takeUntilBy(eventStream, observable)</code> ⌘</a></li>
+<li><a href="https://kefirjs.github.io/kefir/#throttle"><code>U.throttle(ms, observable)</code> ⌘</a></li>
+<li><a href="https://kefirjs.github.io/kefir/#to-property"><code>U.toProperty(observable)</code> ⌘</a></li>
+</ul>
+</li>
+<li><a href="#additional-combinators">Additional combinators</a><ul>
+<li><a href="#U-consume"><code>U.consume(action, observable)</code></a></li>
+<li><a href="#U-endWith"><code>U.endWith(value, observable)</code></a></li>
+<li><a href="#U-fromPromise"><code>U.fromPromise(() =&gt; promise | {ready, abort})</code></a></li>
+<li><a href="#U-lazy"><code>U.lazy(() =&gt; observable)</code></a></li>
+<li><a href="#U-sink"><code>U.sink(observable)</code></a></li>
+<li><a href="#U-skipIdenticals"><code>U.skipIdenticals(observable)</code></a></li>
+<li><a href="#U-skipWhen"><code>U.skipWhen(predicate, observable)</code></a></li>
+<li><a href="#U-startWith"><code>U.startWith(value, observable)</code></a></li>
+<li><a href="#U-template"><code>U.template([ ... ] | { ... })</code></a></li>
+</ul>
+</li>
+<li><a href="#subscribing">Subscribing</a><ul>
+<li><a href="#U-on"><code>U.on({value, error, end}, observable)</code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#lifted-standard-functions">Lifted standard functions</a><ul>
+<li><a href="#JSON">JSON</a><ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse"><code>U.parse(string[, reviver])</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify"><code>U.stringify(value[, replacer[, space]])</code> ⌘</a></li>
+</ul>
+</li>
+<li><a href="#URIs">URIs</a><ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/decodeURI"><code>U.decodeURI(string)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/decodeURIComponent"><code>U.decodeURIComponent(string)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURI"><code>U.encodeURI(string)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent"><code>U.encodeURIComponent(string)</code> ⌘</a></li>
+</ul>
+</li>
+<li><a href="#Math">Math</a><ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/abs"><code>U.abs(x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/acos"><code>U.acos(x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/acosh"><code>U.acosh(x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/asin"><code>U.asin(x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/asinh"><code>U.asinh(x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/atan"><code>U.atan(x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/atanh"><code>U.atanh(x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/atan2"><code>U.atan2(y, x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/cbrt"><code>U.cbrt(x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/ceil"><code>U.ceil(x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/clz32"><code>U.clz32(x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/cos"><code>U.cos(x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/cosh"><code>U.cosh(x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/exp"><code>U.exp(x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/expm1"><code>U.expm1(x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/floor"><code>U.floor(x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/fround"><code>U.fround(x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/hypot"><code>U.hypot(...xs)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/imul"><code>U.imul(x, y)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/log"><code>U.log(x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/log1p"><code>U.log1p(x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/log10"><code>U.log10(x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/log2"><code>U.log2(x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/max"><code>U.max(...xs)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/min"><code>U.min(...xs)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/pow"><code>U.pow(x, y)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/round"><code>U.round(x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/sign"><code>U.sign(x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/sin"><code>U.sin(x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/sinh"><code>U.sinh(x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/sqrt"><code>U.sqrt(x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/tan"><code>U.tan(x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/tanh"><code>U.tanh(x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/trunc"><code>U.trunc(x)</code> ⌘</a></li>
+</ul>
+</li>
+<li><a href="#String">String</a><ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/raw"><code>U.string`template string with observables`</code> ⌘</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2><a id="reference"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#reference">■</a> Reference</h2>
+<p>This library provides a large number of named exports.  Typically one just
+imports the library as:</p>
+<pre><code class="hljs lang-jsx">import * as U from &#39;karet.util&#39;</code></pre>
+<h3><a id="about-lifted-functions"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#about-lifted-functions">■</a> About lifted functions</h3>
+<p>Many of the functions in this library are <a href="#U-liftRec"><em>lifted</em></a> so that they
+accept both ordinary values and observables as inputs.  When such functions are
+given only ordinary values as inputs, they return immediately with the result
+value.  OTOH, when such a function is given at least an observable as an input,
+they return an observable of results.</p>
+<h3><a id="debugging"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#debugging">■</a> <a href="#debugging">Debugging</a></h3>
+<h4><a id="U-show"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-show">■</a> <a href="#U-show"><code>U.show(...labels, any)</code></a></h4>
+<p><code>U.show</code> is basically an identity function that <code>console.log</code>s the values
+flowing through.  <code>U.show</code> works on plain values, observables, and atoms.  When
+used with atoms, <code>U.show</code> also logs values written through.</p>
+<p>For example:</p>
+<pre><code class="hljs lang-jsx">var Component = ({state}) =&gt; (
+  &lt;div&gt;
+    &lt;SubComponent subState={U.show(&#39;subState&#39;, U.view(&#39;subState&#39;, state))}/&gt;
+  &lt;/div&gt;
+)</code></pre>
+<h3><a id="atoms"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#atoms">■</a> <a href="#atoms">Atoms</a></h3>
+<h4><a id="creating-atoms"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#creating-atoms">■</a> <a href="#creating-atoms">Creating atoms</a></h4>
+<h5><a id="U-atom"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-atom">■</a> <a href="#U-atom"><code>U.atom(value)</code></a></h5>
+<p><code>U.atom</code> creates a new atom with the given initial value.</p>
+<p>For example:</p>
+<pre><code class="hljs lang-jsx">var notEmpty = U.atom(&#39;initial&#39;)
+notEmpty.get() // &#39;initial&#39;
+notEmpty.log() // [property] &lt;value:current&gt; initial</code></pre>
+<h5><a id="U-molecule"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-molecule">■</a> <a href="#U-molecule"><code>U.molecule([ ... ] | { ... })</code></a></h5>
+<p><code>U.molecule</code> composes an atom from a template of atoms.</p>
+<p>For example:</p>
+<pre><code class="hljs lang-jsx">var xyA = U.atom({x: 1, y: 2})
+var xL = U.view(&#39;x&#39;, xyA)
+var yL = U.view(&#39;y&#39;, xyA)
+var xyM = U.molecule({x: xL, y: yL})</code></pre>
+<p>When read, either as a property or via <code>get</code>, the atoms in the template are
+replaced by their values:</p>
+<pre><code class="hljs lang-jsx">R.equals( xyM.get(), xyA.get() ) // true</code></pre>
+<p>When written to, the atoms in the template are written to with matching elements
+from the written value:</p>
+<pre><code class="hljs lang-jsx">xyM.modify(L.set(&#39;x&#39;, 3))
+xL.get() // 3
+yL.get() // 2</code></pre>
+<p>The writes are performed holding event propagation.</p>
+<p>It is considered an error, and the effect is unpredictable, if the written value
+does not match the template, aside from the positions of abstract mutables, of
+course, which means that write operations, <code>set</code>, <code>remove</code>, and <code>modify</code>, on
+molecules and lensed atoms created from molecules are only partial.</p>
+<p>Also, if the template contains multiple abstract mutables that correspond to the
+same underlying state, then writing through the template will give unpredictable
+results.</p>
+<h5><a id="U-variable"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-variable">■</a> <a href="#U-variable"><code>U.variable()</code></a></h5>
+<p><code>U.variable</code> creates a new atom without an initial value.  See also
+<a href="#U-refTo"><code>U.refTo</code></a>.</p>
+<p>For example:</p>
+<pre><code class="hljs lang-jsx">var empty = U.variable()
+empty.get() // undefined
+empty.log()
+empty.set(&#39;first&#39;) // [property] &lt;value&gt; first</code></pre>
+<h4><a id="transactions"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#transactions">■</a> <a href="#transactions">Transactions</a></h4>
+<h5><a id="U-holding"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-holding">■</a> <a href="#U-holding"><code>U.holding(() =&gt; { ... })</code></a></h5>
+<p><code>U.holding</code> is given a thunk to call while holding the propagation of events
+from changes to atoms. The thunk can <code>get</code>, <code>set</code>, <code>remove</code> and <code>modify</code> any
+number of atoms.  After the thunk returns, persisting changes to atoms are
+propagated.  See also <a href="#U-actions"><code>U.actions</code></a> and <a href="#U-getProps"><code>U.getProps</code></a>.</p>
+<p>For example:</p>
+<pre><code class="hljs lang-jsx">var xy = U.atom({x: 1, y: 2})
+var x = U.view(&#39;x&#39;, xy)
+var y = U.view(&#39;y&#39;, xy)
+x.log(&#39;x&#39;) // x &lt;value:current&gt; 1
+y.log(&#39;y&#39;) // y &lt;value:current&gt; 2
+U.holding(() =&gt; {
+  xy.set({x: 2, y: 1})
+  x.set(x.get() - 1)
+}) // y &lt;value&gt; 1</code></pre>
+<h4><a id="decomposing"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#decomposing">■</a> <a href="#decomposing">Decomposing</a></h4>
+<h5><a id="U-destructure"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-destructure">■</a> <a href="#U-destructure"><code>U.destructure(atom)</code></a></h5>
+<p><code>U.destructure</code> wraps a given atom or observable with a
+<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy">proxy</a>
+that performs property access via <a href="#U-view"><code>U.view</code></a>.  On plain observable
+properties only <code>get</code> access is supported.  On mutable atoms <code>get</code>, <code>set</code>, and
+<code>deleteProperty</code> accesses are supported.</p>
+<p>For example,</p>
+<pre><code class="hljs lang-jsx">var {name, number} = U.destructure(contact)</code></pre>
+<p>is equivalent to</p>
+<pre><code class="hljs lang-jsx">var name = U.view(&#39;name&#39;, contact)
+var number = U.view(&#39;number&#39;, contact)</code></pre>
+<p>Note that <em>all</em> property accesses through the proxy returned by <code>U.destructure</code>
+are performed via <a href="#U-view"><code>U.view</code></a>.  This means that the return value of
+<code>U.destructure</code> cannot be used as the atom or observable that it proxies.</p>
+<p>Note that <code>U.destructure</code> is not recursive, which means that nested
+destructuring cannot be used.  Only single level property access is proxied.</p>
+<p>Note that <code>U.destructure</code> requires proper
+<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy"><code>Proxy</code></a>
+support.  You need to <a href="https://caniuse.com/#feat=proxy">decide whether you can use
+it</a>.</p>
+<h5><a id="U-mapElems"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-mapElems">■</a> <a href="#U-mapElems"><code>U.mapElems((elemAtom, index) =&gt; any, arrayAtom)</code></a></h5>
+<p><code>U.mapElems</code> performs a cached incremental map over state containing an array of
+values.  On changes, the mapping function is only called for elements that were
+not in the state previously.  <code>U.mapElems</code> can be used for rendering a list of
+<em>stateless components</em>, however, if elements in the array have unique ids, then
+<a href="#U-mapElemsWithIds"><code>U.mapElemsWithIds</code></a> is generally preferable.</p>
+<p>For example:</p>
+<pre><code class="hljs lang-jsx">var Contacts = ({contacts}) =&gt; (
+  &lt;div&gt;
+    {U.mapElems((contact, i) =&gt; &lt;Contact {...{key: i, contact}} /&gt;, contacts)}
+  &lt;/div&gt;
+)</code></pre>
+<p>See the live <a href="https://codesandbox.io/s/zk7bx827r">Contacts</a> CodeSandbox for an
+example.</p>
+<h5><a id="U-mapElemsWithIds"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-mapElemsWithIds">■</a> <a href="#U-mapElemsWithIds"><code>U.mapElemsWithIds(idLens, (elemAtom, id) =&gt; any, arrayAtom)</code></a></h5>
+<p><code>U.mapElemsWithIds</code> performs a cached incremental map over state containing an
+array of values with unique ids.  On changes, the mapping function is only
+called for elements that were not in the state previously.  <code>U.mapElemsWithIds</code>
+is particularly designed for rendering a list of potentially <em>stateful
+components</em> efficiently.  See also <a href="#U-mapElems"><code>U.mapElems</code></a>.</p>
+<p>For example:</p>
+<pre><code class="hljs lang-jsx">var state = U.atom([
+  {id: 1, value: &#39;Keep&#39;},
+  {id: 2, value: &#39;Calmm&#39;},
+  {id: 3, value: &#39;and&#39;},
+  {id: 4, value: &#39;React!&#39;}
+])
+
+var Elems = ({elems}) =&gt; (
+  &lt;ul&gt;
+    {U.mapElemsWithIds(
+      &#39;id&#39;,
+      (elem, id) =&gt; &lt;li key={id}&gt;{U.view(&#39;value&#39;, elem)}&lt;/li&gt;,
+      elems
+    )}
+  &lt;/ul&gt;
+)</code></pre>
+<p><code>U.mapElemsWithIds</code> is asymptotically optimal in the sense that any change (new
+elements added or old elements removed, positions of elements changed, ...) has
+<code>Theta(n)</code> complexity.  That is the best that can be achieved with plain arrays.</p>
+<h5><a id="U-view"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-view">■</a> <a href="#U-view"><code>U.view(lens, atom)</code></a></h5>
+<p><code>U.view</code> creates a read-write view with the given lens from the given original
+atom.  The lens may also be an observable producing lenses.  Modifications to
+the lensed atom are reflected in the original atom and vice verse.</p>
+<p>For example:</p>
+<pre><code class="hljs lang-jsx">var root = U.atom({x: 1})
+var x = U.view(&#39;x&#39;, root)
+x.set(2)
+root.get() // { x: 2 }
+root.set({x: 3})
+x.get() // 3</code></pre>
+<p>One of the key ideas that makes lensed atoms work is <a href="https://github.com/calmm-js/partial.lenses/#L-compose">the compositionality of
+partial lenses</a>.  Those
+equations make it possible not just to create lenses via composition (left hand
+sides of equations), but also to create paths of lensed atoms (right hand sides
+of equations).  More concretely, both the <code>c</code> in</p>
+<pre><code class="hljs lang-jsx">var b = U.view(a_to_b_PLens, a)
+var c = U.view(b_to_c_PLens, b)</code></pre>
+<p>and in</p>
+<pre><code class="hljs lang-jsx">var c = U.view([a_to_b_PLens, b_to_c_PLens], a)</code></pre>
+<p>can be considered equivalent thanks to the compositionality equations of lenses.</p>
+<p>Note that, for most intents and purposes, <code>U.view</code> is a <a href="https://en.wikipedia.org/wiki/Referential_transparency">referentially
+transparent</a> function:
+it does not create new mutable state&mdash;it merely creates a reference to
+existing mutable state.</p>
+<p><code>U.view</code> is the primary means of decomposing state for sub-components.  For
+example:</p>
+<pre><code class="hljs lang-jsx">var Contact = ({contact}) =&gt; (
+  &lt;div&gt;
+    &lt;TextInput value={U.view(&#39;name&#39;, contact)} /&gt;
+    &lt;TextInput value={U.view(&#39;phone&#39;, contact)} /&gt;
+  &lt;/div&gt;
+)</code></pre>
+<p>See the live <a href="https://codesandbox.io/s/zk7bx827r">Contacts</a> CodeSandbox for an
+example.</p>
+<h4><a id="side-effects-on-atoms"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#side-effects-on-atoms">■</a> <a href="#side-effects-on-atoms">Side-effects on atoms</a></h4>
+<h5><a id="U-set"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-set">■</a> <a href="#U-set"><code>U.set(atom, value)</code></a></h5>
+<p><code>U.set</code> sets the given value to the specified atom.  In case the value is
+actually an observable, <code>U.set</code> returns a <a href="#U-sink">sink</a> that sets any values
+produced by the observable to the atom.</p>
+<p>For example:</p>
+<pre><code class="hljs lang-jsx">var Component = ({parameters}) =&gt; {
+  const state = U.atom(null)
+  // ...
+  return (
+    &lt;div&gt;
+      {U.set(state, httpRequestAsObservable(parameters))}
+      {U.ifElse(
+        R.isNil(state),
+        &lt;Spinner /&gt;,
+        &lt;Editor state={state} /&gt;
+      )}
+    &lt;/div&gt;
+  )
+}</code></pre>
+<p>Note that the above kind of arrangement to fetch data and set it into an atom is
+not needed when the data is only displayed in a read-only fashion in the UI.</p>
+<h4><a id="actions-on-atoms"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#actions-on-atoms">■</a> <a href="#actions-on-atoms">Actions on atoms</a></h4>
+<h5><a id="U-doModify"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-doModify">■</a> <a href="#U-doModify"><code>U.doModify(atom, mapper)</code></a></h5>
+<p><code>U.doModify</code> creates an action that invokes the <code>modify</code> method on the given
+atom with the given mapping function.</p>
+<h5><a id="U-doRemove"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-doRemove">■</a> <a href="#U-doRemove"><code>U.doRemove(atom)</code></a></h5>
+<p><code>U.doRemove</code> creates an action that invokes the <code>remove</code> method on the given
+atom.</p>
+<h5><a id="U-doSet"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-doSet">■</a> <a href="#U-doSet"><code>U.doSet(atom, value)</code></a></h5>
+<p><code>U.doSet</code> creates an action that invokes the <code>set</code> method on the given atom with
+the given value.</p>
+<h3><a id="bus"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#bus">■</a> <a href="#bus">Bus</a></h3>
+<h4><a id="creating-buses"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#creating-buses">■</a> <a href="#creating-buses">Creating buses</a></h4>
+<h5><a id="U-bus"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-bus">■</a> <a href="#U-bus"><code>U.bus()</code></a></h5>
+<p><code>U.bus()</code> creates a new observable <code>Bus</code> stream.  A <code>Bus</code> stream has the
+following methods:</p>
+<ul>
+<li><code>bus.push(value)</code> to explicitly emit value <code>value</code>,</li>
+<li><code>bus.error(error)</code> to explicitly emit error <code>error</code>, and</li>
+<li><code>bus.end()</code> to explicitly end the stream after which all the methods do
+nothing.</li>
+</ul>
+<p>Note that buses and event streams, in general, are fairly rarely used with
+Karet.  They can be useful for performing IO actions and in cases where actions
+from UI controls need to be throttled or combined.</p>
+<p>See the live <a href="https://codesandbox.io/s/1840p9xo9l">Counter using Event Streams</a>
+CodeSandbox for an example.</p>
+<h4><a id="actions-on-buses"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#actions-on-buses">■</a> <a href="#actions-on-buses">Actions on buses</a></h4>
+<h5><a id="U-doEnd"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-doEnd">■</a> <a href="#U-doEnd"><code>U.doEnd(bus)</code></a></h5>
+<p><code>U.doEnd</code> creates an action that invokes the <code>end</code> method on the given bus.</p>
+<h5><a id="U-doError"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-doError">■</a> <a href="#U-doError"><code>U.doError(bus, error)</code></a></h5>
+<p><code>U.doError</code> creates an action that invokes the <code>error</code> method on the given bus
+with the given value.</p>
+<h5><a id="U-doPush"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-doPush">■</a> <a href="#U-doPush"><code>U.doPush(bus, value)</code></a></h5>
+<p><code>U.doPush</code> creates an action that invokes the <code>push</code> method on the given bus
+with the given value.</p>
+<h3><a id="convenience"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#convenience">■</a> <a href="#convenience">Convenience</a></h3>
+<h4><a id="U-scope"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-scope">■</a> <a href="#U-scope"><code>U.scope((...) =&gt; ...)</code></a></h4>
+<p><code>U.scope</code> simply calls the given thunk.  IOW, <code>U.scope(fn)</code> is equivalent to
+<code>(fn)()</code>.  You can use it to create a new scope at expression level.</p>
+<p>For example:</p>
+<pre><code class="hljs lang-js">U.scope((x = 1, y = 2) =&gt; x + y)
+</code></pre>
+<h4><a id="U-seq"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-seq">■</a> <del><a href="#U-seq"><code>U.seq(any, ...fns)</code></a></del></h4>
+<p><strong>WARNING: <code>U.seq</code> has been obsoleted.  Use <a href="#U-thru"><code>U.thru</code></a> instead.</strong></p>
+<p><code>U.seq</code> allows one to pipe a value through a sequence of functions.  In other
+words, <code>U.seq(x, fn_1, ..., fn_N)</code> is roughly equivalent to <code>fn_N( ... fn_1(x)
+... )</code>.  It serves a similar purpose as the
+<a href="https://clojuredocs.org/clojure.core/-%3E%3E"><code>-&gt;&gt;</code></a> macro of Clojure or the
+<code>|&gt;</code> operator of
+<a href="https://blogs.msdn.microsoft.com/dsyme/2011/05/17/archeological-semiotics-the-birth-of-the-pipeline-symbol-1994/">F#</a>
+and <a href="http://package.elm-lang.org/packages/elm-lang/core/latest/Basics#%7C%3E">Elm</a>,
+for example, or the
+<a href="http://comp.lang.functional.narkive.com/zZJZg20r/a-family-of-function-application-operators-for-standard-ml"><code>&gt;|</code></a>
+operator defined in a Usenet post by some rando.  See also <a href="#U-thru"><code>U.thru</code></a>.</p>
+<p>For example:</p>
+<pre><code class="hljs lang-js">U.seq(1, x =&gt; x + 1, x =&gt; -x)
+</code></pre>
+<p>A common technique in JavaScript is to use method chaining: <code>x.fn_1().fn_2()</code>.
+A problem with method chaining is that it requires having objects with methods.
+Sometimes you may need to manipulate values that are not objects, like <code>null</code>
+and <code>undefined</code>, and other times you may want to use functions that are not
+directly provided as methods and it may not be desirable to <a href="https://en.wikipedia.org/wiki/Monkey_patch#Pitfalls">monkey
+patch</a> such methods.</p>
+<p><code>U.seq</code> is designed to work with partially applied
+<a href="https://en.wikipedia.org/wiki/Currying">curried</a> functions that take the <a
+href="https://en.wikipedia.org/wiki/Object_(grammar)">object</a> as their last
+argument and can be seen as providing a flexible alternative to method chaining.</p>
+<h4><a id="U-seqPartial"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-seqPartial">■</a> <del><a href="#U-seqPartial"><code>U.seqPartial(any, ...fns)</code></a></del></h4>
+<p><strong>WARNING: <code>seqPartial</code> has been deprecated.  There is no replacement for it.</strong></p>
+<p><code>U.seqPartial</code> allows one to pipe a value through a sequence of function in such
+a way that if the value becomes <code>undefined</code> the process is stopped and
+<code>undefined</code> is returned without calling the remaining functions.</p>
+<h4><a id="U-tapPartial"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-tapPartial">■</a> <a href="#U-tapPartial"><code>U.tapPartial(action, any)</code></a></h4>
+<p><code>U.tapPartial</code> is a <a href="#U-liftRec">lifted</a> partial
+<a href="http://ramdajs.com/docs/#tap">tap</a> function.  The given action is called for
+values flowing through except when the value is <code>undefined</code>.</p>
+<p>For example:</p>
+<pre><code class="hljs lang-jsx">U.thru(
+  observable,
+  ...
+  U.tapPartial(value =&gt; console.log(value)),
+  ...
+)</code></pre>
+<h4><a id="U-thru"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-thru">■</a> <a href="#U-thru"><code>U.thru(any, ...fns)</code></a></h4>
+<p><code>U.thru</code> allows one to pipe a value through a sequence of functions.  In other
+words, <code>U.thru(x, fn_1, ..., fn_N)</code> is roughly equivalent to <code>fn_N( ... fn_1(x)
+... )</code>.  It serves a similar purpose as the
+<a href="https://clojuredocs.org/clojure.core/-%3E%3E"><code>-&gt;&gt;</code></a> macro of Clojure or the
+<code>|&gt;</code> operator of
+<a href="https://blogs.msdn.microsoft.com/dsyme/2011/05/17/archeological-semiotics-the-birth-of-the-pipeline-symbol-1994/">F#</a>
+and <a href="http://package.elm-lang.org/packages/elm-lang/core/latest/Basics#%7C%3E">Elm</a>,
+for example, or the
+<a href="http://comp.lang.functional.narkive.com/zZJZg20r/a-family-of-function-application-operators-for-standard-ml"><code>&gt;|</code></a>
+operator defined in a Usenet post by some rando.  See also
+<a href="#U-through"><code>U.through</code></a>.</p>
+<p>For example:</p>
+<pre><code class="hljs lang-js">U.thru(1, x =&gt; x + 1, x =&gt; -x)
+</code></pre>
+<p>A common technique in JavaScript is to use method chaining: <code>x.fn_1().fn_2()</code>.
+A problem with method chaining is that it requires having objects with methods.
+Sometimes you may need to manipulate values that are not objects, like <code>null</code>
+and <code>undefined</code>, and other times you may want to use functions that are not
+directly provided as methods and it may not be desirable to <a href="https://en.wikipedia.org/wiki/Monkey_patch#Pitfalls">monkey
+patch</a> such methods.</p>
+<p><code>U.thru</code> is designed to work with partially applied
+<a href="https://en.wikipedia.org/wiki/Currying">curried</a> and <a href="#lifting">lifted</a>
+functions that take the <a
+href="https://en.wikipedia.org/wiki/Object_(grammar)">object</a> as their last
+argument and can be seen as providing a flexible alternative to method chaining.</p>
+<h4><a id="U-through"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-through">■</a> <a href="#U-through"><code>U.through(...fns)</code></a></h4>
+<p><code>U.through</code> allows one to compose a function that passes its single argument
+through all of the given functions from left to right.  In other words,
+<code>U.through(fn_1, ..., fn_N)(x)</code> is roughly equivalent to <code>fn_N( ... fn_1(x)
+... )</code>.  It serves a similar purpose as
+<a href="http://ramdajs.com/docs/#pipe"><code>R.pipe</code></a>, but has been crafted to work with
+<a href="#lifting">lifted</a> functions.  See also <a href="#U-thru"><code>U.thru</code></a>.</p>
+<p>For example:</p>
+<pre><code class="hljs lang-js">U.through(x =&gt; x + 1, x =&gt; -x)(1)
+</code></pre>
+<h4><a id="U-toPartial"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-toPartial">■</a> <a href="#U-toPartial"><code>U.toPartial(fn)</code></a></h4>
+<p><code>U.toPartial</code> takes the given function and returns a curried version of the
+function that immediately returns <code>undefined</code> if any of the arguments passed is
+<code>undefined</code> and otherwise calls the given function with arguments.</p>
+<p>For example:</p>
+<pre><code class="hljs lang-js">U.toPartial((x, y) =&gt; x + y)(1, undefined)
+</code></pre>
+<pre><code class="hljs lang-js">U.toPartial((x, y) =&gt; x + y)(1, 2)
+</code></pre>
+<h3><a id="react-helpers"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#react-helpers">■</a> <a href="#react-helpers">React helpers</a></h3>
+<h4><a id="context"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#context">■</a> <del><a href="#context">Context</a></del></h4>
+<h5><a id="U-Context"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-Context">■</a> <del><a href="#U-Context"><code>&lt;U.Context context={context} /&gt;</code></a></del></h5>
+<p><strong>WARNING: <code>U.Context</code> has been obsoleted. Just use the new <a href="https://reactjs.org/docs/context.html">React context
+API</a>.</strong></p>
+<p><code>U.Context</code> is a component that allows one to set the context for child
+components.  See also <a href="#U-withContext"><code>U.withContext</code></a>.</p>
+<p>Usually the context should be an object with the desired properties.  Also, with
+Karet, the values are usually observable properties.</p>
+<p>For example:</p>
+<pre><code class="hljs lang-jsx">&lt;U.Context context={{language: U.atom(&#39;fi&#39;)}}/&gt;
+  &lt;Page /&gt;
+&lt;U.Context/&gt;</code></pre>
+<h5><a id="U-withContext"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-withContext">■</a> <del><a href="#U-withContext"><code>U.withContext((props, context) =&gt; element)</code></a></del></h5>
+<p><strong>WARNING: <code>U.withContext</code> has been obsoleted. Just use the new <a href="https://reactjs.org/docs/context.html">React context
+API</a>.</strong></p>
+<p><code>U.withContext</code> creates a component that takes both the props and the context as
+parameters.  See also <a href="#U-Context"><code>U.Context</code></a>.</p>
+<p>For example:</p>
+<pre><code class="hljs lang-jsx">var Text = U.withContext(({children: text}, {language}) =&gt; (
+  &lt;span&gt;{translate(language, text)}&lt;/span&gt;
+)</code></pre>
+<h4><a id="binding"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#binding">■</a> <a href="#binding">Binding</a></h4>
+<h5><a id="U-getProps"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-getProps">■</a> <a href="#U-getProps"><code>U.getProps({...propName: atom|bus})</code></a></h5>
+<p><code>U.getProps</code> returns an event callback that gets the values of the properties
+named in the given template from the event target and pushes or sets them to the
+<a href="#bus">buses</a> or <a href="#atoms">atoms</a> that are the values of the properties.  In case
+the template contains multiple properties, the results are written while
+<a href="#U-holding">holding</a> change propagation.</p>
+<p>For example:</p>
+<pre><code class="hljs lang-jsx">var TextInput = ({value}) =&gt; (
+  &lt;input type=&quot;text&quot; value={value} onChange={U.getProps({value})} /&gt;
+)</code></pre>
+<pre><code class="hljs lang-jsx">var Checkbox = ({checked}) =&gt; (
+  &lt;input type=&quot;checkbox&quot; checked={checked} onChange={U.getProps({checked})} /&gt;
+)</code></pre>
+<h5><a id="U-setProps"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-setProps">■</a> <a href="#U-setProps"><code>U.setProps({...propName: observable})</code></a></h5>
+<p><code>U.setProps</code> returns a callback designed to be used with <code>ref</code> that subscribes
+to observables in the given template and copies values from the observables to
+the named properties in the DOM element.  This allows one to bind to DOM
+properties such as scroll position that are not HTML attributes.  See also
+<a href="#U-actions"><code>U.actions</code></a>.</p>
+<p>See the live <a href="https://codesandbox.io/s/w6lpz5m9n7">Scroll</a> CodeSandbox for an
+example.</p>
+<h4><a id="input-components"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#input-components">■</a> <a href="#input-components">Input components</a></h4>
+<h5><a id="U-Input"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-Input">■</a> <a href="#U-Input"><code>&lt;U.Input {...{value|checked}} /&gt;</code></a></h5>
+<p><code>U.Input</code> is a wrapper for an <code>input</code> element that binds either
+<a href="#U-getProps"><code>onChange={U.getProps({value})}</code></a> or
+<a href="#U-getProps"><code>onChange={U.getProps({checked})}</code></a> when either <code>value</code> or
+<code>checked</code> is a defined property.</p>
+<p>For example:</p>
+<pre><code class="hljs lang-jsx">var checked = U.atom(false)
+// ...
+&lt;U.Input type=&quot;checkbox&quot; checked={checked} /&gt;</code></pre>
+<h5><a id="U-Select"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-Select">■</a> <a href="#U-Select"><code>&lt;U.Select {...{value}} /&gt;</code></a></h5>
+<p><code>U.Select</code> is a wrapper for a <code>select</code> element that binds
+<a href="#U-getProps"><code>onChange={U.getProps({value})}</code></a> when <code>value</code> is a defined
+property.</p>
+<p>For example:</p>
+<pre><code class="hljs lang-jsx">var value = U.atom(&#39;&#39;)
+// ...
+&lt;U.Select value={value} /&gt;</code></pre>
+<h5><a id="U-TextArea"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-TextArea">■</a> <a href="#U-TextArea"><code>&lt;U.TextArea {...{value}} /&gt;</code></a></h5>
+<p><code>U.TextArea</code> is a wrapper for a <code>textarea</code> element that binds
+<a href="#U-getProps"><code>onChange={U.getProps({value})}</code></a> when <code>value</code> is a defined
+property.</p>
+<p>For example:</p>
+<pre><code class="hljs lang-jsx">var value = U.atom(&#39;&#39;)
+// ...
+&lt;U.TextArea value={value} /&gt;</code></pre>
+<h4><a id="refs"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#refs">■</a> <a href="#refs">Refs</a></h4>
+<h5><a id="U-refTo"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-refTo">■</a> <a href="#U-refTo"><code>U.refTo(variable)</code></a></h5>
+<p><code>U.refTo</code> is designed for getting a reference to the DOM element of a component.
+See also <a href="#U-variable"><code>U.variable</code></a>.  See also <a href="#U-actions"><code>U.actions</code></a>.</p>
+<p>For example:</p>
+<pre><code class="hljs lang-jsx">var Component = ({dom = U.variable()}) =&gt; (
+  &lt;div ref={U.refTo(dom)}&gt;
+    ...
+  &lt;/div&gt;
+)</code></pre>
+<p><a href="https://facebook.github.io/react/docs/refs-and-the-dom.html">React</a> calls the
+<code>ref</code> callback with the DOM element on mount and with <code>null</code> on unmount.
+However, <code>U.refTo</code> does not write <code>null</code> to the variable.  The upside of
+skipping <code>null</code> and using an initially empty <a href="#U-variable">variable</a> rather than
+an <a href="#U-atom">atom</a> is that once the variable emits a value, you can be sure that
+it refers to a DOM element.</p>
+<p>Note that in case you also want to observe <code>null</code> values, you can use
+<a href="#U-set"><code>U.set</code></a> instead of <code>U.refTo</code>:</p>
+<pre><code class="hljs lang-jsx">var Component = ({dom = U.variable()}) =&gt; (
+  &lt;div ref={U.set(dom)}&gt;
+    ...
+  &lt;/div&gt;
+)</code></pre>
+<h4><a id="lifecycle"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#lifecycle">■</a> <a href="#lifecycle">Lifecycle</a></h4>
+<h5><a id="U-onUnmount"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-onUnmount">■</a> <a href="#U-onUnmount"><code>U.onUnmount(action)</code></a></h5>
+<p><code>U.onUnmount</code> allows you to perform an action when a component is unmounted.</p>
+<p>For example:</p>
+<pre><code class="hljs lang-jsx">var Component = () =&gt; {
+  console.log(&#39;Mounted!&#39;)
+  return (
+    &lt;div&gt;
+      {U.onUnmount(() =&gt; console.log(&#39;Unmounted!&#39;))}
+    &lt;/div&gt;
+  )
+}</code></pre>
+<h4><a id="events"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#events">■</a> <a href="#events">Events</a></h4>
+<h5><a id="U-actions"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-actions">■</a> <a href="#U-actions"><code>U.actions(...actions)</code></a></h5>
+<p><code>U.actions</code> is designed for creating an action from multiple actions.  It
+returns an unary action function that calls the functions in the arguments with
+the same argument.  In case there are multiple actions, they are performed while
+<a href="#U-holding">holding</a> change propagation.</p>
+<p>For example:</p>
+<pre><code class="hljs lang-jsx">var InputValue = ({value, onChange}) =&gt; (
+  &lt;input value={value} onChange={U.actions(onChange, U.getProps({value}))} /&gt;
+)</code></pre>
+<p>Note that in case <code>onChange</code> is not given to the above component as a property
+it causes no problem as <code>U.actions</code> does not attempt to call <code>undefined</code>.</p>
+<p>Note that <code>U.actions</code> can also be used with actions given to the React <code>ref</code>
+property.</p>
+<h5><a id="U-preventDefault"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-preventDefault">■</a> <a href="#U-preventDefault"><code>U.preventDefault(event)</code></a></h5>
+<p><code>U.preventDefault</code> invokes the <code>preventDefault</code> method on the given object.</p>
+<h5><a id="U-stopPropagation"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-stopPropagation">■</a> <a href="#U-stopPropagation"><code>U.stopPropagation(event)</code></a></h5>
+<p><code>U.stopPropagation</code> invokes the <code>stopPropagation</code> method on the given object.</p>
+<h4><a id="class-names"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#class-names">■</a> <a href="#class-names">Class names</a></h4>
+<h5><a id="U-cns"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-cns">■</a> <a href="#U-cns"><code>U.cns(...classNames)</code></a></h5>
+<p><code>U.cns</code> is designed for creating a list of class names for the <code>className</code>
+property.  It joins the truthy values from the arguments with a space.  In case
+the result would be an empty string, <code>undefined</code> is returned instead.</p>
+<p>For example:</p>
+<pre><code class="hljs lang-jsx">var Component = ({className}) =&gt; (
+  &lt;div className={U.cns(className, &#39;a-class-name&#39;, false, &#39;another-one&#39;, undefined)} /&gt;
+)</code></pre>
+<h4><a id="interop"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#interop">■</a> <a href="#interop">Interop</a></h4>
+<h5><a id="U-pure"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-pure">■</a> <a href="#U-pure"><code>U.pure(Component)</code></a></h5>
+<p><code>U.pure</code> wraps the given component inside a
+<a href="https://reactjs.org/docs/react-api.html#reactpurecomponent"><code>PureComponent</code></a>.
+<code>U.pure</code> can be used for preventing unnecessary rerenders when a Karet component
+is used as a child of a React component that rerenders its children even when
+their props do not change.  See also <a href="#U-toReact"><code>U.toReact</code></a>.</p>
+<h5><a id="U-toKaret"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-toKaret">■</a> <a href="#U-toKaret"><code>U.toKaret(ReactComponent)</code></a></h5>
+<p><code>U.toKaret</code> converts a React component that takes plain value properties to a
+Karet component that can be given observable properties.  <code>U.toKaret</code> is useful
+when using React components, such as <a href="http://jedwatson.github.io/react-select/">React
+Select</a>, as children of Karet
+components and with observable rather than plain value properties.  <code>U.toKaret</code>
+is a synonym for <a href="https://github.com/calmm-js/karet#fromClass"><code>fromClass</code></a> from
+the <a href="https://github.com/calmm-js/karet">Karet</a> library.</p>
+<h5><a id="U-toReact"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-toReact">■</a> <a href="#U-toReact"><code>U.toReact(KaretComponent)</code></a></h5>
+<p><code>U.toReact</code> converts a Karet component that expects observable properties and
+should not be rerendered unnecessarily into a React component that takes plain
+value properties.  <code>U.toReact</code> may be needed particularly when a Karet component
+is controlled by a higher-order React component, such as <a href="https://reacttraining.com/react-router/">React
+Router</a>, because Karet components
+typically (are not and) must not be rerendered unnecessarily.  <code>U.toReact</code> is
+equivalent to <a href="#U-toReactExcept"><code>U.toReactExcept(() =&gt; false)</code></a>.  See also
+<a href="#U-pure"><code>U.pure</code></a>.</p>
+<h5><a id="U-toReactExcept"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-toReactExcept">■</a> <a href="#U-toReactExcept"><code>U.toReactExcept(propName =&gt; boolean, KaretComponent)</code></a></h5>
+<p><code>U.toReactExcept</code> converts a Karet component that expects observable properties
+and should not be rerendered unnecessarily into a React component that takes
+plain value properties.  The given predicate is used to determine which
+properties must not be converted to observable properties.  Like
+<a href="#U-toReact"><code>U.toReact</code></a>, <code>U.toReactExcept</code> may be needed particularly when a
+Karet component is controlled by a higher-order React component, such as <a href="https://reacttraining.com/react-router/">React
+Router</a>, because Karet components
+typically (are not and) must not be rerendered unnecessarily.  See the <a href="https://codesandbox.io/s/kkx6zrzr35">Calmm
+function to React class</a> CodeSandbox for an
+example.</p>
+<h3><a id="kefir"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#kefir">■</a> <a href="#kefir">Kefir</a></h3>
+<h4><a id="conditionals"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#conditionals">■</a> <a href="#conditionals">Conditionals</a></h4>
+<h5><a id="U-and"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-and">■</a> <a href="#U-and"><code>U.and(...any)</code></a></h5>
+<p><code>U.and</code> is a lazy variadic logical and over potentially observable properties.
+<code>U.and(l, r)</code> does not subscribe to <code>r</code> unless <code>l</code> is truthy.</p>
+<h5><a id="U-cond"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-cond">■</a> <a href="#U-cond"><code>U.cond(...[condition, consequent][, [alternative]])</code></a></h5>
+<p><code>U.cond</code> allows one to express a sequence of conditionals.  <code>U.cond</code> translates
+to a nested expression of <a href="#U-ifElse"><code>U.ifElse</code></a>s.</p>
+<pre><code class="hljs lang-jsx">U.cond( [ condition, consequent ]
+      , ...
+    [ , [ alternative ] ] )</code></pre>
+<p>The last <code>[ alternative ]</code>, which, when present, needs to be a singleton array,
+is optional.</p>
+<h5><a id="U-ifElse"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-ifElse">■</a> <a href="#U-ifElse"><code>U.ifElse(condition, consequent, alternative)</code></a></h5>
+<p><code>U.ifElse</code> is basically an implementation of the conditional operator <code>condition
+? consequent : alternative</code> for observable properties.</p>
+<p><code>U.ifElse(condition, consequent, alternative)</code> is roughly shorthand for</p>
+<pre><code class="hljs lang-jsx">U.toProperty(
+  U.flatMapLatest(boolean =&gt; (boolean ? consequent : alternative), condition)
+)</code></pre>
+<p>except that the <code>consequent</code> and <code>alternative</code> expressions are only evaluated
+once.</p>
+<h5><a id="U-not"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-not">■</a> <a href="#U-not"><code>U.not(any)</code></a></h5>
+<p><code>U.not</code> is a logical negation over a potentially observable property.</p>
+<h5><a id="U-or"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-or">■</a> <a href="#U-or"><code>U.or(...any)</code></a></h5>
+<p><code>U.or</code> is a lazy variadic logical or over potentially observable properties.
+<code>U.or(l, r)</code> does not subscribe to <code>r</code> unless <code>l</code> is falsy.</p>
+<h5><a id="U-unless"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-unless">■</a> <a href="#U-unless"><code>U.unless(condition, alternative)</code></a></h5>
+<p><code>U.unless(condition, alternative)</code> is shorthand for <a href="#U-ifElse"><code>U.ifElse(condition,
+undefined, alternative)</code></a>.</p>
+<h5><a id="U-when"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-when">■</a> <a href="#U-when"><code>U.when(condition, consequent)</code></a></h5>
+<p><code>U.when(condition, consequent)</code> is shorthand for <a href="#U-ifElse"><code>U.ifElse(condition,
+consequent, undefined)</code></a>.</p>
+<h4><a id="animation"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#animation">■</a> <a href="#animation">Animation</a></h4>
+<h5><a id="U-animationSpan"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-animationSpan">■</a> <a href="#U-animationSpan"><code>U.animationSpan(milliseconds)</code></a></h5>
+<p><code>U.animationSpan</code> creates a property of increasing values from 0 to 1 for the
+given duration in milliseconds on each animation frame as generated by
+<a href="https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame"><code>requestAnimationFrame</code></a>.</p>
+<p>See the live <a href="https://codesandbox.io/s/9ooox5695y">Animation</a> CodeSandbox for an
+example.</p>
+<h4><a id="lifting"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#lifting">■</a> <a href="#lifting">Lifting</a></h4>
+<h5><a id="U-combine"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-combine">■</a> <a href="#U-combine"><code>U.combine([...any], fn)</code></a></h5>
+<p><code>U.combine</code> is a special purpose <a href="https://kefirjs.github.io/kefir/">Kefir</a>
+observable property combinator designed for combining properties for a sink that
+accepts both observable properties and constant values such as the Reactive VDOM
+of <a href="https://github.com/calmm-js/karet">Karet</a>.</p>
+<p>Unlike typical property combinators, when <code>U.combine</code> is invoked with only
+constants (no properties), then the result is computed immediately and returned
+as a plain value.  This optimization eliminates redundant properties.</p>
+<p>The basic semantics of <code>U.combine</code> can be described as</p>
+<pre><code class="hljs lang-jsx">U.combine(xs, fn) === Kefir.combine(xs, fn).skipDuplicates(R.identical)</code></pre>
+<p>where <a href="https://kefirjs.github.io/kefir/#combine"><code>Kefir.combine</code></a> and
+<a href="https://kefirjs.github.io/kefir/#skip-duplicates"><code>skipDuplicates</code></a> come from
+Kefir and <a href="http://ramdajs.com/docs/#identical"><code>R.identical</code></a> from
+<a href="http://ramdajs.com/">Ramda</a>.  Duplicates are skipped, because that can reduce
+unnecessary updates.  Ramda&#39;s <code>R.identical</code> provides a semantics of equality
+that works well within the context of embedding properties to VDOM.</p>
+<p>Unlike with <a href="https://kefirjs.github.io/kefir/#combine"><code>Kefir.combine</code></a>, any of
+the argument <code>xs</code> given to <code>U.combine</code> is allowed to be</p>
+<ul>
+<li>a constant,</li>
+<li>a property, or</li>
+<li>a data structure of nested arrays and plain objects containing properties.</li>
+</ul>
+<p>In other words, <code>U.combine</code> also provides functionality similar to
+<a href="https://github.com/baconjs/bacon.js#bacon-combinetemplate"><code>Bacon.combineTemplate</code></a>.</p>
+<p>Note: <code>U.combine</code> is carefully optimized for space&mdash;if you write equivalent
+combinations using Kefir&#39;s own operators, they will likely take more memory.</p>
+<h5><a id="U-combines"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-combines">■</a> <del><a href="#U-combines"><code>U.combines(...any[, fn])</code></a></del></h5>
+<p><strong>WARNING: <code>combines</code> has been obsoleted.  Please use <a href="#U-combine"><code>U.combine</code></a>,
+<a href="#U-template"><code>U.template</code></a>, <a href="U-lift"><code>U.lift</code></a>, or <a href="#U-liftRec"><code>U.liftRec</code></a>
+instead.</strong></p>
+<p><code>U.combines</code> is a special purpose <a href="https://kefirjs.github.io/kefir/">Kefir</a>
+observable combinator designed for combining properties for a sink that accepts
+both observables and constant values such as the Reactive VDOM of
+<a href="https://github.com/calmm-js/karet">Karet</a>.</p>
+<p>Unlike typical observable combinators, when <code>U.combines</code> is invoked with only
+constants (no observables), then the result is computed immediately and returned
+as a plain value.  This optimization eliminates redundant observables.</p>
+<p>The basic semantics of <code>U.combines</code> can be described as</p>
+<pre><code class="hljs lang-jsx">U.combines(...xs, fn) === Kefir.combine(xs, fn).skipDuplicates(R.identical)</code></pre>
+<p>where <a href="https://kefirjs.github.io/kefir/#combine"><code>Kefir.combine</code></a> and
+<a href="https://kefirjs.github.io/kefir/#skip-duplicates"><code>skipDuplicates</code></a> come from
+Kefir and <a href="http://ramdajs.com/docs/#identical"><code>R.identical</code></a> from
+<a href="http://ramdajs.com/">Ramda</a>.  Duplicates are skipped, because that can reduce
+unnecessary updates.  Ramda&#39;s <code>R.identical</code> provides a semantics of equality
+that works well within the context of embedding properties to VDOM.</p>
+<p>Unlike with <a href="https://kefirjs.github.io/kefir/#combine"><code>Kefir.combine</code></a>, any
+argument of <code>U.combines</code> is allowed to be</p>
+<ul>
+<li>a constant,</li>
+<li>an observable (including the combiner function), or</li>
+<li>an array or object containing observables.</li>
+</ul>
+<p>In other words, <code>U.combines</code> also provides functionality similar to
+<a href="https://github.com/baconjs/bacon.js#bacon-combinetemplate"><code>Bacon.combineTemplate</code></a>.</p>
+<p>Note: <code>U.combines</code> is carefully optimized for space&mdash;if you write
+equivalent combinations using Kefir&#39;s own operators, they will likely take more
+memory.</p>
+<h5><a id="U-lift"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-lift">■</a> <a href="#U-lift"><code>U.lift((...) =&gt; ...)</code></a></h5>
+<p><code>U.lift</code> allows one to lift a function operating on plain values to a function
+that operates both on plain values and on observable properties.  When given
+only plain values, the resulting function returns a plain value.  When given
+observable properties, the resulting function returns an observable property of
+results.  See also <a href="#U-liftRec"><code>U.liftRec</code></a></p>
+<p>For example:</p>
+<pre><code class="hljs lang-jsx">var includes = U.lift( (xs, x) =&gt; xs.includes(x) )
+
+var obsOfBooleans = includes(obsOfArrays, obsOfValues)</code></pre>
+<p><code>U.lift</code> works well for simple functions that do not return functions.  If you
+need to lift higher-order functions that return new functions that should also
+be lifted, try <a href="#U-liftRec"><code>U.liftRec</code></a>.</p>
+<h5><a id="U-liftRec"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-liftRec">■</a> <a href="#U-liftRec"><code>U.liftRec((...) =&gt; ...)</code></a></h5>
+<p><code>U.liftRec</code> allows one to lift a function operating on plain values to a
+function that operates both on plain values and on observable properties.  When
+given only plain values, the resulting function returns a plain value.  When
+given observable properties, the resulting function returns an observable
+property of results.  See also <a href="#U-lift"><code>U.lift</code></a>.</p>
+<p>For example:</p>
+<pre><code class="hljs lang-jsx">var either = U.liftRec(R.either)
+var equals = U.lift(R.equals)
+
+var obsOfBooleans = either(R.equals(obs1), R.equals(obs2))</code></pre>
+<p><code>U.liftRec</code> is designed to be very simple to use.  For example, the <a href="https://github.com/calmm-js/kefir.ramda/blob/master/src/kefir.ramda.js">Kefir
+Ramda</a>
+library simply wraps every <a href="http://ramdajs.com/">Ramda</a> function with <code>liftRec</code>
+and this results in a library that has essentially the same signature (currying
+and variable argument functions work the same) as Ramda except that the
+functions also work on <a href="https://kefirjs.github.io/kefir/">Kefir</a> observables.</p>
+<h4><a id="curried-combinators"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#curried-combinators">■</a> <a href="#curried-combinators">Curried combinators</a></h4>
+<p><a href="https://kefirjs.github.io/kefir/">Kefir</a> is a traditional JavaScript library
+that provides a fluent API using method chaining.  Karet Util supports more
+functional style JavaScript by providing curried functions for programming with
+Kefir.</p>
+<p>The following are simply links to the relevant
+<a href="https://kefirjs.github.io/kefir/">Kefir</a> documentation:</p>
+<ul>
+<li><a href="https://kefirjs.github.io/kefir/#changes"><code>U.changes(observable)</code> ⌘</a></li>
+<li><a href="https://kefirjs.github.io/kefir/#debounce"><code>U.debounce(ms, observable)</code> ⌘</a></li>
+<li><a href="https://kefirjs.github.io/kefir/#delay"><code>U.delay(ms, observable)</code> ⌘</a></li>
+<li><a href="https://kefirjs.github.io/kefir/#flat-map-errors"><code>U.flatMapErrors(value =&gt; observable, observable)</code> ⌘</a></li>
+<li><a href="https://kefirjs.github.io/kefir/#flat-map-latest"><code>U.flatMapLatest(value =&gt; observable, observable)</code> ⌘</a></li>
+<li><a href="https://kefirjs.github.io/kefir/#flat-map"><code>U.flatMapParallel(value =&gt; observable, observable)</code> ⌘</a></li>
+<li><a href="https://kefirjs.github.io/kefir/#flat-map-concat"><code>U.flatMapSerial(value =&gt; observable, observable)</code> ⌘</a></li>
+<li><a href="https://kefirjs.github.io/kefir/#scan"><code>U.foldPast((state, value) =&gt; state, state, observable)</code> ⌘</a></li>
+<li><a href="https://kefirjs.github.io/kefir/#from-event"><code>U.fromEvents(target, eventName, transform)</code> ⌘</a></li>
+<li><a href="https://kefirjs.github.io/kefir/#ignore-errors"><code>U.ignoreErrors(observable)</code> ⌘</a></li>
+<li><a href="https://kefirjs.github.io/kefir/#ignore-values"><code>U.ignoreValues(observable)</code> ⌘</a></li>
+<li><a href="https://kefirjs.github.io/kefir/#interval"><code>U.interval(ms, value)</code> ⌘</a></li>
+<li><a href="https://kefirjs.github.io/kefir/#later"><code>U.later(ms, value)</code> ⌘</a></li>
+<li><a href="https://kefirjs.github.io/kefir/#map"><code>U.mapValue(value =&gt; value, observable)</code> ⌘</a></li>
+<li><a href="https://kefirjs.github.io/kefir/#never"><code>U.never</code> ⌘</a> &mdash; Note that this is
+not a function!</li>
+<li><a href="https://kefirjs.github.io/kefir/#merge"><code>U.parallel([...observables])</code> ⌘</a></li>
+<li><a href="https://kefirjs.github.io/kefir/#obs-sampled-by"><code>U.sampledBy(eventStream, property)</code> ⌘</a></li>
+<li><a href="https://kefirjs.github.io/kefir/#concat"><code>U.serially([...observables])</code> ⌘</a></li>
+<li><a href="https://kefirjs.github.io/kefir/#skip-duplicates"><code>U.skipDuplicates(equality, observable)</code> ⌘</a></li>
+<li><a href="https://kefirjs.github.io/kefir/#skip"><code>U.skipFirst(number, observable)</code> ⌘</a></li>
+<li><a href="https://kefirjs.github.io/kefir/#skip-errors"><code>U.skipFirstErrors(n, observable)</code> ⌘</a></li>
+<li><a href="https://kefirjs.github.io/kefir/#filter"><code>U.skipUnless(predicate, observable)</code> ⌘</a></li>
+<li><a href="https://kefirjs.github.io/kefir/#take"><code>U.takeFirst(number, observable)</code> ⌘</a></li>
+<li><a href="https://kefirjs.github.io/kefir/#take-errors"><code>U.takeFirstErrors(number, observable)</code> ⌘</a></li>
+<li><a href="https://kefirjs.github.io/kefir/#take-until-by"><code>U.takeUntilBy(eventStream, observable)</code> ⌘</a></li>
+<li><a href="https://kefirjs.github.io/kefir/#throttle"><code>U.throttle(ms, observable)</code> ⌘</a></li>
+<li><a href="https://kefirjs.github.io/kefir/#to-property"><code>U.toProperty(observable)</code> ⌘</a></li>
+</ul>
+<h4><a id="additional-combinators"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#additional-combinators">■</a> <a href="#additional-combinators">Additional combinators</a></h4>
+<h5><a id="U-consume"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-consume">■</a> <a href="#U-consume"><code>U.consume(action, observable)</code></a></h5>
+<p><code>U.consume</code> creates a property that simply immediately produces <code>undefined</code> and
+subscribes to the given observable whose values it passes to the given action
+for as long as the returned property is subscribed to.  <code>U.consume</code> can be used
+for executing side-effects during the time that a component is mounted.  See
+also <a href="#U-sink"><code>U.sink</code></a>.</p>
+<p>For example:</p>
+<pre><code class="hljs lang-jsx">var DocumentTitle = ({title}) =&gt; (
+  &lt;React.Fragment&gt;
+    {U.consume(title =&gt; {
+      if (typeof document !== &#39;undefined&#39;) document.title = title
+    }, title)}
+  &lt;/React.Fragment&gt;
+)</code></pre>
+<h5><a id="U-endWith"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-endWith">■</a> <a href="#U-endWith"><code>U.endWith(value, observable)</code></a></h5>
+<p><code>U.endWith</code> creates an observable that ends with the given value.  That is,
+after the given observable ends, the given value is emitted.</p>
+<h5><a id="U-lazy"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-lazy">■</a> <a href="#U-lazy"><code>U.lazy(() =&gt; observable)</code></a></h5>
+<p><code>U.lazy</code> allows to create an observable lazily.</p>
+<p>For example, one use case for <code>U.lazy</code> is to create cyclic observables:</p>
+<pre><code class="hljs lang-jsx">var sequence = [&#39;⠋&#39;, &#39;⠙&#39;, &#39;⠸&#39;, &#39;⠴&#39;, &#39;⠦&#39;, &#39;⠇&#39;]
+var loop = () =&gt;
+  U.serially([U.serially(sequence.map(U.later(100))), U.lazy(loop)])</code></pre>
+<p>See the live <a href="https://codesandbox.io/s/2wov8r44r0">Login</a> CodeSandbox for an
+example.</p>
+<h5><a id="U-fromPromise"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-fromPromise">■</a> <a href="#U-fromPromise"><code>U.fromPromise(() =&gt; promise | {ready, abort})</code></a></h5>
+<p><code>U.fromPromise</code> converts a thunk that returns a promise or an object of the
+shape <code>{ready, abort}</code> where <code>ready</code> is a promise and <code>abort</code> is an action that
+aborts the promise into a Kefir property.  The thunk is invoked once when the
+property is subscribed to for the first time.  If an <code>abort</code> action is defined
+and all subscriptions of the property are closed before the promise resolves,
+the property is ended and the <code>abort</code> action is called once.</p>
+<p>For example:</p>
+<pre><code class="hljs lang-jsx">var fetchJSON =
+  typeof AbortController === &#39;undefined&#39;
+    ? (url, params = {}) =&gt;
+        U.fromPromise(() =&gt; fetch(url, params).then(res =&gt; res.json()))
+    : (url, params = {}) =&gt;
+        U.fromPromise(() =&gt; {
+          const controller = new AbortController()
+          return {
+            ready: fetch(url, {...params, signal: controller.signal}).then(
+              res =&gt; res.json()
+            ),
+            abort() {
+              controller.abort()
+            }
+          }
+        })</code></pre>
+<p>See the live <a href="https://codesandbox.io/s/wk51qz3kjl">GitHub search</a> CodeSandbox
+for an example.</p>
+<p>Note that <code>U.fromPromise</code> is not the same as Kefir&#39;s
+<a href="https://kefirjs.github.io/kefir/#from-promise"><code>fromPromise</code></a>.</p>
+<h5><a id="U-sink"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-sink">■</a> <a href="#U-sink"><code>U.sink(observable)</code></a></h5>
+<p><code>U.sink</code> creates a property that simply immediately produces <code>undefined</code> and
+subscribes to the given observable for as long as the returned sink is
+subscribed to.  See also <a href="#U-consume"><code>U.consume</code></a>.</p>
+<h5><a id="U-skipIdenticals"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-skipIdenticals">■</a> <a href="#U-skipIdenticals"><code>U.skipIdenticals(observable)</code></a></h5>
+<p><code>U.skipIdenticals</code> is shorthand for
+<a href="https://kefirjs.github.io/kefir/#skip-duplicates"><code>U.skipDuplicates(Object.is)</code></a>.</p>
+<h5><a id="U-skipWhen"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-skipWhen">■</a> <a href="#U-skipWhen"><code>U.skipWhen(predicate, observable)</code></a></h5>
+<p><code>U.skipWhen(predicate)</code> is shorthand for <a href="https://kefirjs.github.io/kefir/#filter"><code>U.skipUnless(x =&gt;
+!predicate(x))</code></a>.</p>
+<h5><a id="U-startWith"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-startWith">■</a> <a href="#U-startWith"><code>U.startWith(value, observable)</code></a></h5>
+<p><code>U.startWith</code> creates a property that starts with the given value.  It uses the
+<a href="https://kefirjs.github.io/kefir/#to-property"><code>toProperty</code></a> method of Kefir.</p>
+<h5><a id="U-template"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-template">■</a> <a href="#U-template"><code>U.template([ ... ] | { ... })</code></a></h5>
+<p><code>U.template</code> composes an observable property from an arbitrarily nested template
+of objects and arrays observables.</p>
+<p>For example:</p>
+<pre><code class="hljs lang-jsx">var abProperty = U.template({a: anObservable, b: anotherObservable})
+abProperty instanceof Kefir.Observable // true</code></pre>
+<h4><a id="subscribing"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#subscribing">■</a> <a href="#subscribing">Subscribing</a></h4>
+<h5><a id="U-on"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-on">■</a> <a href="#U-on"><code>U.on({value, error, end}, observable)</code></a></h5>
+<p><code>U.on</code> subscribes to an observable and dispatches the events to the actions
+specified in the template.</p>
+<p><strong>Note</strong> that explicitly subscribing to an observable should be done <em>very
+rarely</em> in a Karet application!  Full Karet applications can be written with
+zero uses of explicit observable subscriptions, because the Reactive VDOM of
+<a href="https://github.com/calmm-js/karet/">Karet</a> automatically subscribes to and
+unsubscribes from observables.  Nevertheless, it can sometimes be convenient to
+subscribe explicitly to observables to perform side-effects.</p>
+<p>For example:</p>
+<pre><code class="hljs lang-jsx">U.thru(
+  observable,
+  ...,
+  U.on({
+    value: value = console.log(value)
+  })
+)</code></pre>
+<h3><a id="lifted-standard-functions"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#lifted-standard-functions">■</a> <a href="#lifted-standard-functions">Lifted standard functions</a></h3>
+<p>Standard JavaScript functions only operate on plain values.  Karet Util provides
+<a href="#U-liftRec">lifted</a> versions of some useful standard JavaScript functions.  The
+below just directly links to relevant documentation in MDN.</p>
+<h4><a id="JSON"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#JSON">■</a> <a href="#JSON">JSON</a></h4>
+<ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse"><code>U.parse(string[, reviver])</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify"><code>U.stringify(value[, replacer[, space]])</code> ⌘</a></li>
+</ul>
+<h4><a id="URIs"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#URIs">■</a> <a href="#URIs">URIs</a></h4>
+<ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/decodeURI"><code>U.decodeURI(string)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/decodeURIComponent"><code>U.decodeURIComponent(string)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURI"><code>U.encodeURI(string)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent"><code>U.encodeURIComponent(string)</code> ⌘</a></li>
+</ul>
+<h4><a id="Math"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#Math">■</a> <a href="#Math">Math</a></h4>
+<ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/abs"><code>U.abs(x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/acos"><code>U.acos(x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/acosh"><code>U.acosh(x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/asin"><code>U.asin(x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/asinh"><code>U.asinh(x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/atan"><code>U.atan(x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/atanh"><code>U.atanh(x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/atan2"><code>U.atan2(y, x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/cbrt"><code>U.cbrt(x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/ceil"><code>U.ceil(x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/clz32"><code>U.clz32(x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/cos"><code>U.cos(x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/cosh"><code>U.cosh(x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/exp"><code>U.exp(x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/expm1"><code>U.expm1(x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/floor"><code>U.floor(x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/fround"><code>U.fround(x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/hypot"><code>U.hypot(...xs)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/imul"><code>U.imul(x, y)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/log"><code>U.log(x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/log1p"><code>U.log1p(x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/log10"><code>U.log10(x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/log2"><code>U.log2(x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/max"><code>U.max(...xs)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/min"><code>U.min(...xs)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/pow"><code>U.pow(x, y)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/round"><code>U.round(x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/sign"><code>U.sign(x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/sin"><code>U.sin(x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/sinh"><code>U.sinh(x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/sqrt"><code>U.sqrt(x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/tan"><code>U.tan(x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/tanh"><code>U.tanh(x)</code> ⌘</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/trunc"><code>U.trunc(x)</code> ⌘</a></li>
+</ul>
+<h4><a id="String"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#String">■</a> <a href="#String">String</a></h4>
+<ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/raw"><code>U.string`template string with observables`</code> ⌘</a></li>
+</ul>
+
+    <div class="loading-hidden">
+      <pre><code class="hljs lang-js">
+        document.querySelector('.loading-message').className = "loading-hidden";
+        ga('send', 'event', 'completed', 'load', Math.round((Date.now() - startTime)/1000));
+        accelerate_klipse();
+      </code></pre>
+    </div>
+    <script type="text/javascript" src="https://unpkg.com/babel-polyfill/dist/polyfill.min.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/infestines/dist/infestines.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/partial.lenses/dist/partial.lenses.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/kefir/dist/kefir.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/react@16.5.0/umd/react.development.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/karet/dist/karet.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/kefir.atom/dist/kefir.atom.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/karet.lift/dist/karet.lift.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/kefir.combines/dist/kefir.combines.js"></script>
+    <script type="text/javascript" src="karet.util.js"></script>
+    <script type="text/javascript" src="setup.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/ramda/dist/ramda.min.js"></script>
+    <script type="text/javascript" src="fw/klipse-settings.js"></script>
+    <script type="text/javascript" src="https://storage.googleapis.com/app.klipse.tech/plugin_prod/js/klipse_plugin.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/javascript.min.js"></script>
+    <script type="text/javascript" src="fw/init-hljs.js"></script>
+    <script type="text/javascript" src="fw/menu.js"></script>
+    <script type="text/javascript" src="fw/tooltips.js"></script>
+    <script type="text/javascript" src="fw/clicks-to-ga.js"></script>
+  </body>
+</html>
