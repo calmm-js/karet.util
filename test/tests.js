@@ -41,7 +41,7 @@ const testEq = (expect, thunk) =>
       }
     }
     if (actual instanceof Observable) {
-      U.thru(actual, U.takeFirst(1), U.on({value: check}))
+      U.thru(actual, U.takeFirst(1), U.on({value: check, error: check}))
     } else {
       check(actual)
     }
@@ -207,16 +207,6 @@ describe('U.string', () => {
     'Hello, constant property!',
     () => U.string`Hello, ${'constant'} ${C('property')}!`
   )
-})
-
-describe('U.Context', () => {
-  const Who = U.withContext((_, {who}) => <div>Hello, {who}!</div>)
-
-  testRender('<div>Hello, World!</div>', () => (
-    <U.Context context={{who: C('World')}}>
-      <Who />
-    </U.Context>
-  ))
 })
 
 describe('bound inputs', () => {
@@ -606,6 +596,21 @@ describe('U.fromPromise', () => {
   )
 })
 
+describe('IdentityLatest', () => {
+  testEq([{x: 3}, {x: 1}, {x: 2}, {x: 1}, {x: 1}], () =>
+    U.IdentityLatest.chain(
+      R.reverse,
+      U.thru(
+        [{x: 0}, {x: 0}, {x: 1}, {x: 0}, {x: 2}],
+        L.traverse(U.IdentityLatest, x => (x ? C(x + 1) : x + 1), [
+          L.elems,
+          C('x')
+        ])
+      )
+    )
+  )
+})
+
 describe('U.animationSpan', () => {
   testEq([0, 0.25, 0.5, 0.75, 1, 'done'], () => {
     global.window = 1
@@ -647,8 +652,11 @@ describe('toReact', () => {
   })
 })
 
-describe('obsoleted', () => {
-  testEq(2, () => U.seq(1, R.inc))
-  testEq(2, () => U.seqPartial(1, R.inc))
-  testEq(3, () => U.combines(1, 2, R.add))
+describe('shortcuts', () => {
+  testEq(101, () => U.delay(10, 101))
+  testEq(101, () => U.mapValue(x => x + 1, 100))
+  testEq(101, () => U.flatMapParallel(x => x + 1, 100))
+  testEq(101, () => U.flatMapSerial(x => x + 1, 100))
+  testEq(101, () => U.flatMapLatest(x => x + 1, 100))
+  testEq(101, () => U.toProperty(101))
 })
