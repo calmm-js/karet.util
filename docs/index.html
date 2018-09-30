@@ -92,8 +92,6 @@
 </li>
 <li><a href="#convenience">Convenience</a><ul>
 <li><a href="#U-scope"><code>U.scope((...) =&gt; ...)</code></a></li>
-<li><del><a href="#U-seq"><code>U.seq(any, ...fns)</code></a></del></li>
-<li><del><a href="#U-seqPartial"><code>U.seqPartial(any, ...fns)</code></a></del></li>
 <li><a href="#U-tapPartial"><code>U.tapPartial(action, any)</code></a></li>
 <li><a href="#U-thru"><code>U.thru(any, ...fns)</code></a></li>
 <li><a href="#U-through"><code>U.through(...fns)</code></a></li>
@@ -101,11 +99,6 @@
 </ul>
 </li>
 <li><a href="#react-helpers">React helpers</a><ul>
-<li><del><a href="#context">Context</a></del><ul>
-<li><del><a href="#U-Context"><code>&lt;U.Context context={context} /&gt;</code></a></del></li>
-<li><del><a href="#U-withContext"><code>U.withContext((props, context) =&gt; element)</code></a></del></li>
-</ul>
-</li>
 <li><a href="#binding">Binding</a><ul>
 <li><a href="#U-getProps"><code>U.getProps({...propName: atom|bus})</code></a></li>
 <li><a href="#U-setProps"><code>U.setProps({...propName: observable})</code></a></li>
@@ -145,6 +138,11 @@
 </ul>
 </li>
 <li><a href="#kefir">Kefir</a><ul>
+<li><a href="#algebras">Algebras</a><ul>
+<li><a href="#U-IdentityLatest"><code>U.IdentityLatest</code></a></li>
+<li><a href="#U-Latest"><code>U.Latest</code></a></li>
+</ul>
+</li>
 <li><a href="#conditionals">Conditionals</a><ul>
 <li><a href="#U-and"><code>U.and(...any)</code></a></li>
 <li><a href="#U-cond"><code>U.cond(...[condition, consequent][, [alternative]])</code></a></li>
@@ -161,7 +159,6 @@
 </li>
 <li><a href="#lifting">Lifting</a><ul>
 <li><a href="#U-combine"><code>U.combine([...any], fn)</code></a></li>
-<li><del><a href="#U-combines"><code>U.combines(...any, fn)</code></a></del></li>
 <li><a href="#U-lift"><code>U.lift((...) =&gt; ...)</code></a></li>
 <li><a href="#U-liftRec"><code>U.liftRec((...) =&gt; ...)</code></a></li>
 </ul>
@@ -193,6 +190,7 @@
 <li><a href="https://kefirjs.github.io/kefir/#take-errors"><code>U.takeFirstErrors(number, observable)</code> ⌘</a></li>
 <li><a href="https://kefirjs.github.io/kefir/#take-until-by"><code>U.takeUntilBy(eventStream, observable)</code> ⌘</a></li>
 <li><a href="https://kefirjs.github.io/kefir/#throttle"><code>U.throttle(ms, observable)</code> ⌘</a></li>
+<li><a href="https://kefirjs.github.io/kefir/#constant"><code>U.toObservable(observable)</code> ⌘</a></li>
 <li><a href="https://kefirjs.github.io/kefir/#to-property"><code>U.toProperty(observable)</code> ⌘</a></li>
 </ul>
 </li>
@@ -509,36 +507,6 @@ with the given value.</p>
 <p>For example:</p>
 <pre><code class="hljs lang-js">U.scope((x = 1, y = 2) =&gt; x + y)
 </code></pre>
-<h4><a id="U-seq"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-seq">■</a> <del><a href="#U-seq"><code>U.seq(any, ...fns)</code></a></del></h4>
-<p><strong>WARNING: <code>U.seq</code> has been obsoleted.  Use <a href="#U-thru"><code>U.thru</code></a> instead.</strong></p>
-<p><code>U.seq</code> allows one to pipe a value through a sequence of functions.  In other
-words, <code>U.seq(x, fn_1, ..., fn_N)</code> is roughly equivalent to <code>fn_N( ... fn_1(x)
-... )</code>.  It serves a similar purpose as the
-<a href="https://clojuredocs.org/clojure.core/-%3E%3E"><code>-&gt;&gt;</code></a> macro of Clojure or the
-<code>|&gt;</code> operator of
-<a href="https://blogs.msdn.microsoft.com/dsyme/2011/05/17/archeological-semiotics-the-birth-of-the-pipeline-symbol-1994/">F#</a>
-and <a href="http://package.elm-lang.org/packages/elm-lang/core/latest/Basics#%7C%3E">Elm</a>,
-for example, or the
-<a href="http://comp.lang.functional.narkive.com/zZJZg20r/a-family-of-function-application-operators-for-standard-ml"><code>&gt;|</code></a>
-operator defined in a Usenet post by some rando.  See also <a href="#U-thru"><code>U.thru</code></a>.</p>
-<p>For example:</p>
-<pre><code class="hljs lang-js">U.seq(1, x =&gt; x + 1, x =&gt; -x)
-</code></pre>
-<p>A common technique in JavaScript is to use method chaining: <code>x.fn_1().fn_2()</code>.
-A problem with method chaining is that it requires having objects with methods.
-Sometimes you may need to manipulate values that are not objects, like <code>null</code>
-and <code>undefined</code>, and other times you may want to use functions that are not
-directly provided as methods and it may not be desirable to <a href="https://en.wikipedia.org/wiki/Monkey_patch#Pitfalls">monkey
-patch</a> such methods.</p>
-<p><code>U.seq</code> is designed to work with partially applied
-<a href="https://en.wikipedia.org/wiki/Currying">curried</a> functions that take the <a
-href="https://en.wikipedia.org/wiki/Object_(grammar)">object</a> as their last
-argument and can be seen as providing a flexible alternative to method chaining.</p>
-<h4><a id="U-seqPartial"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-seqPartial">■</a> <del><a href="#U-seqPartial"><code>U.seqPartial(any, ...fns)</code></a></del></h4>
-<p><strong>WARNING: <code>seqPartial</code> has been deprecated.  There is no replacement for it.</strong></p>
-<p><code>U.seqPartial</code> allows one to pipe a value through a sequence of function in such
-a way that if the value becomes <code>undefined</code> the process is stopped and
-<code>undefined</code> is returned without calling the remaining functions.</p>
 <h4><a id="U-tapPartial"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-tapPartial">■</a> <a href="#U-tapPartial"><code>U.tapPartial(action, any)</code></a></h4>
 <p><code>U.tapPartial</code> is a <a href="#U-liftRec">lifted</a> partial
 <a href="http://ramdajs.com/docs/#tap">tap</a> function.  The given action is called for
@@ -596,27 +564,6 @@ function that immediately returns <code>undefined</code> if any of the arguments
 <pre><code class="hljs lang-js">U.toPartial((x, y) =&gt; x + y)(1, 2)
 </code></pre>
 <h3><a id="react-helpers"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#react-helpers">■</a> <a href="#react-helpers">React helpers</a></h3>
-<h4><a id="context"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#context">■</a> <del><a href="#context">Context</a></del></h4>
-<h5><a id="U-Context"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-Context">■</a> <del><a href="#U-Context"><code>&lt;U.Context context={context} /&gt;</code></a></del></h5>
-<p><strong>WARNING: <code>U.Context</code> has been obsoleted. Just use the new <a href="https://reactjs.org/docs/context.html">React context
-API</a>.</strong></p>
-<p><code>U.Context</code> is a component that allows one to set the context for child
-components.  See also <a href="#U-withContext"><code>U.withContext</code></a>.</p>
-<p>Usually the context should be an object with the desired properties.  Also, with
-Karet, the values are usually observable properties.</p>
-<p>For example:</p>
-<pre><code class="hljs lang-jsx">&lt;U.Context context={{language: U.atom(&#39;fi&#39;)}}/&gt;
-  &lt;Page /&gt;
-&lt;U.Context/&gt;</code></pre>
-<h5><a id="U-withContext"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-withContext">■</a> <del><a href="#U-withContext"><code>U.withContext((props, context) =&gt; element)</code></a></del></h5>
-<p><strong>WARNING: <code>U.withContext</code> has been obsoleted. Just use the new <a href="https://reactjs.org/docs/context.html">React context
-API</a>.</strong></p>
-<p><code>U.withContext</code> creates a component that takes both the props and the context as
-parameters.  See also <a href="#U-Context"><code>U.Context</code></a>.</p>
-<p>For example:</p>
-<pre><code class="hljs lang-jsx">var Text = U.withContext(({children: text}, {language}) =&gt; (
-  &lt;span&gt;{translate(language, text)}&lt;/span&gt;
-)</code></pre>
 <h4><a id="binding"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#binding">■</a> <a href="#binding">Binding</a></h4>
 <h5><a id="U-getProps"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-getProps">■</a> <a href="#U-getProps"><code>U.getProps({...propName: atom|bus})</code></a></h5>
 <p><code>U.getProps</code> returns an event callback that gets the values of the properties
@@ -763,6 +710,24 @@ typically (are not and) must not be rerendered unnecessarily.  See the <a href="
 function to React class</a> CodeSandbox for an
 example.</p>
 <h3><a id="kefir"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#kefir">■</a> <a href="#kefir">Kefir</a></h3>
+<h4><a id="algebras"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#algebras">■</a> <a href="#algebras">Algebras</a></h4>
+<h5><a id="U-IdentityLatest"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-IdentityLatest">■</a> <a href="#U-IdentityLatest"><code>U.IdentityLatest</code></a></h5>
+<p><code>U.IdentityLatest</code> is a Static Land compatible algebra module over properties,
+like <a href="#U-Latest"><code>U.Latest</code></a>, or plain values.</p>
+<h5><a id="U-Latest"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-Latest">■</a> <a href="#U-Latest"><code>U.Latest</code></a></h5>
+<p><code>U.Latest</code> is a Static Land compatible algebra module over properties from which
+only the latest value is propagated.  Currently it implements the
+<a href="https://github.com/rpominov/static-land/blob/master/docs/spec.md#monad">monad</a>
+algebra.</p>
+<p>For example:</p>
+<pre><code class="hljs lang-js">log(
+  L.traverse(
+    U.Latest,
+    x =&gt; U.startWith(undefined, U.later(x*1000, x)),
+    L.elems,
+    [1, 2, 3]
+  )
+)</code></pre>
 <h4><a id="conditionals"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#conditionals">■</a> <a href="#conditionals">Conditionals</a></h4>
 <h5><a id="U-and"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-and">■</a> <a href="#U-and"><code>U.and(...any)</code></a></h5>
 <p><code>U.and</code> is a lazy variadic logical and over potentially observable properties.
@@ -830,37 +795,6 @@ the argument <code>xs</code> given to <code>U.combine</code> is allowed to be</p
 <a href="https://github.com/baconjs/bacon.js#bacon-combinetemplate"><code>Bacon.combineTemplate</code></a>.</p>
 <p>Note: <code>U.combine</code> is carefully optimized for space&mdash;if you write equivalent
 combinations using Kefir&#39;s own operators, they will likely take more memory.</p>
-<h5><a id="U-combines"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-combines">■</a> <del><a href="#U-combines"><code>U.combines(...any[, fn])</code></a></del></h5>
-<p><strong>WARNING: <code>combines</code> has been obsoleted.  Please use <a href="#U-combine"><code>U.combine</code></a>,
-<a href="#U-template"><code>U.template</code></a>, <a href="U-lift"><code>U.lift</code></a>, or <a href="#U-liftRec"><code>U.liftRec</code></a>
-instead.</strong></p>
-<p><code>U.combines</code> is a special purpose <a href="https://kefirjs.github.io/kefir/">Kefir</a>
-observable combinator designed for combining properties for a sink that accepts
-both observables and constant values such as the Reactive VDOM of
-<a href="https://github.com/calmm-js/karet">Karet</a>.</p>
-<p>Unlike typical observable combinators, when <code>U.combines</code> is invoked with only
-constants (no observables), then the result is computed immediately and returned
-as a plain value.  This optimization eliminates redundant observables.</p>
-<p>The basic semantics of <code>U.combines</code> can be described as</p>
-<pre><code class="hljs lang-jsx">U.combines(...xs, fn) === Kefir.combine(xs, fn).skipDuplicates(R.identical)</code></pre>
-<p>where <a href="https://kefirjs.github.io/kefir/#combine"><code>Kefir.combine</code></a> and
-<a href="https://kefirjs.github.io/kefir/#skip-duplicates"><code>skipDuplicates</code></a> come from
-Kefir and <a href="http://ramdajs.com/docs/#identical"><code>R.identical</code></a> from
-<a href="http://ramdajs.com/">Ramda</a>.  Duplicates are skipped, because that can reduce
-unnecessary updates.  Ramda&#39;s <code>R.identical</code> provides a semantics of equality
-that works well within the context of embedding properties to VDOM.</p>
-<p>Unlike with <a href="https://kefirjs.github.io/kefir/#combine"><code>Kefir.combine</code></a>, any
-argument of <code>U.combines</code> is allowed to be</p>
-<ul>
-<li>a constant,</li>
-<li>an observable (including the combiner function), or</li>
-<li>an array or object containing observables.</li>
-</ul>
-<p>In other words, <code>U.combines</code> also provides functionality similar to
-<a href="https://github.com/baconjs/bacon.js#bacon-combinetemplate"><code>Bacon.combineTemplate</code></a>.</p>
-<p>Note: <code>U.combines</code> is carefully optimized for space&mdash;if you write
-equivalent combinations using Kefir&#39;s own operators, they will likely take more
-memory.</p>
 <h5><a id="U-lift"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-lift">■</a> <a href="#U-lift"><code>U.lift((...) =&gt; ...)</code></a></h5>
 <p><code>U.lift</code> allows one to lift a function operating on plain values to a function
 that operates both on plain values and on observable properties.  When given
@@ -895,7 +829,8 @@ functions also work on <a href="https://kefirjs.github.io/kefir/">Kefir</a> obse
 <p><a href="https://kefirjs.github.io/kefir/">Kefir</a> is a traditional JavaScript library
 that provides a fluent API using method chaining.  Karet Util supports more
 functional style JavaScript by providing curried functions for programming with
-Kefir.</p>
+Kefir.  The functions provided by Karet Util also try to avoid constructing
+observables unnecessarily.</p>
 <p>The following are simply links to the relevant
 <a href="https://kefirjs.github.io/kefir/">Kefir</a> documentation:</p>
 <ul>
@@ -926,6 +861,7 @@ not a function!</li>
 <li><a href="https://kefirjs.github.io/kefir/#take-errors"><code>U.takeFirstErrors(number, observable)</code> ⌘</a></li>
 <li><a href="https://kefirjs.github.io/kefir/#take-until-by"><code>U.takeUntilBy(eventStream, observable)</code> ⌘</a></li>
 <li><a href="https://kefirjs.github.io/kefir/#throttle"><code>U.throttle(ms, observable)</code> ⌘</a></li>
+<li><a href="https://kefirjs.github.io/kefir/#constant"><code>U.toObservable(observable)</code> ⌘</a></li>
 <li><a href="https://kefirjs.github.io/kefir/#to-property"><code>U.toProperty(observable)</code> ⌘</a></li>
 </ul>
 <h4><a id="additional-combinators"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#additional-combinators">■</a> <a href="#additional-combinators">Additional combinators</a></h4>

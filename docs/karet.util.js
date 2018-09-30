@@ -1,23 +1,12 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('kefir.atom'), require('kefir'), require('infestines'), require('partial.lenses'), require('karet.lift'), require('karet'), require('react'), require('kefir.combines')) :
-  typeof define === 'function' && define.amd ? define(['exports', 'kefir.atom', 'kefir', 'infestines', 'partial.lenses', 'karet.lift', 'karet', 'react', 'kefir.combines'], factory) :
-  (factory((global.karet = global.karet || {}, global.karet.util = {}),global.Kefir.atom,global.Kefir,global.I,global.L,global.karet.lift,global.karet,global.React,global.Kefir.combines));
-}(this, (function (exports,A,K,I,L,F,Karet,React,kefir_combines) { 'use strict';
-
-  var header = 'karet.util: ';
-
-  function warn(f, m) {
-    if (!f.warned) {
-      f.warned = 1;
-      console.warn(header + m);
-    }
-  }
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('kefir.atom'), require('kefir'), require('infestines'), require('partial.lenses'), require('karet.lift'), require('karet'), require('react')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'kefir.atom', 'kefir', 'infestines', 'partial.lenses', 'karet.lift', 'karet', 'react'], factory) :
+  (factory((global.karet = global.karet || {}, global.karet.util = {}),global.Kefir.atom,global.Kefir,global.I,global.L,global.karet.lift,global.karet,global.React));
+}(this, (function (exports,A,K,I,L,F,Karet,React) { 'use strict';
 
   ////////////////////////////////////////////////////////////////////////////////
 
-  var setName = function (to, name) {
-    return I.defineNameU(to, name);
-  };
+  var setName = I.defineNameU;
 
   // Actions /////////////////////////////////////////////////////////////////////
 
@@ -55,9 +44,6 @@
   };
 
   var toUndefined = function toUndefined(_) {};
-  var toObservable = function toObservable(x) {
-    return isObservable(x) ? x : K.constant(x);
-  };
 
   var invokeIf = function invokeIf(fn, x) {
     return fn && fn(x);
@@ -68,6 +54,22 @@
           value = _ref.value;
       return invokeIf(fns[type], value);
     };
+  };
+
+  var mapValueU = function mapValue(fn, xs) {
+    if (isObservable(xs)) return xs.map(fn);else return fn(xs);
+  };
+
+  var flatMapLatestU = function flatMapLatest(fn, xs) {
+    if (isObservable(xs)) return xs.flatMapLatest(I.pipe2U(fn, toObservable));else return fn(xs);
+  };
+
+  var flatMapParallelU = function flatMapParallel(fn, xs) {
+    if (isObservable(xs)) return xs.flatMap(I.pipe2U(fn, toObservable));else return fn(xs);
+  };
+
+  var flatMapSerialU = function flatMapSerial(fn, xs) {
+    if (isObservable(xs)) return xs.flatMapConcat(I.pipe2U(fn, toObservable));else return fn(xs);
   };
 
   // Curried ---------------------------------------------------------------------
@@ -81,27 +83,21 @@
   var serially = function serially(xs) {
     return K.concat(xs.map(toObservable));
   };
-  var parallel = K.merge;
+  var parallel = function parallel(xs) {
+    return K.merge(xs.map(toObservable));
+  };
   var delay = /*#__PURE__*/I.curry(function delay(ms, xs) {
-    return toObservable(xs).delay(ms);
+    if (isObservable(xs)) return xs.delay(ms);else return xs;
   });
-  var mapValue = /*#__PURE__*/I.curry(function mapValue(fn, xs) {
-    return toObservable(xs).map(fn);
-  });
-  var flatMapParallel = /*#__PURE__*/I.curry(function flatMapParallel(fn, xs) {
-    return toObservable(xs).flatMap(I.pipe2U(fn, toObservable));
-  });
-  var flatMapSerial = /*#__PURE__*/I.curry(function flatMapSerial(fn, xs) {
-    return toObservable(xs).flatMapConcat(I.pipe2U(fn, toObservable));
-  });
+  var mapValue = /*#__PURE__*/I.curry(mapValueU);
+  var flatMapParallel = /*#__PURE__*/I.curry(flatMapParallelU);
+  var flatMapSerial = /*#__PURE__*/I.curry(flatMapSerialU);
   var flatMapErrors = /*#__PURE__*/I.curry(function flatMapErrors(fn, xs) {
     return toObservable(xs).flatMapErrors(I.pipe2U(fn, toObservable));
   });
-  var flatMapLatest = /*#__PURE__*/I.curry(function flatMapLatest(fn, xs) {
-    return toObservable(xs).flatMapLatest(I.pipe2U(fn, toObservable));
-  });
+  var flatMapLatest = /*#__PURE__*/I.curry(flatMapLatestU);
   var foldPast = /*#__PURE__*/I.curry(function foldPast(fn, s, xs) {
-    return toObservable(xs).scan(fn, s);
+    if (isObservable(xs)) return xs.scan(fn, s);else return fn(s, xs);
   });
   var interval = /*#__PURE__*/I.curry(K.interval);
   var later = /*#__PURE__*/I.curry(K.later);
@@ -116,7 +112,7 @@
     return toObservable(xs).skip(n);
   });
   var skipDuplicates = /*#__PURE__*/I.curry(function skipDuplicates(equals, xs) {
-    return toObservable(xs).skipDuplicates(equals);
+    if (isObservable(xs)) return xs.skipDuplicates(equals);else return xs;
   });
   var skipUnless = /*#__PURE__*/I.curry(function skipUnless(p, xs) {
     return toObservable(xs).filter(p);
@@ -130,8 +126,11 @@
   var takeUntilBy = /*#__PURE__*/I.curry(function takeUntilBy(ts, xs) {
     return toObservable(xs).takeUntilBy(ts);
   });
+  var toObservable = function toObservable(x) {
+    return isObservable(x) ? x : K.constant(x);
+  };
   var toProperty = function toProperty(xs) {
-    return isProperty(xs) ? xs : isStream(xs) ? xs.toProperty() : K.constant(xs);
+    return isStream(xs) ? xs.toProperty() : xs;
   };
   var throttle = /*#__PURE__*/I.curry(function throttle(ms, xs) {
     return toObservable(xs).throttle(ms);
@@ -158,7 +157,7 @@
     return toObservable(xs).concat(toObservable(v));
   });
   var lazy = function lazy(th) {
-    return toProperty(flatMapLatest(th, toProperty()));
+    return toProperty(flatMapLatestU(th, toObservable()));
   };
   var skipIdenticals = /*#__PURE__*/skipDuplicates(I.identicalU);
   var skipWhen = /*#__PURE__*/I.curry(function skipWhen(p, xs) {
@@ -235,19 +234,19 @@
   };
 
   var and = /*#__PURE__*/setName( /*#__PURE__*/mkBop(true, function and(l, r) {
-    return toProperty(flatMapLatest(function (l) {
+    return toProperty(flatMapLatestU(function (l) {
       return l && r;
     }, l));
   }), 'andAlso');
 
   var or = /*#__PURE__*/setName( /*#__PURE__*/mkBop(false, function or(l, r) {
-    return toProperty(flatMapLatest(function (l) {
+    return toProperty(flatMapLatestU(function (l) {
       return l || r;
     }, l));
   }), 'orElse');
 
   var ifteU = function ifElse(b, t, e) {
-    return toProperty(flatMapLatest(function (b) {
+    return toProperty(flatMapLatestU(function (b) {
       return b ? t : e;
     }, b));
   };
@@ -267,6 +266,18 @@
     }
     return op;
   }
+
+  // Algebras --------------------------------------------------------------------
+
+  var Latest = /*#__PURE__*/I.Monad(function (f, x) {
+    return x.map(f).skipDuplicates(I.identicalU);
+  }, K.constant, function (f, x) {
+    return K.combine([f, x], I.applyU).toProperty().skipDuplicates(I.identicalU);
+  }, function (f, x) {
+    return x.flatMapLatest(f).toProperty().skipDuplicates(I.identicalU);
+  });
+
+  var IdentityLatest = /*#__PURE__*/I.IdentityOrU(isProperty, Latest);
 
   // Animation -------------------------------------------------------------------
 
@@ -300,11 +311,6 @@
     return typeof window === 'undefined' ? never : new Ticks(d);
   };
 
-  var combines = function combines() {
-    warn(combines, '`combines` has been obsoleted.  Please use `combine`, `template`, `lift`, or `liftRec` instead.');
-    return kefir_combines.combines.apply(null, arguments);
-  };
-
   // Bus -------------------------------------------------------------------------
 
   var streamPrototype = K.Stream.prototype;
@@ -328,16 +334,6 @@
   var doEnd = /*#__PURE__*/doN(0, 'end', 'doEnd');
 
   // Convenience /////////////////////////////////////////////////////////////////
-
-  var seq = function seq(_) {
-    warn(seq, '`seq` has been obsoleted.  Use `thru` instead.');
-    return I.seq.apply(null, arguments);
-  };
-
-  var seqPartial = function seqPartial(_) {
-    warn(seqPartial, '`seqPartial` has been deprecated.  There is no replacement for it.');
-    return I.seqPartial.apply(null, arguments);
-  };
 
   var scope = function scope(fn) {
     return fn();
@@ -365,7 +361,7 @@
   };
 
   var thruProperty = function thru(x, fs) {
-    return toProperty(flatMapLatest(function thru(fs) {
+    return toProperty(flatMapLatestU(function thru(fs) {
       return thruPlain(x, fs);
     }, fs));
   };
@@ -440,50 +436,11 @@
     return K.stream(I.always(effect)).toProperty(I.always(undefined));
   };
 
-  // Context ---------------------------------------------------------------------
-
-  var _React$createContext = /*#__PURE__*/React.createContext(I.object0),
-      Provider = _React$createContext.Provider,
-      Consumer = _React$createContext.Consumer;
-
-  var Context = /*#__PURE__*/(function (fn) {
-    return function Context(props) {
-      warn(Context, '`Context` has been obsoleted.  Just use the new React context API.');
-      return fn(props);
-    };
-  })(function Context(_ref2) {
-    var context = _ref2.context,
-        children = _ref2.children;
-
-    return React.createElement(
-      Provider,
-      { value: context },
-      children
-    );
-  });
-
-  var withContext = /*#__PURE__*/(function (fn) {
-    return function withContext(props) {
-      warn(withContext, '`withContext` has been obsoleted.  Just use the new React context API.');
-      return fn(props);
-    };
-  })(function withContext(toElem) {
-    return function (props) {
-      return React.createElement(
-        Consumer,
-        null,
-        function (context) {
-          return toElem(props, context);
-        }
-      );
-    };
-  });
-
   // DOM Binding -----------------------------------------------------------------
 
   var getProp = function getProp(name, object) {
-    return function getProp(_ref3) {
-      var target = _ref3.target;
+    return function getProp(_ref2) {
+      var target = _ref2.target;
 
       var value = target[name];
       if (I.isFunction(object.push)) {
@@ -916,6 +873,7 @@
   exports.takeFirst = takeFirst;
   exports.takeFirstErrors = takeFirstErrors;
   exports.takeUntilBy = takeUntilBy;
+  exports.toObservable = toObservable;
   exports.toProperty = toProperty;
   exports.throttle = throttle;
   exports.fromEvents = fromEvents;
@@ -937,15 +895,14 @@
   exports.unless = unless;
   exports.when = when;
   exports.cond = cond;
+  exports.Latest = Latest;
+  exports.IdentityLatest = IdentityLatest;
   exports.animationSpan = animationSpan;
-  exports.combines = combines;
   exports.Bus = Bus;
   exports.bus = bus;
   exports.doPush = doPush;
   exports.doError = doError;
   exports.doEnd = doEnd;
-  exports.seq = seq;
-  exports.seqPartial = seqPartial;
   exports.scope = scope;
   exports.tapPartial = tapPartial;
   exports.toPartial = toPartial;
@@ -953,8 +910,6 @@
   exports.through = through;
   exports.show = show;
   exports.onUnmount = onUnmount;
-  exports.Context = Context;
-  exports.withContext = withContext;
   exports.getProps = getProps;
   exports.setProps = setProps;
   exports.Select = Select;
