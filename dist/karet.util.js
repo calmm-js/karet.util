@@ -327,6 +327,25 @@
     return new Bus();
   };
 
+  // Serializer ------------------------------------------------------------------
+
+  function serializer(initial) {
+    var atFirst = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : I.array0;
+
+    var actions = bus();
+    var property = thru(serially(atFirst.concat(actions)), flatMapSerial(scope), startWith(initial));
+    property.push = function (action) {
+      return actions.push(action);
+    };
+    property.error = function (value) {
+      return actions.error(value);
+    };
+    property.end = function () {
+      return actions.end();
+    };
+    return property;
+  }
+
   // Actions on buses ------------------------------------------------------------
 
   var doPush = /*#__PURE__*/doN(1, 'push', 'doPush');
@@ -900,6 +919,7 @@
   exports.animationSpan = animationSpan;
   exports.Bus = Bus;
   exports.bus = bus;
+  exports.serializer = serializer;
   exports.doPush = doPush;
   exports.doError = doError;
   exports.doEnd = doEnd;

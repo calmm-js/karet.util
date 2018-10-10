@@ -80,6 +80,7 @@
 <li><a href="#bus">Bus</a><ul>
 <li><a href="#creating-buses">Creating buses</a><ul>
 <li><a href="#U-bus"><code>U.bus()</code></a></li>
+<li><a href="#U-serializer"><code>U.serializer(initial[, [...actions]])</code></a></li>
 </ul>
 </li>
 <li><a href="#actions-on-buses">Actions on buses</a><ul>
@@ -491,6 +492,23 @@ Karet.  They can be useful for performing IO actions and in cases where actions
 from UI controls need to be throttled or combined.</p>
 <p>See the live <a href="https://codesandbox.io/s/1840p9xo9l">Counter using Event Streams</a>
 CodeSandbox for an example.</p>
+<h5><a id="U-serializer"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-serializer">■</a> <a href="#U-serializer"><code>U.serializer(initial[, [...actions]])</code></a></h5>
+<p><code>U.serializer</code> creates a new observable <em>property</em> for <em>serially</em> executing
+actions, which are zero argument functions that may return a value or an
+observable that should eventually end.  The returned property starts with the
+given <code>initial</code> value and then continues with the results of the optional array
+of <code>actions</code>.  Like a <a href="#U-bus"><code>Bus</code></a>, the returned property also has the
+following extra methods:</p>
+<ul>
+<li><code>bus.push(action)</code> to explicitly push a new action to be executed,</li>
+<li><code>bus.error(error)</code> to explicitly emit error <code>error</code>, and</li>
+<li><code>bus.end()</code> to explicitly stop the serializer after which all the methods do
+nothing.</li>
+</ul>
+<p>The property must be subscribed to in order to process actions.</p>
+<p>See the <a href="https://codesandbox.io/s/2rq54pgrp">Form using Context</a> CodeSandbox for
+a minimalist example that uses a serializer to execute a simulated asynchronous
+operation.</p>
 <h4><a id="actions-on-buses"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#actions-on-buses">■</a> <a href="#actions-on-buses">Actions on buses</a></h4>
 <h5><a id="U-doEnd"></a> <a href="#contents">≡</a> <a href="https://github.com/calmm-js/karet.util/blob/master/README.md#U-doEnd">■</a> <a href="#U-doEnd"><code>U.doEnd(bus)</code></a></h5>
 <p><code>U.doEnd</code> creates an action that invokes the <code>end</code> method on the given bus.</p>

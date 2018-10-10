@@ -1,7 +1,7 @@
 import { AbstractMutable, holding, Atom, Molecule, Join } from 'kefir.atom';
 export { holding } from 'kefir.atom';
 import { Observable, Property, Stream, concat, merge, interval, later, never, constant, fromEvents, combine, stream } from 'kefir';
-import { defineNameU, arityN, pipe2U, curry, identicalU, id, inherit, Monad, applyU, IdentityOrU, always, isDefined, isFunction, object0, assign } from 'infestines';
+import { defineNameU, arityN, pipe2U, curry, identicalU, id, inherit, Monad, applyU, IdentityOrU, always, array0, isDefined, isFunction, object0, assign } from 'infestines';
 import { iso, get, set, collect, flatten, when, join, remove, find } from 'partial.lenses';
 import { combine as combine$1, lift, liftRec } from 'karet.lift';
 export { combine, lift, liftRec } from 'karet.lift';
@@ -335,6 +335,25 @@ var Bus = /*#__PURE__*/inherit(function Bus() {
 var bus = function bus() {
   return new Bus();
 };
+
+// Serializer ------------------------------------------------------------------
+
+function serializer(initial) {
+  var atFirst = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : array0;
+
+  var actions = bus();
+  var property = thru(serially(atFirst.concat(actions)), flatMapSerial(scope), startWith(initial));
+  property.push = function (action) {
+    return actions.push(action);
+  };
+  property.error = function (value) {
+    return actions.error(value);
+  };
+  property.end = function () {
+    return actions.end();
+  };
+  return property;
+}
 
 // Actions on buses ------------------------------------------------------------
 
@@ -855,4 +874,4 @@ var mapElemsWithIds = /*#__PURE__*/curry(function mapElemsWithIds(idL, xi2y, xs)
   }, []), skipIdenticals);
 });
 
-export { debounce, changes, serially, parallel, delay, mapValue, flatMapParallel, flatMapSerial, flatMapErrors, flatMapLatest, foldPast, interval$1 as interval, later$1 as later, never$1 as never, on, sampledBy, skipFirst, skipDuplicates, skipUnless, takeFirst, takeFirstErrors, takeUntilBy, toObservable, toProperty, throttle, fromEvents$1 as fromEvents, ignoreValues, ignoreErrors, startWith, sink, consume, endWith, lazy, skipIdenticals, skipWhen, template, fromPromise, not, and, or, ifElse, unless, when$1 as when, cond, Latest, IdentityLatest, animationSpan, Bus, bus, doPush, doError, doEnd, scope, tapPartial, toPartial, thru, through, show, onUnmount, getProps, setProps, Select, Input, TextArea, refTo, actions, preventDefault, stopPropagation, cns, pure, toReactExcept, toReact, parse, stringify, du as decodeURI, duc as decodeURIComponent, eu as encodeURI, euc as encodeURIComponent, abs, acos, acosh, asin, asinh, atan, atan2, atanh, cbrt, ceil, clz32, cos, cosh, exp, expm1, floor, fround, hypot, imul, log, log10, log1p, log2, max, min, pow, round, sign, sin, sinh, sqrt, tan, tanh, trunc, string, atom, variable, molecule, set$1 as set, doModify, doSet, doRemove, destructure, view, mapElems, mapElemsWithIds };
+export { debounce, changes, serially, parallel, delay, mapValue, flatMapParallel, flatMapSerial, flatMapErrors, flatMapLatest, foldPast, interval$1 as interval, later$1 as later, never$1 as never, on, sampledBy, skipFirst, skipDuplicates, skipUnless, takeFirst, takeFirstErrors, takeUntilBy, toObservable, toProperty, throttle, fromEvents$1 as fromEvents, ignoreValues, ignoreErrors, startWith, sink, consume, endWith, lazy, skipIdenticals, skipWhen, template, fromPromise, not, and, or, ifElse, unless, when$1 as when, cond, Latest, IdentityLatest, animationSpan, Bus, bus, serializer, doPush, doError, doEnd, scope, tapPartial, toPartial, thru, through, show, onUnmount, getProps, setProps, Select, Input, TextArea, refTo, actions, preventDefault, stopPropagation, cns, pure, toReactExcept, toReact, parse, stringify, du as decodeURI, duc as decodeURIComponent, eu as encodeURI, euc as encodeURIComponent, abs, acos, acosh, asin, asinh, atan, atan2, atanh, cbrt, ceil, clz32, cos, cosh, exp, expm1, floor, fround, hypot, imul, log, log10, log1p, log2, max, min, pow, round, sign, sin, sinh, sqrt, tan, tanh, trunc, string, atom, variable, molecule, set$1 as set, doModify, doSet, doRemove, destructure, view, mapElems, mapElemsWithIds };
