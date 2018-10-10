@@ -36,6 +36,7 @@ A collection of utilities for working with
   * [Bus](#bus)
     * [Creating buses](#creating-buses)
       * [`U.bus()`](#U-bus)
+      * [`U.serializer(initial[, [...actions]])`](#U-serializer)
     * [Actions on buses](#actions-on-buses)
       * [`U.doEnd(bus)`](#U-doEnd)
       * [`U.doError(bus, error)`](#U-doError)
@@ -515,6 +516,26 @@ from UI controls need to be throttled or combined.
 
 See the live [Counter using Event Streams](https://codesandbox.io/s/1840p9xo9l)
 CodeSandbox for an example.
+
+##### <a id="U-serializer"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-serializer) [`U.serializer(initial[, [...actions]])`](#U-serializer)
+
+`U.serializer` creates a new observable *property* for *serially* executing
+actions, which are zero argument functions that may return a value or an
+observable that should eventually end.  The returned property starts with the
+given `initial` value and then continues with the results of the optional array
+of `actions`.  Like a [`Bus`](#U-bus), the returned property also has the
+following extra methods:
+
+* `bus.push(action)` to explicitly push a new action to be executed,
+* `bus.error(error)` to explicitly emit error `error`, and
+* `bus.end()` to explicitly stop the serializer after which all the methods do
+  nothing.
+
+The property must be subscribed to in order to process actions.
+
+See the [Form using Context](https://codesandbox.io/s/2rq54pgrp) CodeSandbox for
+a minimalist example that uses a serializer to execute a simulated asynchronous
+operation.
 
 #### <a id="actions-on-buses"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#actions-on-buses) [Actions on buses](#actions-on-buses)
 

@@ -268,6 +268,45 @@ describe('U.bus', () => {
   })
 })
 
+describe('U.serializer', () => {
+  testEq(
+    [
+      {type: 'value', value: 2},
+      {type: 'value', value: 3},
+      {type: 'error', value: 4},
+      {type: 'end'}
+    ],
+    () => {
+      const s = U.serializer(1, [() => 2])
+      const es = []
+      s.onAny(e => es.push(e))
+      s.push(() => 3)
+      s.error(4)
+      s.end()
+      s.error(5)
+      s.push(() => 6)
+      return es
+    }
+  )
+  testEq(
+    [
+      {type: 'value', value: 1},
+      {type: 'value', value: 2},
+      {type: 'error', value: 3},
+      {type: 'end'}
+    ],
+    () => {
+      const s = U.serializer(1)
+      const es = []
+      s.onAny(e => es.push(e))
+      s.push(() => 2)
+      s.error(3)
+      s.end()
+      return es
+    }
+  )
+})
+
 describe('U.and', () => {
   testEq(true, () => U.and())
   testEq(1, () => U.and(C(1)))
