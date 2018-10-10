@@ -317,6 +317,21 @@ export const Bus = I.inherit(
 
 export const bus = () => new Bus()
 
+// Serializer ------------------------------------------------------------------
+
+export function serializer(initial, atFirst = I.array0) {
+  const actions = bus()
+  const property = thru(
+    serially(atFirst.concat(actions)),
+    flatMapSerial(scope),
+    startWith(initial)
+  )
+  property.push = action => actions.push(action)
+  property.error = value => actions.error(value)
+  property.end = () => actions.end()
+  return property
+}
+
 // Actions on buses ------------------------------------------------------------
 
 export const doPush = doN(1, 'push', 'doPush')
