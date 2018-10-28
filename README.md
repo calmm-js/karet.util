@@ -14,80 +14,80 @@ A collection of utilities for working with
 * [Reference](#reference)
   * [About lifted functions](#about-lifted-functions)
   * [Debugging](#debugging)
-    * [`U.show(...labels, any)`](#U-show)
+    * [`U.show(...labels, any)`](#u-show)
   * [Atoms](#atoms)
     * [Creating atoms](#creating-atoms)
-      * [`U.atom(value)`](#U-atom)
-      * [`U.molecule([ ... ] | { ... })`](#U-molecule)
-      * [`U.variable()`](#U-variable)
+      * [`U.atom(value)`](#u-atom)
+      * [`U.molecule([ ... ] | { ... })`](#u-molecule)
+      * [`U.variable()`](#u-variable)
     * [Transactions](#transactions)
-      * [`U.holding(() => { ... })`](#U-holding)
+      * [`U.holding(() => { ... })`](#u-holding)
     * [Decomposing](#decomposing)
-      * [`U.destructure(atom)`](#U-destructure)
-      * [`U.mapElems((elemAtom, index) => any, arrayAtom)`](#U-mapElems)
-      * [`U.mapElemsWithIds(lensAtom, (elemAtom, id) => any, arrayAtom)`](#U-mapElemsWithIds)
-      * [`U.view(lens, atom)`](#U-view)
+      * [`U.destructure(atom)`](#u-destructure)
+      * [`U.mapElems((elemAtom, index) => any, arrayAtom)`](#u-mapelems)
+      * [`U.mapElemsWithIds(lensAtom, (elemAtom, id) => any, arrayAtom)`](#u-mapelemswithids)
+      * [`U.view(lens, atom)`](#u-view)
     * [Side-effects on atoms](#side-effects-on-atoms)
-      * [`U.set(atom, value)`](#U-set)
+      * [`U.set(atom, value)`](#u-set)
     * [Actions on atoms](#actions-on-atoms)
-      * [`U.doModify(atom, mapper)`](#U-doModify)
-      * [`U.doRemove(atom)`](#U-doRemove)
-      * [`U.doSet(atom, value)`](#U-doSet)
+      * [`U.doModify(atom, mapper)`](#u-domodify)
+      * [`U.doRemove(atom)`](#u-doremove)
+      * [`U.doSet(atom, value)`](#u-doset)
   * [Bus](#bus)
     * [Creating buses](#creating-buses)
-      * [`U.bus()`](#U-bus)
-      * [`U.serializer(initial[, [...actions]])`](#U-serializer)
+      * [`U.bus()`](#u-bus)
+      * [`U.serializer(initial[, [...actions]])`](#u-serializer)
     * [Actions on buses](#actions-on-buses)
-      * [`U.doEnd(bus)`](#U-doEnd)
-      * [`U.doError(bus, error)`](#U-doError)
-      * [`U.doPush(bus, value)`](#U-doPush)
+      * [`U.doEnd(bus)`](#u-doend)
+      * [`U.doError(bus, error)`](#u-doerror)
+      * [`U.doPush(bus, value)`](#u-dopush)
   * [Convenience](#convenience)
-    * [`U.scope((...) => ...)`](#U-scope)
-    * [`U.tapPartial(action, any)`](#U-tapPartial)
-    * [`U.thru(any, ...fns)`](#U-thru)
-    * [`U.through(...fns)`](#U-through)
-    * [`U.toPartial(fn)`](#U-toPartial)
+    * [`U.scope((...) => ...)`](#u-scope)
+    * [`U.tapPartial(action, any)`](#u-tappartial)
+    * [`U.thru(any, ...fns)`](#u-thru)
+    * [`U.through(...fns)`](#u-through)
+    * [`U.toPartial(fn)`](#u-topartial)
   * [React helpers](#react-helpers)
     * [Binding](#binding)
-      * [`U.getProps({...propName: atom|bus})`](#U-getProps)
-      * [`U.setProps({...propName: observable})`](#U-setProps)
+      * [`U.getProps({...propName: atom|bus})`](#u-getprops)
+      * [`U.setProps({...propName: observable})`](#u-setprops)
     * [Input components](#input-components)
-      * [`<U.Input {...{value|checked}} />`](#U-Input)
-      * [`<U.Select {...{value}} />`](#U-Select)
-      * [`<U.TextArea {...{value}} />`](#U-TextArea)
+      * [`<U.Input {...{value|checked}} />`](#u-input)
+      * [`<U.Select {...{value}} />`](#u-select)
+      * [`<U.TextArea {...{value}} />`](#u-textarea)
     * [Refs](#refs)
-      * [`U.refTo(variable)`](#U-refTo)
+      * [`U.refTo(variable)`](#u-refto)
     * [Lifecycle](#lifecycle)
-      * [`U.onUnmount(action)`](#U-onUnmount)
+      * [`U.onUnmount(action)`](#u-onunmount)
     * [Events](#events)
-      * [`U.actions(...actions)`](#U-actions)
-      * [`U.preventDefault(event)`](#U-preventDefault)
-      * [`U.stopPropagation(event)`](#U-stopPropagation)
+      * [`U.actions(...actions)`](#u-actions)
+      * [`U.preventDefault(event)`](#u-preventdefault)
+      * [`U.stopPropagation(event)`](#u-stoppropagation)
     * [Class names](#class-names)
-      * [`U.cns(...classNames)`](#U-cns)
+      * [`U.cns(...classNames)`](#u-cns)
     * [Interop](#interop)
-      * [`U.pure(Component)`](#U-pure)
-      * [`U.toKaret(ReactComponent)`](#U-toKaret)
-      * [`U.toReact(KaretComponent)`](#U-toReact)
-      * [`U.toReactExcept(propName => boolean, KaretComponent)`](#U-toReactExcept)
+      * [`U.pure(Component)`](#u-pure)
+      * [`U.toKaret(ReactComponent)`](#u-tokaret)
+      * [`U.toReact(KaretComponent)`](#u-toreact)
+      * [`U.toReactExcept(propName => boolean, KaretComponent)`](#u-toreactexcept)
   * [Kefir](#kefir)
     * [Algebras](#algebras)
-      * [`U.IdentityLatest`](#U-IdentityLatest)
-      * [`U.Latest`](#U-Latest)
+      * [`U.IdentityLatest`](#u-identitylatest)
+      * [`U.Latest`](#u-latest)
     * [Conditionals](#conditionals)
-      * [`U.and(...any)`](#U-and)
-      * [`U.cond(...[condition, consequent][, [alternative]])`](#U-cond)
-      * [`U.ifElse(condition, consequent, alternative)`](#U-ifElse)
-      * [`U.not(any)`](#U-not)
-      * [`U.or(...any)`](#U-or)
-      * [`U.unless(condition, alternative)`](#U-unless)
-      * [`U.when(condition, consequent)`](#U-when)
+      * [`U.and(...any)`](#u-and)
+      * [`U.cond(...[condition, consequent][, [alternative]])`](#u-cond)
+      * [`U.ifElse(condition, consequent, alternative)`](#u-ifelse)
+      * [`U.not(any)`](#u-not)
+      * [`U.or(...any)`](#u-or)
+      * [`U.unless(condition, alternative)`](#u-unless)
+      * [`U.when(condition, consequent)`](#u-when)
     * [Animation](#animation)
-      * [`U.animationSpan(milliseconds)`](#U-animationSpan)
+      * [`U.animationSpan(milliseconds)`](#u-animationspan)
     * [Lifting](#lifting)
-      * [`U.combine([...any], fn)`](#U-combine)
-      * [`U.lift((...) => ...)`](#U-lift)
-      * [`U.liftRec((...) => ...)`](#U-liftRec)
+      * [`U.combine([...any], fn)`](#u-combine)
+      * [`U.lift((...) => ...)`](#u-lift)
+      * [`U.liftRec((...) => ...)`](#u-liftrec)
     * [Curried combinators](#curried-combinators)
       * [`U.changes(observable)` ⌘](https://kefirjs.github.io/kefir/#changes)
       * [`U.debounce(ms, observable)` ⌘](https://kefirjs.github.io/kefir/#debounce)
@@ -118,17 +118,17 @@ A collection of utilities for working with
       * [`U.toObservable(observable)` ⌘](https://kefirjs.github.io/kefir/#constant)
       * [`U.toProperty(observable)` ⌘](https://kefirjs.github.io/kefir/#to-property)
     * [Additional combinators](#additional-combinators)
-      * [`U.consume(action, observable)`](#U-consume)
-      * [`U.endWith(value, observable)`](#U-endWith)
-      * [`U.fromPromise(() => promise | {ready, abort})`](#U-fromPromise)
-      * [`U.lazy(() => observable)`](#U-lazy)
-      * [`U.sink(observable)`](#U-sink)
-      * [`U.skipIdenticals(observable)`](#U-skipIdenticals)
-      * [`U.skipWhen(predicate, observable)`](#U-skipWhen)
-      * [`U.startWith(value, observable)`](#U-startWith)
-      * [`U.template([ ... ] | { ... })`](#U-template)
+      * [`U.consume(action, observable)`](#u-consume)
+      * [`U.endWith(value, observable)`](#u-endwith)
+      * [`U.fromPromise(() => promise | {ready, abort})`](#u-frompromise)
+      * [`U.lazy(() => observable)`](#u-lazy)
+      * [`U.sink(observable)`](#u-sink)
+      * [`U.skipIdenticals(observable)`](#u-skipidenticals)
+      * [`U.skipWhen(predicate, observable)`](#u-skipwhen)
+      * [`U.startWith(value, observable)`](#u-startwith)
+      * [`U.template([ ... ] | { ... })`](#u-template)
     * [Subscribing](#subscribing)
-      * [`U.on({value, error, end}, observable)`](#U-on)
+      * [`U.on({value, error, end}, observable)`](#u-on)
   * [Lifted standard functions](#lifted-standard-functions)
     * [JSON](#JSON)
       * [`U.parse(string[, reviver])` ⌘](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse)
@@ -187,7 +187,7 @@ import * as U from 'karet.util'
 
 ### <a id="about-lifted-functions"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#about-lifted-functions) About lifted functions
 
-Many of the functions in this library are [*lifted*](#U-liftRec) so that they
+Many of the functions in this library are [*lifted*](#u-liftrec) so that they
 accept both ordinary values and observables as inputs.  When such functions are
 given only ordinary values as inputs, they return immediately with the result
 value.  OTOH, when such a function is given at least an observable as an input,
@@ -195,7 +195,7 @@ they return an observable of results.
 
 ### <a id="debugging"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#debugging) [Debugging](#debugging)
 
-#### <a id="U-show"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-show) [`U.show(...labels, any)`](#U-show)
+#### <a id="u-show"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-show) [`U.show(...labels, any)`](#u-show)
 
 `U.show` is basically an identity function that `console.log`s the values
 flowing through.  `U.show` works on plain values, observables, and atoms.  When
@@ -215,7 +215,7 @@ const Component = ({state}) => (
 
 #### <a id="creating-atoms"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#creating-atoms) [Creating atoms](#creating-atoms)
 
-##### <a id="U-atom"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-atom) [`U.atom(value)`](#U-atom)
+##### <a id="u-atom"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-atom) [`U.atom(value)`](#u-atom)
 
 `U.atom` creates a new atom with the given initial value.
 
@@ -227,7 +227,7 @@ notEmpty.get() // 'initial'
 notEmpty.log() // [property] <value:current> initial
 ```
 
-##### <a id="U-molecule"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-molecule) [`U.molecule([ ... ] | { ... })`](#U-molecule)
+##### <a id="u-molecule"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-molecule) [`U.molecule([ ... ] | { ... })`](#u-molecule)
 
 `U.molecule` composes an atom from a template of atoms.
 
@@ -267,10 +267,10 @@ Also, if the template contains multiple abstract mutables that correspond to the
 same underlying state, then writing through the template will give unpredictable
 results.
 
-##### <a id="U-variable"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-variable) [`U.variable()`](#U-variable)
+##### <a id="u-variable"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-variable) [`U.variable()`](#u-variable)
 
 `U.variable` creates a new atom without an initial value.  See also
-[`U.refTo`](#U-refTo).
+[`U.refTo`](#u-refto).
 
 For example:
 
@@ -283,12 +283,12 @@ empty.set('first') // [property] <value> first
 
 #### <a id="transactions"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#transactions) [Transactions](#transactions)
 
-##### <a id="U-holding"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-holding) [`U.holding(() => { ... })`](#U-holding)
+##### <a id="u-holding"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-holding) [`U.holding(() => { ... })`](#u-holding)
 
 `U.holding` is given a thunk to call while holding the propagation of events
 from changes to atoms. The thunk can `get`, `set`, `remove` and `modify` any
 number of atoms.  After the thunk returns, persisting changes to atoms are
-propagated.  See also [`U.actions`](#U-actions) and [`U.getProps`](#U-getProps).
+propagated.  See also [`U.actions`](#u-actions) and [`U.getProps`](#u-getprops).
 
 For example:
 
@@ -306,11 +306,11 @@ U.holding(() => {
 
 #### <a id="decomposing"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#decomposing) [Decomposing](#decomposing)
 
-##### <a id="U-destructure"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-destructure) [`U.destructure(atom)`](#U-destructure)
+##### <a id="u-destructure"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-destructure) [`U.destructure(atom)`](#u-destructure)
 
 `U.destructure` wraps a given atom or observable with a
 [proxy](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy)
-that performs property access via [`U.view`](#U-view).  On plain observable
+that performs property access via [`U.view`](#u-view).  On plain observable
 properties only `get` access is supported.  On mutable atoms `get`, `set`, and
 `deleteProperty` accesses are supported.
 
@@ -328,7 +328,7 @@ const number = U.view('number', contact)
 ```
 
 Note that *all* property accesses through the proxy returned by `U.destructure`
-are performed via [`U.view`](#U-view).  This means that the return value of
+are performed via [`U.view`](#u-view).  This means that the return value of
 `U.destructure` cannot be used as the atom or observable that it proxies.
 
 Note that `U.destructure` is not recursive, which means that nested
@@ -339,13 +339,13 @@ Note that `U.destructure` requires proper
 support.  You need to [decide whether you can use
 it](https://caniuse.com/#feat=proxy).
 
-##### <a id="U-mapElems"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-mapElems) [`U.mapElems((elemAtom, index) => any, arrayAtom)`](#U-mapElems)
+##### <a id="u-mapelems"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-mapElems) [`U.mapElems((elemAtom, index) => any, arrayAtom)`](#u-mapelems)
 
 `U.mapElems` performs a cached incremental map over state containing an array of
 values.  On changes, the mapping function is only called for elements that were
 not in the state previously.  `U.mapElems` can be used for rendering a list of
 *stateless components*, however, if elements in the array have unique ids, then
-[`U.mapElemsWithIds`](#U-mapElemsWithIds) is generally preferable.
+[`U.mapElemsWithIds`](#u-mapelemswithids) is generally preferable.
 
 For example:
 
@@ -360,13 +360,13 @@ const Contacts = ({contacts}) => (
 See the live [Contacts](https://codesandbox.io/s/zk7bx827r) CodeSandbox for an
 example.
 
-##### <a id="U-mapElemsWithIds"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-mapElemsWithIds) [`U.mapElemsWithIds(idLens, (elemAtom, id) => any, arrayAtom)`](#U-mapElemsWithIds)
+##### <a id="u-mapelemswithids"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-mapElemsWithIds) [`U.mapElemsWithIds(idLens, (elemAtom, id) => any, arrayAtom)`](#u-mapelemswithids)
 
 `U.mapElemsWithIds` performs a cached incremental map over state containing an
 array of values with unique ids.  On changes, the mapping function is only
 called for elements that were not in the state previously.  `U.mapElemsWithIds`
 is particularly designed for rendering a list of potentially *stateful
-components* efficiently.  See also [`U.mapElems`](#U-mapElems).
+components* efficiently.  See also [`U.mapElems`](#u-mapelems).
 
 For example:
 
@@ -393,7 +393,7 @@ const Elems = ({elems}) => (
 elements added or old elements removed, positions of elements changed, ...) has
 `Theta(n)` complexity.  That is the best that can be achieved with plain arrays.
 
-##### <a id="U-view"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-view) [`U.view(lens, atom)`](#U-view)
+##### <a id="u-view"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-view) [`U.view(lens, atom)`](#u-view)
 
 `U.view` creates a read-write view with the given lens from the given original
 atom.  The lens may also be an observable producing lenses.  Modifications to
@@ -451,10 +451,10 @@ example.
 
 #### <a id="side-effects-on-atoms"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#side-effects-on-atoms) [Side-effects on atoms](#side-effects-on-atoms)
 
-##### <a id="U-set"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-set) [`U.set(atom, value)`](#U-set)
+##### <a id="u-set"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-set) [`U.set(atom, value)`](#u-set)
 
 `U.set` sets the given value to the specified atom.  In case the value is
-actually an observable, `U.set` returns a [sink](#U-sink) that sets any values
+actually an observable, `U.set` returns a [sink](#u-sink) that sets any values
 produced by the observable to the atom.
 
 For example:
@@ -481,17 +481,17 @@ not needed when the data is only displayed in a read-only fashion in the UI.
 
 #### <a id="actions-on-atoms"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#actions-on-atoms) [Actions on atoms](#actions-on-atoms)
 
-##### <a id="U-doModify"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-doModify) [`U.doModify(atom, mapper)`](#U-doModify)
+##### <a id="u-domodify"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-doModify) [`U.doModify(atom, mapper)`](#u-domodify)
 
 `U.doModify` creates an action that invokes the `modify` method on the given
 atom with the given mapping function.
 
-##### <a id="U-doRemove"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-doRemove) [`U.doRemove(atom)`](#U-doRemove)
+##### <a id="u-doremove"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-doRemove) [`U.doRemove(atom)`](#u-doremove)
 
 `U.doRemove` creates an action that invokes the `remove` method on the given
 atom.
 
-##### <a id="U-doSet"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-doSet) [`U.doSet(atom, value)`](#U-doSet)
+##### <a id="u-doset"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-doSet) [`U.doSet(atom, value)`](#u-doset)
 
 `U.doSet` creates an action that invokes the `set` method on the given atom with
 the given value.
@@ -500,7 +500,7 @@ the given value.
 
 #### <a id="creating-buses"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#creating-buses) [Creating buses](#creating-buses)
 
-##### <a id="U-bus"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-bus) [`U.bus()`](#U-bus)
+##### <a id="u-bus"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-bus) [`U.bus()`](#u-bus)
 
 `U.bus()` creates a new observable `Bus` stream.  A `Bus` stream has the
 following methods:
@@ -517,13 +517,13 @@ from UI controls need to be throttled or combined.
 See the live [Counter using Event Streams](https://codesandbox.io/s/1840p9xo9l)
 CodeSandbox for an example.
 
-##### <a id="U-serializer"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-serializer) [`U.serializer(initial[, [...actions]])`](#U-serializer)
+##### <a id="u-serializer"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-serializer) [`U.serializer(initial[, [...actions]])`](#u-serializer)
 
 `U.serializer` creates a new observable *property* for *serially* executing
 actions, which are zero argument functions that may return a value or an
 observable that should eventually end.  The returned property starts with the
 given `initial` value and then continues with the results of the optional array
-of `actions`.  Like a [`Bus`](#U-bus), the returned property also has the
+of `actions`.  Like a [`Bus`](#u-bus), the returned property also has the
 following extra methods:
 
 * `bus.push(action)` to explicitly push a new action to be executed,
@@ -539,23 +539,23 @@ operation.
 
 #### <a id="actions-on-buses"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#actions-on-buses) [Actions on buses](#actions-on-buses)
 
-##### <a id="U-doEnd"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-doEnd) [`U.doEnd(bus)`](#U-doEnd)
+##### <a id="u-doend"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-doEnd) [`U.doEnd(bus)`](#u-doend)
 
 `U.doEnd` creates an action that invokes the `end` method on the given bus.
 
-##### <a id="U-doError"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-doError) [`U.doError(bus, error)`](#U-doError)
+##### <a id="u-doerror"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-doError) [`U.doError(bus, error)`](#u-doerror)
 
 `U.doError` creates an action that invokes the `error` method on the given bus
 with the given value.
 
-##### <a id="U-doPush"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-doPush) [`U.doPush(bus, value)`](#U-doPush)
+##### <a id="u-dopush"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-doPush) [`U.doPush(bus, value)`](#u-dopush)
 
 `U.doPush` creates an action that invokes the `push` method on the given bus
 with the given value.
 
 ### <a id="convenience"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#convenience) [Convenience](#convenience)
 
-#### <a id="U-scope"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-scope) [`U.scope((...) => ...)`](#U-scope)
+#### <a id="u-scope"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-scope) [`U.scope((...) => ...)`](#u-scope)
 
 `U.scope` simply calls the given thunk.  IOW, `U.scope(fn)` is equivalent to
 `(fn)()`.  You can use it to create a new scope at expression level.
@@ -567,9 +567,9 @@ U.scope((x = 1, y = 2) => x + y)
 // 3
 ```
 
-#### <a id="U-tapPartial"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-tapPartial) [`U.tapPartial(action, any)`](#U-tapPartial)
+#### <a id="u-tappartial"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-tapPartial) [`U.tapPartial(action, any)`](#u-tappartial)
 
-`U.tapPartial` is a [lifted](#U-liftRec) partial
+`U.tapPartial` is a [lifted](#u-liftrec) partial
 [tap](http://ramdajs.com/docs/#tap) function.  The given action is called for
 values flowing through except when the value is `undefined`.
 
@@ -584,7 +584,7 @@ U.thru(
 )
 ```
 
-#### <a id="U-thru"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-thru) [`U.thru(any, ...fns)`](#U-thru)
+#### <a id="u-thru"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-thru) [`U.thru(any, ...fns)`](#u-thru)
 
 `U.thru` allows one to pipe a value through a sequence of functions.  In other
 words, `U.thru(x, fn_1, ..., fn_N)` is roughly equivalent to `fn_N( ... fn_1(x)
@@ -596,7 +596,7 @@ and [Elm](http://package.elm-lang.org/packages/elm-lang/core/latest/Basics#|>),
 for example, or the
 [`>|`](http://comp.lang.functional.narkive.com/zZJZg20r/a-family-of-function-application-operators-for-standard-ml)
 operator defined in a Usenet post by some rando.  See also
-[`U.through`](#U-through).
+[`U.through`](#u-through).
 
 For example:
 
@@ -618,14 +618,14 @@ functions that take the <a
 href="https://en.wikipedia.org/wiki/Object_(grammar)">object</a> as their last
 argument and can be seen as providing a flexible alternative to method chaining.
 
-#### <a id="U-through"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-through) [`U.through(...fns)`](#U-through)
+#### <a id="u-through"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-through) [`U.through(...fns)`](#u-through)
 
 `U.through` allows one to compose a function that passes its single argument
 through all of the given functions from left to right.  In other words,
 `U.through(fn_1, ..., fn_N)(x)` is roughly equivalent to `fn_N( ... fn_1(x)
 ... )`.  It serves a similar purpose as
 [`R.pipe`](http://ramdajs.com/docs/#pipe), but has been crafted to work with
-[lifted](#lifting) functions.  See also [`U.thru`](#U-thru).
+[lifted](#lifting) functions.  See also [`U.thru`](#u-thru).
 
 For example:
 
@@ -634,7 +634,7 @@ U.through(x => x + 1, x => -x)(1)
 // -2
 ```
 
-#### <a id="U-toPartial"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-toPartial) [`U.toPartial(fn)`](#U-toPartial)
+#### <a id="u-topartial"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-toPartial) [`U.toPartial(fn)`](#u-topartial)
 
 `U.toPartial` takes the given function and returns a curried version of the
 function that immediately returns `undefined` if any of the arguments passed is
@@ -656,13 +656,13 @@ U.toPartial((x, y) => x + y)(1, 2)
 
 #### <a id="binding"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#binding) [Binding](#binding)
 
-##### <a id="U-getProps"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-getProps) [`U.getProps({...propName: atom|bus})`](#U-getProps)
+##### <a id="u-getprops"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-getProps) [`U.getProps({...propName: atom|bus})`](#u-getprops)
 
 `U.getProps` returns an event callback that gets the values of the properties
 named in the given template from the event target and pushes or sets them to the
 [buses](#bus) or [atoms](#atoms) that are the values of the properties.  In case
 the template contains multiple properties, the results are written while
-[holding](#U-holding) change propagation.
+[holding](#u-holding) change propagation.
 
 For example:
 
@@ -678,24 +678,24 @@ const Checkbox = ({checked}) => (
 )
 ```
 
-##### <a id="U-setProps"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-setProps) [`U.setProps({...propName: observable})`](#U-setProps)
+##### <a id="u-setprops"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-setProps) [`U.setProps({...propName: observable})`](#u-setprops)
 
 `U.setProps` returns a callback designed to be used with `ref` that subscribes
 to observables in the given template and copies values from the observables to
 the named properties in the DOM element.  This allows one to bind to DOM
 properties such as scroll position that are not HTML attributes.  See also
-[`U.actions`](#U-actions).
+[`U.actions`](#u-actions).
 
 See the live [Scroll](https://codesandbox.io/s/w6lpz5m9n7) CodeSandbox for an
 example.
 
 #### <a id="input-components"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#input-components) [Input components](#input-components)
 
-##### <a id="U-Input"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-Input) [`<U.Input {...{value|checked}} />`](#U-Input)
+##### <a id="u-input"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-Input) [`<U.Input {...{value|checked}} />`](#u-input)
 
 `U.Input` is a wrapper for an `input` element that binds either
-[`onChange={U.getProps({value})}`](#U-getProps) or
-[`onChange={U.getProps({checked})}`](#U-getProps) when either `value` or
+[`onChange={U.getProps({value})}`](#u-getprops) or
+[`onChange={U.getProps({checked})}`](#u-getprops) when either `value` or
 `checked` is a defined property.
 
 For example:
@@ -706,10 +706,10 @@ const checked = U.atom(false)
 <U.Input type="checkbox" checked={checked} />
 ```
 
-##### <a id="U-Select"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-Select) [`<U.Select {...{value}} />`](#U-Select)
+##### <a id="u-select"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-Select) [`<U.Select {...{value}} />`](#u-select)
 
 `U.Select` is a wrapper for a `select` element that binds
-[`onChange={U.getProps({value})}`](#U-getProps) when `value` is a defined
+[`onChange={U.getProps({value})}`](#u-getprops) when `value` is a defined
 property.
 
 For example:
@@ -720,10 +720,10 @@ const value = U.atom('')
 <U.Select value={value} />
 ```
 
-##### <a id="U-TextArea"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-TextArea) [`<U.TextArea {...{value}} />`](#U-TextArea)
+##### <a id="u-textarea"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-TextArea) [`<U.TextArea {...{value}} />`](#u-textarea)
 
 `U.TextArea` is a wrapper for a `textarea` element that binds
-[`onChange={U.getProps({value})}`](#U-getProps) when `value` is a defined
+[`onChange={U.getProps({value})}`](#u-getprops) when `value` is a defined
 property.
 
 For example:
@@ -736,10 +736,10 @@ const value = U.atom('')
 
 #### <a id="refs"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#refs) [Refs](#refs)
 
-##### <a id="U-refTo"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-refTo) [`U.refTo(variable)`](#U-refTo)
+##### <a id="u-refto"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-refTo) [`U.refTo(variable)`](#u-refto)
 
 `U.refTo` is designed for getting a reference to the DOM element of a component.
-See also [`U.variable`](#U-variable).  See also [`U.actions`](#U-actions).
+See also [`U.variable`](#u-variable).  See also [`U.actions`](#u-actions).
 
 For example:
 
@@ -754,12 +754,12 @@ const Component = ({dom = U.variable()}) => (
 [React](https://facebook.github.io/react/docs/refs-and-the-dom.html) calls the
 `ref` callback with the DOM element on mount and with `null` on unmount.
 However, `U.refTo` does not write `null` to the variable.  The upside of
-skipping `null` and using an initially empty [variable](#U-variable) rather than
-an [atom](#U-atom) is that once the variable emits a value, you can be sure that
+skipping `null` and using an initially empty [variable](#u-variable) rather than
+an [atom](#u-atom) is that once the variable emits a value, you can be sure that
 it refers to a DOM element.
 
 Note that in case you also want to observe `null` values, you can use
-[`U.set`](#U-set) instead of `U.refTo`:
+[`U.set`](#u-set) instead of `U.refTo`:
 
 ```jsx
 const Component = ({dom = U.variable()}) => (
@@ -771,7 +771,7 @@ const Component = ({dom = U.variable()}) => (
 
 #### <a id="lifecycle"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#lifecycle) [Lifecycle](#lifecycle)
 
-##### <a id="U-onUnmount"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-onUnmount) [`U.onUnmount(action)`](#U-onUnmount)
+##### <a id="u-onunmount"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-onUnmount) [`U.onUnmount(action)`](#u-onunmount)
 
 `U.onUnmount` allows you to perform an action when a component is unmounted.
 
@@ -790,12 +790,12 @@ const Component = () => {
 
 #### <a id="events"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#events) [Events](#events)
 
-##### <a id="U-actions"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-actions) [`U.actions(...actions)`](#U-actions)
+##### <a id="u-actions"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-actions) [`U.actions(...actions)`](#u-actions)
 
 `U.actions` is designed for creating an action from multiple actions.  It
 returns an unary action function that calls the functions in the arguments with
 the same argument.  In case there are multiple actions, they are performed while
-[holding](#U-holding) change propagation.
+[holding](#u-holding) change propagation.
 
 For example:
 
@@ -811,17 +811,17 @@ it causes no problem as `U.actions` does not attempt to call `undefined`.
 Note that `U.actions` can also be used with actions given to the React `ref`
 property.
 
-##### <a id="U-preventDefault"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-preventDefault) [`U.preventDefault(event)`](#U-preventDefault)
+##### <a id="u-preventdefault"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-preventDefault) [`U.preventDefault(event)`](#u-preventdefault)
 
 `U.preventDefault` invokes the `preventDefault` method on the given object.
 
-##### <a id="U-stopPropagation"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-stopPropagation) [`U.stopPropagation(event)`](#U-stopPropagation)
+##### <a id="u-stoppropagation"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-stopPropagation) [`U.stopPropagation(event)`](#u-stoppropagation)
 
 `U.stopPropagation` invokes the `stopPropagation` method on the given object.
 
 #### <a id="class-names"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#class-names) [Class names](#class-names)
 
-##### <a id="U-cns"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-cns) [`U.cns(...classNames)`](#U-cns)
+##### <a id="u-cns"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-cns) [`U.cns(...classNames)`](#u-cns)
 
 `U.cns` is designed for creating a list of class names for the `className`
 property.  It joins the truthy values from the arguments with a space.  In case
@@ -837,15 +837,15 @@ const Component = ({className}) => (
 
 #### <a id="interop"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#interop) [Interop](#interop)
 
-##### <a id="U-pure"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-pure) [`U.pure(Component)`](#U-pure)
+##### <a id="u-pure"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-pure) [`U.pure(Component)`](#u-pure)
 
 `U.pure` wraps the given component inside a
 [`PureComponent`](https://reactjs.org/docs/react-api.html#reactpurecomponent).
 `U.pure` can be used for preventing unnecessary rerenders when a Karet component
 is used as a child of a React component that rerenders its children even when
-their props do not change.  See also [`U.toReact`](#U-toReact).
+their props do not change.  See also [`U.toReact`](#u-toreact).
 
-##### <a id="U-toKaret"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-toKaret) [`U.toKaret(ReactComponent)`](#U-toKaret)
+##### <a id="u-tokaret"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-toKaret) [`U.toKaret(ReactComponent)`](#u-tokaret)
 
 `U.toKaret` converts a React component that takes plain value properties to a
 Karet component that can be given observable properties.  `U.toKaret` is useful
@@ -855,7 +855,7 @@ components and with observable rather than plain value properties.  `U.toKaret`
 is a synonym for [`fromClass`](https://github.com/calmm-js/karet#fromClass) from
 the [Karet](https://github.com/calmm-js/karet) library.
 
-##### <a id="U-toReact"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-toReact) [`U.toReact(KaretComponent)`](#U-toReact)
+##### <a id="u-toreact"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-toReact) [`U.toReact(KaretComponent)`](#u-toreact)
 
 `U.toReact` converts a Karet component that expects observable properties and
 should not be rerendered unnecessarily into a React component that takes plain
@@ -863,16 +863,16 @@ value properties.  `U.toReact` may be needed particularly when a Karet component
 is controlled by a higher-order React component, such as [React
 Router](https://reacttraining.com/react-router/), because Karet components
 typically (are not and) must not be rerendered unnecessarily.  `U.toReact` is
-equivalent to [`U.toReactExcept(() => false)`](#U-toReactExcept).  See also
-[`U.pure`](#U-pure).
+equivalent to [`U.toReactExcept(() => false)`](#u-toreactexcept).  See also
+[`U.pure`](#u-pure).
 
-##### <a id="U-toReactExcept"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-toReactExcept) [`U.toReactExcept(propName => boolean, KaretComponent)`](#U-toReactExcept)
+##### <a id="u-toreactexcept"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-toReactExcept) [`U.toReactExcept(propName => boolean, KaretComponent)`](#u-toreactexcept)
 
 `U.toReactExcept` converts a Karet component that expects observable properties
 and should not be rerendered unnecessarily into a React component that takes
 plain value properties.  The given predicate is used to determine which
 properties must not be converted to observable properties.  Like
-[`U.toReact`](#U-toReact), `U.toReactExcept` may be needed particularly when a
+[`U.toReact`](#u-toreact), `U.toReactExcept` may be needed particularly when a
 Karet component is controlled by a higher-order React component, such as [React
 Router](https://reacttraining.com/react-router/), because Karet components
 typically (are not and) must not be rerendered unnecessarily.  See the [Calmm
@@ -883,12 +883,12 @@ example.
 
 #### <a id="algebras"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#algebras) [Algebras](#algebras)
 
-##### <a id="U-IdentityLatest"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-IdentityLatest) [`U.IdentityLatest`](#U-IdentityLatest)
+##### <a id="u-identitylatest"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-IdentityLatest) [`U.IdentityLatest`](#u-identitylatest)
 
 `U.IdentityLatest` is a Static Land compatible algebra module over properties,
-like [`U.Latest`](#U-Latest), or plain values.
+like [`U.Latest`](#u-latest), or plain values.
 
-##### <a id="U-Latest"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-Latest) [`U.Latest`](#U-Latest)
+##### <a id="u-latest"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-Latest) [`U.Latest`](#u-latest)
 
 `U.Latest` is a Static Land compatible algebra module over properties from which
 only the latest value is propagated.  Currently it implements the
@@ -910,15 +910,15 @@ log(
 
 #### <a id="conditionals"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#conditionals) [Conditionals](#conditionals)
 
-##### <a id="U-and"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-and) [`U.and(...any)`](#U-and)
+##### <a id="u-and"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-and) [`U.and(...any)`](#u-and)
 
 `U.and` is a lazy variadic logical and over potentially observable properties.
 `U.and(l, r)` does not subscribe to `r` unless `l` is truthy.
 
-##### <a id="U-cond"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-cond) [`U.cond(...[condition, consequent][, [alternative]])`](#U-cond)
+##### <a id="u-cond"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-cond) [`U.cond(...[condition, consequent][, [alternative]])`](#u-cond)
 
 `U.cond` allows one to express a sequence of conditionals.  `U.cond` translates
-to a nested expression of [`U.ifElse`](#U-ifElse)s.
+to a nested expression of [`U.ifElse`](#u-ifelse)s.
 
 ```jsx
 U.cond( [ condition, consequent ]
@@ -929,7 +929,7 @@ U.cond( [ condition, consequent ]
 The last `[ alternative ]`, which, when present, needs to be a singleton array,
 is optional.
 
-##### <a id="U-ifElse"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-ifElse) [`U.ifElse(condition, consequent, alternative)`](#U-ifElse)
+##### <a id="u-ifelse"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-ifElse) [`U.ifElse(condition, consequent, alternative)`](#u-ifelse)
 
 `U.ifElse` is basically an implementation of the conditional operator `condition
 ? consequent : alternative` for observable properties.
@@ -945,28 +945,28 @@ U.toProperty(
 except that the `consequent` and `alternative` expressions are only evaluated
 once.
 
-##### <a id="U-not"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-not) [`U.not(any)`](#U-not)
+##### <a id="u-not"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-not) [`U.not(any)`](#u-not)
 
 `U.not` is a logical negation over a potentially observable property.
 
-##### <a id="U-or"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-or) [`U.or(...any)`](#U-or)
+##### <a id="u-or"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-or) [`U.or(...any)`](#u-or)
 
 `U.or` is a lazy variadic logical or over potentially observable properties.
 `U.or(l, r)` does not subscribe to `r` unless `l` is falsy.
 
-##### <a id="U-unless"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-unless) [`U.unless(condition, alternative)`](#U-unless)
+##### <a id="u-unless"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-unless) [`U.unless(condition, alternative)`](#u-unless)
 
 `U.unless(condition, alternative)` is shorthand for [`U.ifElse(condition,
-undefined, alternative)`](#U-ifElse).
+undefined, alternative)`](#u-ifelse).
 
-##### <a id="U-when"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-when) [`U.when(condition, consequent)`](#U-when)
+##### <a id="u-when"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-when) [`U.when(condition, consequent)`](#u-when)
 
 `U.when(condition, consequent)` is shorthand for [`U.ifElse(condition,
-consequent, undefined)`](#U-ifElse).
+consequent, undefined)`](#u-ifelse).
 
 #### <a id="animation"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#animation) [Animation](#animation)
 
-##### <a id="U-animationSpan"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-animationSpan) [`U.animationSpan(milliseconds)`](#U-animationSpan)
+##### <a id="u-animationspan"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-animationSpan) [`U.animationSpan(milliseconds)`](#u-animationspan)
 
 `U.animationSpan` creates a property of increasing values from 0 to 1 for the
 given duration in milliseconds on each animation frame as generated by
@@ -977,7 +977,7 @@ example.
 
 #### <a id="lifting"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#lifting) [Lifting](#lifting)
 
-##### <a id="U-combine"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-combine) [`U.combine([...any], fn)`](#U-combine)
+##### <a id="u-combine"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-combine) [`U.combine([...any], fn)`](#u-combine)
 
 `U.combine` is a special purpose [Kefir](https://kefirjs.github.io/kefir/)
 observable property combinator designed for combining properties for a sink that
@@ -1013,13 +1013,13 @@ In other words, `U.combine` also provides functionality similar to
 Note: `U.combine` is carefully optimized for space&mdash;if you write equivalent
 combinations using Kefir's own operators, they will likely take more memory.
 
-##### <a id="U-lift"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-lift) [`U.lift((...) => ...)`](#U-lift)
+##### <a id="u-lift"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-lift) [`U.lift((...) => ...)`](#u-lift)
 
 `U.lift` allows one to lift a function operating on plain values to a function
 that operates both on plain values and on observable properties.  When given
 only plain values, the resulting function returns a plain value.  When given
 observable properties, the resulting function returns an observable property of
-results.  See also [`U.liftRec`](#U-liftRec)
+results.  See also [`U.liftRec`](#u-liftrec)
 
 For example:
 
@@ -1031,15 +1031,15 @@ const obsOfBooleans = includes(obsOfArrays, obsOfValues)
 
 `U.lift` works well for simple functions that do not return functions.  If you
 need to lift higher-order functions that return new functions that should also
-be lifted, try [`U.liftRec`](#U-liftRec).
+be lifted, try [`U.liftRec`](#u-liftrec).
 
-##### <a id="U-liftRec"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-liftRec) [`U.liftRec((...) => ...)`](#U-liftRec)
+##### <a id="u-liftrec"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-liftRec) [`U.liftRec((...) => ...)`](#u-liftrec)
 
 `U.liftRec` allows one to lift a function operating on plain values to a
 function that operates both on plain values and on observable properties.  When
 given only plain values, the resulting function returns a plain value.  When
 given observable properties, the resulting function returns an observable
-property of results.  See also [`U.lift`](#U-lift).
+property of results.  See also [`U.lift`](#u-lift).
 
 For example:
 
@@ -1100,13 +1100,13 @@ The following are simply links to the relevant
 
 #### <a id="additional-combinators"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#additional-combinators) [Additional combinators](#additional-combinators)
 
-##### <a id="U-consume"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-consume) [`U.consume(action, observable)`](#U-consume)
+##### <a id="u-consume"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-consume) [`U.consume(action, observable)`](#u-consume)
 
 `U.consume` creates a property that simply immediately produces `undefined` and
 subscribes to the given observable whose values it passes to the given action
 for as long as the returned property is subscribed to.  `U.consume` can be used
 for executing side-effects during the time that a component is mounted.  See
-also [`U.sink`](#U-sink).
+also [`U.sink`](#u-sink).
 
 For example:
 
@@ -1120,12 +1120,12 @@ const DocumentTitle = ({title}) => (
 )
 ```
 
-##### <a id="U-endWith"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-endWith) [`U.endWith(value, observable)`](#U-endWith)
+##### <a id="u-endwith"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-endWith) [`U.endWith(value, observable)`](#u-endwith)
 
 `U.endWith` creates an observable that ends with the given value.  That is,
 after the given observable ends, the given value is emitted.
 
-##### <a id="U-lazy"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-lazy) [`U.lazy(() => observable)`](#U-lazy)
+##### <a id="u-lazy"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-lazy) [`U.lazy(() => observable)`](#u-lazy)
 
 `U.lazy` allows to create an observable lazily.
 
@@ -1140,7 +1140,7 @@ const loop = () =>
 See the live [Login](https://codesandbox.io/s/2wov8r44r0) CodeSandbox for an
 example.
 
-##### <a id="U-fromPromise"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-fromPromise) [`U.fromPromise(() => promise | {ready, abort})`](#U-fromPromise)
+##### <a id="u-frompromise"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-fromPromise) [`U.fromPromise(() => promise | {ready, abort})`](#u-frompromise)
 
 `U.fromPromise` converts a thunk that returns a promise or an object of the
 shape `{ready, abort}` where `ready` is a promise and `abort` is an action that
@@ -1176,28 +1176,28 @@ for an example.
 Note that `U.fromPromise` is not the same as Kefir's
 [`fromPromise`](https://kefirjs.github.io/kefir/#from-promise).
 
-##### <a id="U-sink"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-sink) [`U.sink(observable)`](#U-sink)
+##### <a id="u-sink"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-sink) [`U.sink(observable)`](#u-sink)
 
 `U.sink` creates a property that simply immediately produces `undefined` and
 subscribes to the given observable for as long as the returned sink is
-subscribed to.  See also [`U.consume`](#U-consume).
+subscribed to.  See also [`U.consume`](#u-consume).
 
-##### <a id="U-skipIdenticals"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-skipIdenticals) [`U.skipIdenticals(observable)`](#U-skipIdenticals)
+##### <a id="u-skipidenticals"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-skipIdenticals) [`U.skipIdenticals(observable)`](#u-skipidenticals)
 
 `U.skipIdenticals` is shorthand for
 [`U.skipDuplicates(Object.is)`](https://kefirjs.github.io/kefir/#skip-duplicates).
 
-##### <a id="U-skipWhen"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-skipWhen) [`U.skipWhen(predicate, observable)`](#U-skipWhen)
+##### <a id="u-skipwhen"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-skipWhen) [`U.skipWhen(predicate, observable)`](#u-skipwhen)
 
 `U.skipWhen(predicate)` is shorthand for [`U.skipUnless(x =>
 !predicate(x))`](https://kefirjs.github.io/kefir/#filter).
 
-##### <a id="U-startWith"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-startWith) [`U.startWith(value, observable)`](#U-startWith)
+##### <a id="u-startwith"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-startWith) [`U.startWith(value, observable)`](#u-startwith)
 
 `U.startWith` creates a property that starts with the given value.  It uses the
 [`toProperty`](https://kefirjs.github.io/kefir/#to-property) method of Kefir.
 
-##### <a id="U-template"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-template) [`U.template([ ... ] | { ... })`](#U-template)
+##### <a id="u-template"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-template) [`U.template([ ... ] | { ... })`](#u-template)
 
 `U.template` composes an observable property from an arbitrarily nested template
 of objects and arrays observables.
@@ -1211,7 +1211,7 @@ abProperty instanceof Kefir.Observable // true
 
 #### <a id="subscribing"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#subscribing) [Subscribing](#subscribing)
 
-##### <a id="U-on"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-on) [`U.on({value, error, end}, observable)`](#U-on)
+##### <a id="u-on"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#U-on) [`U.on({value, error, end}, observable)`](#u-on)
 
 `U.on` subscribes to an observable and dispatches the events to the actions
 specified in the template.
@@ -1238,7 +1238,7 @@ U.thru(
 ### <a id="lifted-standard-functions"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#lifted-standard-functions) [Lifted standard functions](#lifted-standard-functions)
 
 Standard JavaScript functions only operate on plain values.  Karet Util provides
-[lifted](#U-liftRec) versions of some useful standard JavaScript functions.  The
+[lifted](#u-liftrec) versions of some useful standard JavaScript functions.  The
 below just directly links to relevant documentation in MDN.
 
 #### <a id="JSON"></a> [≡](#contents) [▶](https://calmm-js.github.io/karet.util/index.html#JSON) [JSON](#JSON)
