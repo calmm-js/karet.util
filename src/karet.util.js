@@ -778,7 +778,7 @@ export const mapElems = I.curry(function mapElems(xi2y, xs) {
     xs,
     foldPast(function mapElems(ysIn, xsIn) {
       const ysN = ysIn.length
-      const xsN = xsIn.length
+      const xsN = xsIn ? xsIn.length : 0
       if (xsN === ysN) return ysIn
       const m = Math.min(ysN, xsN)
       const ys = ysIn.slice(0, m)
@@ -799,7 +799,7 @@ export const mapElemsWithIds = I.curry(function mapElemsWithIds(idL, xi2y, xs) {
   return thru(
     xs,
     foldPast(function mapElemsWithIds(ysIn, xsIn) {
-      const n = xsIn.length
+      const n = xsIn ? xsIn.length : 0
       let ys = ysIn.length === n ? ysIn : Array(n)
       for (let i = 0; i < n; ++i) {
         const id = idOf(xsIn[i])

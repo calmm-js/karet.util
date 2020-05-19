@@ -178,6 +178,7 @@ describe('U.mapElems', () => {
     }
   )
   testEq([3, 1, 2], () => U.mapElems(x => x + 1, [2, 0, 1]))
+  testEq([], () => U.mapElems(x => x.nope, undefined))
 })
 
 describe('U.mapElemsWithIds', () => {
@@ -204,6 +205,7 @@ describe('U.mapElemsWithIds', () => {
       return ys
     }
   )
+  testEq([], () => U.mapElemsWithIds('nope', x => x.nope, undefined))
 })
 
 describe('U.sink', () => {
