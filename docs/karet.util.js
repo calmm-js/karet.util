@@ -1,8 +1,8 @@
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('kefir.atom'), require('kefir'), require('infestines'), require('partial.lenses'), require('karet.lift'), require('karet'), require('react')) :
   typeof define === 'function' && define.amd ? define(['exports', 'kefir.atom', 'kefir', 'infestines', 'partial.lenses', 'karet.lift', 'karet', 'react'], factory) :
-  (factory((global.karet = global.karet || {}, global.karet.util = {}),global.Kefir.atom,global.Kefir,global.I,global.L,global.karet.lift,global.karet,global.React));
-}(this, (function (exports,A,K,I,L,F,Karet,React) { 'use strict';
+  (global = global || self, factory((global.karet = global.karet || {}, global.karet.util = {}), global.Kefir.atom, global.Kefir, global.I, global.L, global.karet.lift, global.karet, global.React));
+}(this, function (exports, A, K, I, L, F, Karet, React) { 'use strict';
 
   ////////////////////////////////////////////////////////////////////////////////
 
@@ -815,7 +815,7 @@
     var get = chooseGet(xs);
     return thru(xs, foldPast(function mapElems(ysIn, xsIn) {
       var ysN = ysIn.length;
-      var xsN = xsIn.length;
+      var xsN = xsIn ? xsIn.length : 0;
       if (xsN === ysN) return ysIn;
       var m = Math.min(ysN, xsN);
       var ys = ysIn.slice(0, m);
@@ -836,7 +836,7 @@
     };
     var get = chooseGet(xs);
     return thru(xs, foldPast(function mapElemsWithIds(ysIn, xsIn) {
-      var n = xsIn.length;
+      var n = xsIn ? xsIn.length : 0;
       var ys = ysIn.length === n ? ysIn : Array(n);
       for (var i = 0; i < n; ++i) {
         var id = idOf(xsIn[i]);
@@ -998,4 +998,4 @@
 
   Object.defineProperty(exports, '__esModule', { value: true });
 
-})));
+}));

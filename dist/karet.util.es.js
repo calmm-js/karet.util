@@ -1,9 +1,9 @@
-import { AbstractMutable, holding, Atom, Molecule, Join } from 'kefir.atom';
+import { holding, Atom, Molecule, AbstractMutable, Join } from 'kefir.atom';
 export { holding } from 'kefir.atom';
-import { Observable, Property, Stream, concat, merge, interval, later, never, constant, fromEvents, combine, stream } from 'kefir';
-import { defineNameU, arityN, pipe2U, curry, identicalU, id, inherit, Monad, applyU, IdentityOrU, always, array0, isDefined, isFunction, object0, assign } from 'infestines';
-import { iso, get, set, collect, flatten, when, join, remove, find } from 'partial.lenses';
-import { combine as combine$1, lift, liftRec } from 'karet.lift';
+import { constant, concat, merge, Observable, interval, later, never, Stream, fromEvents, Property, combine as combine$1, stream } from 'kefir';
+import { defineNameU, curry, pipe2U, identicalU, id, inherit, arityN, Monad, applyU, IdentityOrU, always, isDefined, isFunction, object0, assign, array0 } from 'infestines';
+import { get, set, collect, flatten, when, join, remove, find, iso } from 'partial.lenses';
+import { lift, combine, liftRec } from 'karet.lift';
 export { combine, lift, liftRec } from 'karet.lift';
 import { createElement } from 'karet';
 export { fromClass as toKaret } from 'karet';
@@ -23,7 +23,7 @@ var doN = function doN(n, method, name) {
       params[_key - 1] = arguments[_key];
     }
 
-    return combine$1(params, function () {
+    return combine(params, function () {
       for (var _len2 = arguments.length, params = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
         params[_key2] = arguments[_key2];
       }
@@ -173,7 +173,7 @@ var skipWhen = /*#__PURE__*/curry(function skipWhen(p, xs) {
   });
 });
 var template = function template(observables) {
-  return combine$1([observables], id);
+  return combine([observables], id);
 };
 
 var FromPromise = /*#__PURE__*/inherit(function FromPromise(makePromise) {
@@ -279,7 +279,7 @@ function cond(_) {
 var Latest = /*#__PURE__*/Monad(function (f, x) {
   return x.map(f).skipDuplicates(identicalU);
 }, constant, function (f, x) {
-  return combine([f, x], applyU).toProperty().skipDuplicates(identicalU);
+  return combine$1([f, x], applyU).toProperty().skipDuplicates(identicalU);
 }, function (f, x) {
   return x.flatMapLatest(f).toProperty().skipDuplicates(identicalU);
 });
@@ -453,9 +453,9 @@ function show(_) {
   var xs = Array(n);
   for (var i = 0; i < n; ++i) {
     xs[i] = arguments[i];
-  }var iso$$1 = combine$1(xs, showIso);
+  }var iso$$1 = combine(xs, showIso);
   var s = arguments[n];
-  return isStream(s) ? isProperty(iso$$1) ? combine([iso$$1, s], get) : mapValue(get(iso$$1), s) : view(iso$$1, s);
+  return isStream(s) ? isProperty(iso$$1) ? combine$1([iso$$1, s], get) : mapValue(get(iso$$1), s) : view(iso$$1, s);
 }
 
 // React ///////////////////////////////////////////////////////////////////////
@@ -739,7 +739,7 @@ var molecule = function molecule(template) {
 // Side-effects ----------------------------------------------------------------
 
 var set$1 = /*#__PURE__*/curry(function set$$1(settable, xs) {
-  var ss = combine$1([xs], function (xs) {
+  var ss = combine([xs], function (xs) {
     return settable.set(xs);
   });
   if (isProperty(ss)) return ss.toProperty(toUndefined);
@@ -757,7 +757,7 @@ var getMutable = function getMutable(xs, l) {
   return xs.view(l);
 };
 var getProperty = function getProperty(xs, l) {
-  return combine$1([l, xs], get);
+  return combine([l, xs], get);
 };
 var getConstant = function getConstant(xs, l) {
   return get(l, xs);
@@ -809,7 +809,7 @@ function destructure(x) {
 
 var view = /*#__PURE__*/curry(function view(l, xs) {
   if (isMutable(xs)) {
-    return isProperty(template(l)) ? new Join(combine$1([l], function (l) {
+    return isProperty(template(l)) ? new Join(combine([l], function (l) {
       return xs.view(l);
     })) : getMutable(xs, l);
   } else {
@@ -824,7 +824,7 @@ var mapElems = /*#__PURE__*/curry(function mapElems(xi2y, xs) {
   var get$$1 = chooseGet(xs);
   return thru(xs, foldPast(function mapElems(ysIn, xsIn) {
     var ysN = ysIn.length;
-    var xsN = xsIn.length;
+    var xsN = xsIn ? xsIn.length : 0;
     if (xsN === ysN) return ysIn;
     var m = Math.min(ysN, xsN);
     var ys = ysIn.slice(0, m);
@@ -845,7 +845,7 @@ var mapElemsWithIds = /*#__PURE__*/curry(function mapElemsWithIds(idL, xi2y, xs)
   };
   var get$$1 = chooseGet(xs);
   return thru(xs, foldPast(function mapElemsWithIds(ysIn, xsIn) {
-    var n = xsIn.length;
+    var n = xsIn ? xsIn.length : 0;
     var ys = ysIn.length === n ? ysIn : Array(n);
     for (var i = 0; i < n; ++i) {
       var id$$1 = idOf(xsIn[i]);

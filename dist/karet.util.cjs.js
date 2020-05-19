@@ -825,7 +825,7 @@ var mapElems = /*#__PURE__*/I.curry(function mapElems(xi2y, xs) {
   var get = chooseGet(xs);
   return thru(xs, foldPast(function mapElems(ysIn, xsIn) {
     var ysN = ysIn.length;
-    var xsN = xsIn.length;
+    var xsN = xsIn ? xsIn.length : 0;
     if (xsN === ysN) return ysIn;
     var m = Math.min(ysN, xsN);
     var ys = ysIn.slice(0, m);
@@ -846,7 +846,7 @@ var mapElemsWithIds = /*#__PURE__*/I.curry(function mapElemsWithIds(idL, xi2y, x
   };
   var get = chooseGet(xs);
   return thru(xs, foldPast(function mapElemsWithIds(ysIn, xsIn) {
-    var n = xsIn.length;
+    var n = xsIn ? xsIn.length : 0;
     var ys = ysIn.length === n ? ysIn : Array(n);
     for (var i = 0; i < n; ++i) {
       var id = idOf(xsIn[i]);
