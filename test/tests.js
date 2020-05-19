@@ -81,14 +81,20 @@ describe('U.actions', () => {
   testEq(theOnlyFunction, () =>
     U.actions(false, theOnlyFunction, 'not a function')
   )
-  testEq([{x: 'x', y: 'y'}, {x: 'X', y: 'Y'}], () => {
-    const xy = U.atom({x: 'x', y: 'y'})
-    const {x, y} = U.destructure(xy)
-    const events = []
-    U.on({value: x => events.push(x)}, xy)
-    U.actions(U.doSet(x, 'X'), U.doModify(y, R.toUpper))()
-    return events
-  })
+  testEq(
+    [
+      {x: 'x', y: 'y'},
+      {x: 'X', y: 'Y'}
+    ],
+    () => {
+      const xy = U.atom({x: 'x', y: 'y'})
+      const {x, y} = U.destructure(xy)
+      const events = []
+      U.on({value: x => events.push(x)}, xy)
+      U.actions(U.doSet(x, 'X'), U.doModify(y, R.toUpper))()
+      return events
+    }
+  )
 })
 
 describe('U.view', () => {
@@ -107,7 +113,13 @@ describe('U.view', () => {
   )
   testEq(101, () =>
     U.view(
-      [U.thru(C('x'), U.flatMapSerial(x => x), U.toProperty)],
+      [
+        U.thru(
+          C('x'),
+          U.flatMapSerial(x => x),
+          U.toProperty
+        )
+      ],
       U.atom({x: 101})
     )
   )
@@ -142,28 +154,39 @@ describe('U.cns', () => {
 })
 
 describe('U.mapElems', () => {
-  testEq([[1, 0, 1], [3, 1, 2], [4, 2, 4]], () => {
-    let uniq = 0
-    const xs = U.atom([2, 1, 1])
-    const ys = U.thru(
-      U.skipFirst(1, xs),
-      U.mapElems((x, i) => [x, i, ++uniq]),
-      U.flatMapLatest(U.template),
-      U.toProperty
-    )
-    ys.onValue(() => {})
-    xs.set([1, 3, 2])
-    xs.set([1, 3])
-    xs.set([3, 1])
-    xs.set([1, 3, 4])
-    return ys
-  })
+  testEq(
+    [
+      [1, 0, 1],
+      [3, 1, 2],
+      [4, 2, 4]
+    ],
+    () => {
+      let uniq = 0
+      const xs = U.atom([2, 1, 1])
+      const ys = U.thru(
+        U.skipFirst(1, xs),
+        U.mapElems((x, i) => [x, i, ++uniq]),
+        U.flatMapLatest(U.template),
+        U.toProperty
+      )
+      ys.onValue(() => {})
+      xs.set([1, 3, 2])
+      xs.set([1, 3])
+      xs.set([3, 1])
+      xs.set([1, 3, 4])
+      return ys
+    }
+  )
   testEq([3, 1, 2], () => U.mapElems(x => x + 1, [2, 0, 1]))
 })
 
 describe('U.mapElemsWithIds', () => {
   testEq(
-    [[{id: '1'}, '1', 2], [{id: '4'}, '4', 4], [{id: '3'}, '3', 3]],
+    [
+      [{id: '1'}, '1', 2],
+      [{id: '4'}, '4', 4],
+      [{id: '3'}, '3', 3]
+    ],
     () => {
       let uniq = 0
       const xs = U.atom([{id: '2'}, {id: '1'}, {id: '3'}])
@@ -430,13 +453,19 @@ describe('U.tapPartial', () => {
     return events
   })
 
-  testEq([[1, undefined, 2], [1, 2]], () => {
-    const events = []
-    const x = U.tapPartial(v => events.push(v), 1)
-    const y = U.tapPartial(v => events.push(v), undefined)
-    const z = U.tapPartial(v => events.push(v), 2)
-    return [[x, y, z], events]
-  })
+  testEq(
+    [
+      [1, undefined, 2],
+      [1, 2]
+    ],
+    () => {
+      const events = []
+      const x = U.tapPartial(v => events.push(v), 1)
+      const y = U.tapPartial(v => events.push(v), undefined)
+      const z = U.tapPartial(v => events.push(v), 2)
+      return [[x, y, z], events]
+    }
+  )
 })
 
 describe('U.thru', () => {
@@ -444,12 +473,17 @@ describe('U.thru', () => {
   testEq(3, () => U.thru(C(1), R.add(C(2))))
   testEq(3, () => U.thru(C({x: 1}), L.get(C('x')), R.add(C(2))))
 
-  testEq([[true, 0], [true, 1]], () =>
-    U.thru(
-      U.atom({xs: ['a', 'b']}),
-      U.view(C('xs')),
-      U.mapElems((x, i) => [x instanceof AbstractMutable, i])
-    )
+  testEq(
+    [
+      [true, 0],
+      [true, 1]
+    ],
+    () =>
+      U.thru(
+        U.atom({xs: ['a', 'b']}),
+        U.view(C('xs')),
+        U.mapElems((x, i) => [x instanceof AbstractMutable, i])
+      )
   )
 })
 
@@ -458,11 +492,16 @@ describe('U.through', () => {
   testEq(3, () => U.through(R.add(C(2)))(C(1)))
   testEq(3, () => U.through(L.get(C('x')), R.add(C(2)))(C({x: 1})))
 
-  testEq([[true, 0], [true, 1]], () =>
-    U.through(
-      U.view(C('xs')),
-      U.mapElems((x, i) => [x instanceof AbstractMutable, i])
-    )(U.atom({xs: ['a', 'b']}))
+  testEq(
+    [
+      [true, 0],
+      [true, 1]
+    ],
+    () =>
+      U.through(
+        U.view(C('xs')),
+        U.mapElems((x, i) => [x instanceof AbstractMutable, i])
+      )(U.atom({xs: ['a', 'b']}))
   )
 })
 
@@ -482,14 +521,20 @@ describe('U.getProps', () => {
     U.getProps({value})({target: {value: 101}})
     return U.debounce(10, U.template({value, checked: checkedProp}))
   })
-  testEq([{x: 'x', y: 'y'}, {x: 'a', y: 'b'}], () => {
-    const xy = U.atom({x: 'x', y: 'y'})
-    const {x, y} = U.destructure(xy)
-    const events = []
-    U.on({value: x => events.push(x)}, xy)
-    U.getProps({x, y})({target: {x: 'a', y: 'b'}})
-    return events
-  })
+  testEq(
+    [
+      {x: 'x', y: 'y'},
+      {x: 'a', y: 'b'}
+    ],
+    () => {
+      const xy = U.atom({x: 'x', y: 'y'})
+      const {x, y} = U.destructure(xy)
+      const events = []
+      U.on({value: x => events.push(x)}, xy)
+      U.getProps({x, y})({target: {x: 'a', y: 'b'}})
+      return events
+    }
+  )
 })
 
 describe('U.endWith', () => {
